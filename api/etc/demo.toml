@@ -1,0 +1,18 @@
+[app]
+name = "demo"
+host = "0.0.0.0"
+port = "8050"
+key  = "this is your app key"
+
+[mysql]
+host = "121.40.150.39"
+port = "9528"
+username = "demo"
+password = "demo!@#123"
+database = "cmdb"
+
+[log]
+level = "debug"
+path = "logs"
+format = "text"
+to = "stdout"
