@@ -5,11 +5,11 @@ port = "8050"
 key  = "this is your app key"
 
 [mysql]
-host = "121.40.150.39"
-port = "9528"
+host = "49.234.114.189"
+port = "5460"
 username = "demo"
-password = "demo!@#123"
-database = "cmdb"
+password = "XXXX"
+database = "demo"
 
 [log]
 level = "debug"
