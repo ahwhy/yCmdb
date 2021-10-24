@@ -7,4 +7,4 @@
 # Editor-based HTTP Client requests
 /httpRequests/
 # yCmdb-conf
-/api/etc/demo.toml
+/demo2.toml
