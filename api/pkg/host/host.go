@@ -133,7 +133,7 @@ func (h *Host) GenHash() error {
 
 type HostSet struct {
 	Items []*Host `json:"items"`
-	Total int     `json:"total"`
+	Total int64   `json:"total"`
 }
 
 func NewHostSet() *HostSet {
