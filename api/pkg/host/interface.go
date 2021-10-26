@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/ahwhy/yCmdb/api/pkg/resource"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -79,7 +80,7 @@ const (
 )
 
 type UpdateHostData struct {
-	*Resource
+	*resource.Information
 	*Describe
 }
 
@@ -108,4 +109,22 @@ type DeleteHostRequest struct {
 
 func NewDeleteHostRequestWithID(id string) *DeleteHostRequest {
 	return &DeleteHostRequest{Id: id}
+}
+
+type PagerResult struct {
+	Data    *HostSet
+	Err     error
+	HasNext bool
+}
+
+// 分页迭代器
+type Pager interface {
+	Next() *PagerResult
+}
+
+
+func NewPagerResult() *PagerResult {
+	return &PagerResult{
+		Data: NewHostSet(),
+	}
 }

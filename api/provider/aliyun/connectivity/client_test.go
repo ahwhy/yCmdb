@@ -1,6 +1,7 @@
 package connectivity_test
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
@@ -18,5 +19,6 @@ func TestClient(t *testing.T) {
 	}
 
 	client := connectivity.NewAliCloudClient(secretID, secretKey, "cn-hangzhou")
-	client.EcsClient()
+	ecs, _ := client.EcsClient()
+	fmt.Println(ecs)
 }

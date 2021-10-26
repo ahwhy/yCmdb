@@ -15,7 +15,7 @@ CREATE TABLE `host` (
   PRIMARY KEY (`resource_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
- resource | CREATE TABLE `resource` (
+CREATE TABLE `resource` (
   `id` char(64) CHARACTER SET latin1 NOT NULL,
   `vendor` tinyint(1) NOT NULL,
   `region` varchar(64) CHARACTER SET latin1 NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE `host` (
   `category` varchar(64) CHARACTER SET latin1 NOT NULL,
   `type` varchar(120) CHARACTER SET latin1 NOT NULL,
   `instance_id` varchar(120) CHARACTER SET latin1 NOT NULL,
-  `name` varchar(255) NOT NULL,
+  `name` varchar(255) CHARACTER SET latin1 NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   `status` varchar(255) CHARACTER SET latin1 NOT NULL,
   `update_at` bigint(13) DEFAULT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE `host` (
   KEY `status` (`status`) USING BTREE,
   KEY `private_ip` (`public_ip`) USING BTREE,
   KEY `public_ip` (`public_ip`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
  CREATE TABLE `secret` (
   `id` varchar(64) NOT NULL,

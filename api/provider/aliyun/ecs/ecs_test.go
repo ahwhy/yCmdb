@@ -1,6 +1,7 @@
 package ecs_test
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
@@ -12,7 +13,17 @@ var (
 	operater *op.EcsOperater
 )
 
-func TestQuery(t *testing.T)
+func TestQuery(t *testing.T) {
+	req := op.NewPageQueryRequest()
+	pager := operater.PageQuery(req)
+
+	hasNext := true
+	for hasNext {
+		p := pager.Next()
+		hasNext = p.HasNext
+		fmt.Printf("%v\n", p.Data)
+	}
+}
 
 func init() {
 	var secretID, secretKey string

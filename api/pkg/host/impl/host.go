@@ -75,20 +75,27 @@ func (s *service) QueryHost(ctx context.Context, req *host.QueryHostRequest) (*h
 	defer rows.Close()
 
 	set := host.NewHostSet()
+	var (
+		publicIPList, privateIPList, keyPairNameList, securityGroupsList string
+	)
 	for rows.Next() {
 		ins := host.NewDefaultHost()
 		err := rows.Scan(
 			&ins.Id, &ins.Vendor, &ins.Region, &ins.Zone, &ins.CreateAt, &ins.ExpireAt,
 			&ins.Category, &ins.Type, &ins.InstanceId, &ins.Name, &ins.Description,
 			&ins.Status, &ins.UpdateAt, &ins.SyncAt, &ins.SyncAccount,
-			&ins.PublicIP, &ins.PrivateIP, &ins.PayType, &ins.DescribeHash, &ins.ResourceHash, &ins.ResourceId,
+			&publicIPList, &privateIPList, &ins.PayType, &ins.DescribeHash, &ins.ResourceHash, &ins.ResourceId,
 			&ins.CPU, &ins.Memory, &ins.GPUAmount, &ins.GPUSpec, &ins.OSType, &ins.OSName,
 			&ins.SerialNumber, &ins.ImageID, &ins.InternetMaxBandwidthOut, &ins.InternetMaxBandwidthIn,
-			&ins.KeyPairName, &ins.SecurityGroups,
+			&keyPairNameList, &securityGroupsList,
 		)
 		if err != nil {
 			return nil, exception.NewInternalServerError("query host error, %s", err.Error())
 		}
+		ins.LoadPrivateIPString(privateIPList)
+		ins.LoadPublicIPString(publicIPList)
+		ins.LoadKeyPairNameString(keyPairNameList)
+		ins.LoadSecurityGroupsString(securityGroupsList)
 		set.Add(ins)
 	}
 
@@ -139,7 +146,10 @@ func (s *service) DescribeHost(ctx context.Context, req *host.DescribeHostReques
 }
 
 func (s *service) UpdateHost(ctx context.Context, req *host.UpdateHostRequest) (*host.Host, error) {
-	var stmt *sql.Stmt
+	var (
+		stmt *sql.Stmt
+		err  error
+	)
 
 	// 检测参数合法性
 	if err := req.Validate(); err != nil {

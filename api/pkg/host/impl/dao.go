@@ -3,12 +3,16 @@ package impl
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	"github.com/ahwhy/yCmdb/api/pkg/host"
 )
 
 func (s *service) save(ctx context.Context, h *host.Host) error {
-	var stmt *sql.Stmt
+	var (
+		stmt *sql.Stmt
+		err  error
+	)
 
 	// 开启一个事物
 	// 文档请参考: http://cngolib.com/database-sql.html#db-begintx
@@ -44,11 +48,11 @@ func (s *service) save(ctx context.Context, h *host.Host) error {
 	// vendor  h.Version.String()
 	_, err = stmt.Exec(
 		h.Id, h.Vendor, h.Region, h.Zone, h.CreateAt, h.ExpireAt, h.Category, h.Type, h.InstanceId,
-		h.Name, h.Description, h.Status, h.UpdateAt, h.SyncAt, h.SyncAccount, h.PublicIP,
-		h.PrivateIP, h.PayType, h.DescribeHash, h.ResourceHash,
+		h.Name, h.Description, h.Status, h.UpdateAt, h.SyncAt, h.SyncAccount, h.PublicIPToString(),
+		h.PrivateIPToString(), h.PayType, h.DescribeHash, h.ResourceHash,
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("save host resource info error, %s", err)
 	}
 
 	// 避免SQL注入, 使用Prepare
@@ -62,17 +66,20 @@ func (s *service) save(ctx context.Context, h *host.Host) error {
 	_, err = stmt.Exec(
 		h.ResourceId, h.CPU, h.Memory, h.GPUAmount, h.GPUSpec, h.OSType, h.OSName,
 		h.SerialNumber, h.ImageID, h.InternetMaxBandwidthOut,
-		h.InternetMaxBandwidthIn, h.KeyPairName, h.SecurityGroups,
+		h.InternetMaxBandwidthIn, h.KeyPairNameToString(), h.SecurityGroupsToString(),
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("save host resource describe error, %s", err)
 	}
 
 	return tx.Commit()
 }
 
 func (s *service) delete(ctx context.Context, req *host.DeleteHostRequest) error {
-	var stmt *sql.Stmt
+	var (
+		stmt *sql.Stmt
+		err  error
+	)
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {

@@ -19,3 +19,17 @@ func (o *EcsOperater) Query(req *ecs.DescribeInstancesRequest) (*host.HostSet, e
 
 	return set, nil
 }
+
+type PageQueryRequest struct {
+	Rate int
+}
+
+func NewPageQueryRequest() *PageQueryRequest {
+	return &PageQueryRequest{
+		Rate: 1,
+	}
+}
+
+func (o *EcsOperater) PageQuery(req *PageQueryRequest) host.Pager {
+	return newPager(20, o, req.Rate)
+}
