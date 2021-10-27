@@ -14,7 +14,8 @@ import (
 
 	"github.com/ahwhy/yCmdb/api/conf"
 	"github.com/ahwhy/yCmdb/api/pkg"
-	"github.com/ahwhy/yCmdb/api/pkg/host/impl"
+	host "github.com/ahwhy/yCmdb/api/pkg/host/impl"
+	syncer "github.com/ahwhy/yCmdb/api/pkg/syncer/impl"
 	"github.com/ahwhy/yCmdb/api/protocol"
 )
 
@@ -133,11 +134,17 @@ var serviceCmd = &cobra.Command{
 			return err
 		}
 
-		// 初始化服务层 Ioc初始化
-		if err := impl.Service.Config(); err != nil {
+		// 初始化host服务层 Ioc初始化
+		if err := host.Service.Config(); err != nil {
 			return err
 		}
-		pkg.Host = impl.Service
+		pkg.Host = host.Service
+
+		//  初始化Syncer.Service
+		if err := syncer.Service.Config(); err != nil {
+			return err
+		}
+		pkg.Syncer = syncer.Service
 
 		// 启动服务
 		ch := make(chan os.Signal, 1)

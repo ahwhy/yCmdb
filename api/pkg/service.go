@@ -1,7 +1,11 @@
 package pkg
 
-import "github.com/ahwhy/yCmdb/api/pkg/host"
+import (
+	"github.com/ahwhy/yCmdb/api/pkg/host"
+	"github.com/ahwhy/yCmdb/api/pkg/syncer"
+)
 
 var (
-	Host host.Service
+	Host   host.Service
+	Syncer syncer.Service
 )

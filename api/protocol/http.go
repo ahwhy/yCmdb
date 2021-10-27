@@ -13,6 +13,7 @@ import (
 
 	"github.com/ahwhy/yCmdb/api/conf"
 	hostAPI "github.com/ahwhy/yCmdb/api/pkg/host/http"
+	syncerAPI "github.com/ahwhy/yCmdb/api/pkg/syncer/http"
 )
 
 // HTTPService http服务
@@ -48,6 +49,7 @@ func NewHTTPService() *HTTPService {
 func (s *HTTPService) Start() error {
 	// 配置子服务路由
 	hostAPI.RegistAPI(s.r)
+	syncerAPI.RegistAPI(s.r)
 
 	// 启动 HTTP服务
 	s.l.Infof("HTTP服务启动成功, 监听地址: %s", s.server.Addr)

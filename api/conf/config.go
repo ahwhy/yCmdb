@@ -10,18 +10,24 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+const (
+	CIPHER_TEXT_PREFIX = "@ciphered@"
+)
+
 // app 配置项
 type app struct {
-	Name string `toml:"name" env:"APP_NAME"`
-	Host string `toml:"host" env:"APP_HOST"`
-	Port string `toml:"port" env:"APP_PORT"`
+	Name       string `toml:"name" env:"APP_NAME"`
+	Host       string `toml:"host" env:"APP_HOST"`
+	Port       string `toml:"port" env:"APP_PORT"`
+	EncryptKey string `toml:"encrypt_key" env:"APP_ENCRYPT_KEY"`
 }
 
 func newDefaultAPP() *app {
 	return &app{
-		Name: "yCmdb",
-		Host: "127.0.0.1",
-		Port: "8050",
+		Name:       "yCmdb",
+		Host:       "127.0.0.1",
+		Port:       "8050",
+		EncryptKey: "defualt app encrypt key",
 	}
 }
 
