@@ -4,6 +4,8 @@ import (
 	"database/sql"
 
 	"github.com/ahwhy/yCmdb/api/conf"
+	"github.com/ahwhy/yCmdb/api/pkg"
+	"github.com/ahwhy/yCmdb/api/pkg/host"
 
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
@@ -15,9 +17,9 @@ var (
 )
 
 type service struct {
-	db  *sql.DB
-	log logger.Logger
-	// syncer syncer.Service
+	db   *sql.DB
+	log  logger.Logger
+	host host.Service
 }
 
 func (s *service) Config() error {
@@ -27,7 +29,7 @@ func (s *service) Config() error {
 	}
 	s.db = db
 
-	// s.syncer = pkg.Syncer
+	s.host = pkg.Host
 	s.log = zap.L().Named("Syncer")
 
 	return nil

@@ -97,11 +97,13 @@ func (s *Secret) EncryptAPISecret(key string) error {
 		return fmt.Errorf("text has ciphered")
 	}
 
+	// 椭圆加密
 	cipherText, err := cbc.Encrypt([]byte(s.APISecret), []byte(key))
 	if err != nil {
 		return err
 	}
 
+	// base64编码
 	base64Str := base64.StdEncoding.EncodeToString(cipherText)
 	s.APISecret = fmt.Sprintf("%s%s", conf.CIPHER_TEXT_PREFIX, base64Str)
 	return nil
@@ -113,8 +115,10 @@ func (s *Secret) DecryptAPISecret(key string) error {
 		return fmt.Errorf("text is plan text")
 	}
 
+	// base64解码
 	base64CipherText := strings.TrimPrefix(s.APISecret, conf.CIPHER_TEXT_PREFIX)
 
+	// 椭圆解密
 	cipherText, err := base64.StdEncoding.DecodeString(base64CipherText)
 	if err != nil {
 		return err
