@@ -5,42 +5,74 @@
 
     <div class="table-op">
       <div class="search">
-        <el-input placeholder="请输入内容" v-model="filterValue" class="input-with-select">
-          <el-select v-model="filterKey" slot="prepend" placeholder="请选择">
-            <el-option label="名称" value="1"></el-option>
-            <el-option label="同步时间" value="2"></el-option>
-            <el-option label="描述" value="3"></el-option>
-          </el-select>
-          <el-button slot="append" icon="el-icon-search"></el-button>
-        </el-input>
+        <el-input
+          v-model="query.keywords"
+          placeholder="请输入实例ID|名称|IP 敲回车进行搜索"
+          @keyup.enter.native="get_hosts"
+        ></el-input>
       </div>
-      <div class="op">
-      </div>
+      <div class="op"></div>
     </div>
 
     <div class="box-shadow">
-      <el-table
-        :data="hosts"
-        style="width: 100%">
-        <el-table-column
-          prop="name"
-          label="名称"
-          width="180">
-        </el-table-column>
+      <el-table :data="hosts" v-loading="fetchHostLoading" style="width: 100%">
+          <el-table-column prop="name" label="名称">
+              <template slot-scope="{ row }">
+                {{ row.resource_id }} <br />
+                {{ row.name }}
+              </template>
+          </el-table-column>
 
-        <el-table-column
-          prop="sync_at"
-          label="同步时间"
-          width="180">
-          <template slot-scope="scope">
-            {{ scope.row.sync_at | parseTime}}
-          </template>
-        </el-table-column>
+          <el-table-column prop="name" label="资产来源">
+              <template slot-scope="{ row }">
+                {{ row.vendor }} <br />
+                {{ row.region }}
+              </template>
+          </el-table-column>
 
-        <el-table-column
-          prop="description"
-          label="描述">
-        </el-table-column>
+          <el-table-column prop="name" label="内网IP/外网IP">
+              <template slot-scope="{ row }">
+                {{ row.private_ip }} <br />
+                {{ row.public_ip }}
+              </template>
+          </el-table-column>
+
+          <el-table-column prop="name" label="系统类型">
+              <template slot-scope="{ row }">
+                {{ row.os_name }}
+              </template>
+          </el-table-column>
+
+          <el-table-column prop="sync_at" label="创建时间">
+              <template slot-scope="scope">
+                {{ scope.row.create_at | parseTime }}
+              </template>
+          </el-table-column>
+
+          <el-table-column prop="expire_at" label="过期时间">
+              <template slot-scope="scope">
+                {{ scope.row.expire_at | parseTime }}
+              </template>
+          </el-table-column>
+
+          <el-table-column prop="name" label="规格">
+              <template slot-scope="{ row }">
+                {{ row.cpu }} / {{ row.memory }}
+              </template>
+          </el-table-column>
+
+          <el-table-column prop="name" label="状态">
+              <template slot-scope="{ row }">
+                {{ row.status }}
+              </template>
+          </el-table-column>
+          
+          <el-table-column prop="操作" align="center" label="状态">
+            <template>
+              <el-button type="text" disabled>归档</el-button>
+              <el-button type="text" disabled>监控</el-button>
+            </template>
+          </el-table-column>
       </el-table>
 
       <pagination 
@@ -69,8 +101,7 @@ export default {
   data() {
     return {
       tips: tips,
-      filterKey: '',
-      filterValue: '',
+      fetchHostLoading: false,
       query: {page_size: 20, page_number: 1},
       total: 0,
       hosts: []
@@ -81,10 +112,19 @@ export default {
   },
   methods: {
     async get_hosts() {
-      const resp = await LIST_HOST(this.query)
-      console.log(resp)
-      this.hosts = resp.data.items
-      this.total = resp.data.total
+      this.fetchHostLoading = true;
+      try {
+        const resp = await LIST_HOST(this.query);
+        this.hosts = resp.data.items;
+        this.total = resp.data.total;
+      } catch (error) {
+        this.$notify.error({
+          title: "获取主机异常",
+          message: error,
+        });
+      } finally {
+        this.fetchHostLoading = false;
+      }
     },
     handleSizeChange(val) {
       this.query.page_size = val
