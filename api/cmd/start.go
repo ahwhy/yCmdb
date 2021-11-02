@@ -12,11 +12,12 @@ import (
 	"github.com/infraboard/mcube/logger/zap"
 	"github.com/spf13/cobra"
 
+	"github.com/ahwhy/yCmdb/api/protocol"
 	"github.com/ahwhy/yCmdb/api/conf"
 	"github.com/ahwhy/yCmdb/api/pkg"
 	host "github.com/ahwhy/yCmdb/api/pkg/host/impl"
+	searcher "github.com/ahwhy/yCmdb/api/pkg/resource/impl"
 	syncer "github.com/ahwhy/yCmdb/api/pkg/syncer/impl"
-	"github.com/ahwhy/yCmdb/api/protocol"
 )
 
 type service struct {
@@ -134,11 +135,18 @@ var serviceCmd = &cobra.Command{
 			return err
 		}
 
-		// 初始化host服务层 Ioc初始化
+		// Ioc初始化
+		// 初始化host.Service
 		if err := host.Service.Config(); err != nil {
 			return err
 		}
 		pkg.Host = host.Service
+
+		// 初始化resource.Service
+		if err := searcher.Service.Config(); err != nil {
+			return err
+		}
+		pkg.Resource = searcher.Service
 
 		//  初始化Syncer.Service
 		if err := syncer.Service.Config(); err != nil {

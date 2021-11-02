@@ -3,12 +3,12 @@ package impl
 import (
 	"database/sql"
 
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
+
 	"github.com/ahwhy/yCmdb/api/conf"
 	"github.com/ahwhy/yCmdb/api/pkg"
 	"github.com/ahwhy/yCmdb/api/pkg/host"
-
-	"github.com/infraboard/mcube/logger"
-	"github.com/infraboard/mcube/logger/zap"
 )
 
 var (
