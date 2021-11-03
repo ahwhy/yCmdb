@@ -13,7 +13,8 @@ const (
 	queryResourceSQL = `SELECT * FROM resource`
 )
 
-func (s *service) Search(ctx context.Context, req *resource.SearchRequest) (*resource.ResourceSet, error) {
+func (s *service) Search(ctx context.Context, req *resource.SearchRequest) (
+	*resource.ResourceSet, error) {
 	query := sqlbuilder.NewQuery(queryResourceSQL)
 
 	if req.Keywords != "" {
@@ -24,6 +25,10 @@ func (s *service) Search(ctx context.Context, req *resource.SearchRequest) (*res
 			req.Keywords+"%",
 			req.Keywords+"%",
 		)
+	}
+
+	if req.Vendor != nil {
+		query.Where("vendor = ?", req.Vendor)
 	}
 
 	querySQL, args := query.Order("sync_at").Desc().Limit(req.OffSet(), uint(req.PageSize)).BuildQuery()

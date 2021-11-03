@@ -56,7 +56,13 @@ func (s *service) QueryHost(ctx context.Context, req *host.QueryHostRequest) (*h
 	query := sqlbuilder.NewQuery(queryHostSQL)
 
 	if req.Keywords != "" {
-		query.Where("r.name LIKE ?", "%"+req.Keywords+"%")
+		query.Where("r.name LIKE ? OR r.id = ? OR r.instance_id = ? OR r.private_ip LIKE ? OR r.public_ip LIKE ?",
+			"%"+req.Keywords+"%",
+			req.Keywords,
+			req.Keywords,
+			req.Keywords+"%",
+			req.Keywords+"%",
+		)
 	}
 
 	querySQL, args := query.Order("sync_at").Desc().Limit(req.OffSet(), uint(req.PageSize)).BuildQuery()
@@ -126,14 +132,17 @@ func (s *service) DescribeHost(ctx context.Context, req *host.DescribeHostReques
 	defer queryStmt.Close()
 
 	ins := host.NewDefaultHost()
+	var (
+		publicIPList, privateIPList, keyPairNameList, securityGroupsList string
+	)
 	err = queryStmt.QueryRow(args...).Scan(
 		&ins.Id, &ins.Vendor, &ins.Region, &ins.Zone, &ins.CreateAt, &ins.ExpireAt,
 		&ins.Category, &ins.Type, &ins.InstanceId, &ins.Name, &ins.Description,
 		&ins.Status, &ins.UpdateAt, &ins.SyncAt, &ins.SyncAccount,
-		&ins.PublicIP, &ins.PrivateIP, &ins.PayType, &ins.DescribeHash, &ins.ResourceHash, &ins.ResourceId,
+		&publicIPList, &privateIPList, &ins.PayType, &ins.DescribeHash, &ins.ResourceHash, &ins.ResourceId,
 		&ins.CPU, &ins.Memory, &ins.GPUAmount, &ins.GPUSpec, &ins.OSType, &ins.OSName,
 		&ins.SerialNumber, &ins.ImageID, &ins.InternetMaxBandwidthOut, &ins.InternetMaxBandwidthIn,
-		&ins.KeyPairName, &ins.SecurityGroups,
+		&keyPairNameList, &securityGroupsList,
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -141,6 +150,11 @@ func (s *service) DescribeHost(ctx context.Context, req *host.DescribeHostReques
 		}
 		return nil, exception.NewInternalServerError("describe host error, %s", err.Error())
 	}
+
+	ins.LoadPrivateIPString(privateIPList)
+	ins.LoadPublicIPString(publicIPList)
+	ins.LoadKeyPairNameString(keyPairNameList)
+	ins.LoadSecurityGroupsString(securityGroupsList)
 
 	return ins, nil
 }

@@ -6,15 +6,15 @@ import app from './modules/app'
 import getters from './getters'
 
 const vuexLocal = new VuexPersistence({
-  storage: window.localStorage
-})
+  storage: window.localStorage,
+});
 
 Vue.use(Vuex);
 
-const modules = {user, app}
+const modules = { user, app };
 
 export default new Vuex.Store({
   modules,
   getters,
-  plugins: [vuexLocal.plugin]
+  plugins: [vuexLocal.plugin],
 });

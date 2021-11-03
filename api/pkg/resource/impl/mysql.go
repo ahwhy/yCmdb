@@ -15,8 +15,8 @@ var (
 )
 
 type service struct {
-	db   *sql.DB
-	log  logger.Logger
+	db  *sql.DB
+	log logger.Logger
 }
 
 func (s *service) Config() error {
@@ -26,7 +26,7 @@ func (s *service) Config() error {
 	}
 	s.db = db
 
-	s.log = zap.L().Named("Syncer")
+	s.log = zap.L().Named("Resource")
 
 	return nil
 }

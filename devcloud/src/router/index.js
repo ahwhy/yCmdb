@@ -27,7 +27,7 @@ const routes = [
   {
     path: "/cmdb",
     component: Layout,
-    redirect: '/cmdb/host',
+    redirect: '/cmdb/search',
     children: [
       {
         path: 'search',
@@ -35,10 +35,15 @@ const routes = [
         name: 'ResourceSearch',
       },
       {
-        path: 'host',
+        path: 'host/list',
         component: () => import('@/views/cmdb/host/index.vue'),
         name: 'ResourceHost',
-      }
+      },
+      {
+        path: "host/detail",
+        component: () => import("@/views/cmdb/host/detail"),
+        name: "HostDetail",
+      },
     ]
   },
   {

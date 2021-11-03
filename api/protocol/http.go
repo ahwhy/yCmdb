@@ -13,6 +13,7 @@ import (
 
 	"github.com/ahwhy/yCmdb/api/conf"
 	hostAPI "github.com/ahwhy/yCmdb/api/pkg/host/http"
+	searcher "github.com/ahwhy/yCmdb/api/pkg/resource/http"
 	syncerAPI "github.com/ahwhy/yCmdb/api/pkg/syncer/http"
 )
 
@@ -49,6 +50,7 @@ func NewHTTPService() *HTTPService {
 func (s *HTTPService) Start() error {
 	// 配置子服务路由
 	hostAPI.RegistAPI(s.r)
+	searcher.RegistAPI(s.r)
 	syncerAPI.RegistAPI(s.r)
 
 	// 启动 HTTP服务

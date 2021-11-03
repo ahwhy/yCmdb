@@ -94,7 +94,7 @@ func NewDefaultResource() *Resource {
 type SearchRequest struct {
 	PageSize     uint64
 	PageNumber   uint64
-	Vendor       Vendor
+	Vendor       *Vendor
 	ResourceType Type
 	Keywords     string
 }

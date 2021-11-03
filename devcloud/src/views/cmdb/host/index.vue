@@ -1,7 +1,6 @@
 <template>
   <div class="main-container">
     <tips :tips="tips" />
-    <h3>CMDB Host</h3>
 
     <div class="table-op">
       <div class="search">
@@ -18,7 +17,12 @@
       <el-table :data="hosts" v-loading="fetchHostLoading" style="width: 100%">
           <el-table-column prop="name" label="名称">
               <template slot-scope="{ row }">
-                {{ row.resource_id }} <br />
+                <router-link
+                  :to="{ path: '/cmdb/host/detail', query: { id: row.id } }"
+                >
+                  {{ row.resource_id }}
+                </router-link>
+                <br />
                 {{ row.name }}
               </template>
           </el-table-column>
@@ -96,13 +100,13 @@ const tips = [
 ]
 
 export default {
-  name: 'Host',
+  name: 'CmdbHost',
   components: { Tips, Pagination },
   data() {
     return {
       tips: tips,
       fetchHostLoading: false,
-      query: {page_size: 20, page_number: 1},
+      query: {page_size: 20, page_number: 1, keywords: "" },
       total: 0,
       hosts: []
     }
@@ -141,5 +145,13 @@ export default {
 <style lang="scss" scoped>
 .box-shadow {
   margin: 12px 0;
+}
+
+.table-op {
+  margin-top: 12px;
+}
+
+.search {
+  width: 30%;
 }
 </style>

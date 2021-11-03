@@ -1,7 +1,13 @@
 <template>
-  <div class="sidebar" :style="{'width': sidebarWidth}">
+  <div class="sidebar" :style="{ width: sidebarWidth }">
     <el-scrollbar wrap-class="scrollbar-wrapper">
-      <el-menu default-active="1-4-1" class="sidebar-el-menu" :collapse="isCollapse" router>
+      <el-menu
+        default-active="/host"
+        :default-openeds="['/host']"
+        class="sidebar-el-menu"
+        :collapse="isCollapse"
+        router
+      >
         <el-submenu index="/host">
           <!-- 添加个title -->
           <template slot="title">
@@ -9,8 +15,8 @@
             <span slot="title">基础资源</span>
           </template>
           <!-- 导航条目 -->
-          <el-menu-item index="/cmdb/host" >主机信息</el-menu-item>
           <el-menu-item index="/cmdb/search">资源检索</el-menu-item>
+          <el-menu-item index="/cmdb/host/list">主机</el-menu-item>
         </el-submenu>
       </el-menu>
     </el-scrollbar>
@@ -19,30 +25,30 @@
 
 <script>
 export default {
-  name: 'Sidebar',
+  name: "Sidebar",
   data() {
     return {
-      sidebarWidth: '',
-    }
+      sidebarWidth: "",
+    };
   },
   watch: {
     isCollapse: {
       handler(newV) {
         if (newV) {
-          this.sidebarWidth = '65px'
+          this.sidebarWidth = "65px";
         } else {
-          this.sidebarWidth = '210px'
+          this.sidebarWidth = "210px";
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   computed: {
     isCollapse() {
-      return this.$store.getters.sidebar.opened
-    }
+      return this.$store.getters.sidebar.opened;
+    },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

@@ -2,21 +2,51 @@
   <div class="navbar">
     <!-- logo -->
     <div class="logo-container">
-      <hamburger id="hamburger-container" :is-active="isCollapse" class="hamburger-container" @toggleClick="toggleSideBar" />
-      <span>极乐研发云</span>
+      <hamburger
+        id="hamburger-container"
+        :is-active="isCollapse"
+        class="hamburger-container"
+        @toggleClick="toggleSideBar"
+      />
+      <span class="title">极乐研发云</span>
     </div>
     <!-- 主导航栏 -->
     <div class="navbar-main">
-      <span class="navbar-item" @click="changeSystem('dashboard')" :class="{ active: activeIndex === 'dashboard' }">首页</span>
-      <span class="navbar-item" @click="changeSystem('product')" :class="{ active: activeIndex === 'product' }">产品运营</span>
-      <span class="navbar-item" @click="changeSystem('cmdb')" :class="{ active: activeIndex === 'cmdb' }">资源管理</span>
-      <span class="navbar-item" @click="changeSystem('workflow')" :class="{ active: activeIndex === 'workflow' }">研发交付</span>
-      <span class="navbar-item" @click="changeSystem('monitor')" :class="{ active: activeIndex === 'monitor' }">监控告警</span>
+      <span
+        class="navbar-item"
+        @click="changeSystem('dashboard')"
+        :class="{ active: activeSystem === 'dashboard' }"
+        >首页</span
+      >
+      <span
+        class="navbar-item"
+        @click="changeSystem('product')"
+        :class="{ active: activeSystem === 'product' }"
+        >产品运营</span
+      >
+      <span
+        class="navbar-item"
+        @click="changeSystem('cmdb')"
+        :class="{ active: activeSystem === 'cmdb' }"
+        >资源管理</span
+      >
+      <span
+        class="navbar-item"
+        @click="changeSystem('workflow')"
+        :class="{ active: activeSystem === 'workflow' }"
+        >研发交付</span
+      >
+      <span
+        class="navbar-item"
+        @click="changeSystem('monitor')"
+        :class="{ active: activeSystem === 'monitor' }"
+        >监控告警</span
+      >
     </div>
     <!-- 用户信息区 -->
     <div class="navbar-user">
       <el-dropdown>
-        <el-button type="text" style="color:white">
+        <el-button type="text" style="color: white">
           <span>Atlantis</span>
           <i class="el-icon-arrow-down el-icon--right dropdown-color" />
         </el-button>
@@ -33,8 +63,8 @@
           </el-dropdown-item>
           <!-- 退出系统 -->
           <el-dropdown-item @click.native="logout" divided>
-            <span style="display:block;">退出登录</span>
-          </el-dropdown-item>       
+            <span style="display: block">退出登录</span>
+          </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -42,39 +72,35 @@
 </template>
 
 <script>
-import Hamburger from '@/components/Hamburger'
+import Hamburger from "@/components/Hamburger";
 
 export default {
-  name: 'Navbar',
+  name: "Navbar",
   components: { Hamburger },
   data() {
-    return {
-      activeIndex: 'dashboard',
-      // isCollapse: false
-    }
+    return {};
   },
   computed: {
     isCollapse() {
-      return this.$store.getters.sidebar.opened
+      return this.$store.getters.sidebar.opened;
     },
     activeSystem() {
-      return this.$store.getters.system
+      return this.$store.getters.system;
     },
   },
   methods: {
-    changeSystem(index) {
-      this.activeIndex = index
-      // this.$store.dispatch('app/setSystem', system)
+    changeSystem(system) {
+      this.$store.dispatch("app/setSystem", system);
     },
     toggleSideBar() {
-      this.$store.dispatch('app/toggleSideBar')
+      this.$store.dispatch("app/toggleSideBar");
     },
     async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push({path: '/login'})
-    }
-  }
-}
+      await this.$store.dispatch("user/logout");
+      this.$router.push({ path: "/login" });
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -107,9 +133,8 @@ export default {
 
   .active {
     background-color: rgba(255, 255, 255, 0.3);
-    border-radius: 4px;    
+    border-radius: 4px;
   }
-  
 }
 
 .logo-container {
