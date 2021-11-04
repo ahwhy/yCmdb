@@ -3,6 +3,8 @@ package syncer
 import (
 	"encoding/base64"
 	"fmt"
+	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/go-playground/validator"
@@ -49,11 +51,45 @@ func (req *CreateSecretRequest) Validate() error {
 	return validate.Struct(req)
 }
 
+func NewQuerySecretRequestFromHTTP(r *http.Request) *QuerySecretRequest {
+	qs := r.URL.Query()
+
+	ps := qs.Get("page_size")
+	pn := qs.Get("page_number")
+	kw := qs.Get("keywords")
+
+	psUint64, _ := strconv.ParseUint(ps, 10, 64)
+	pnUint64, _ := strconv.ParseUint(pn, 10, 64)
+
+	if psUint64 == 0 {
+		psUint64 = 20
+	}
+	if pnUint64 == 0 {
+		pnUint64 = 1
+	}
+	return &QuerySecretRequest{
+		PageSize:   psUint64,
+		PageNumber: pnUint64,
+		Keywords:   kw,
+	}
+}
+
 type QuerySecretRequest struct {
+	PageSize   uint64 `json:"page_size,omitempty"`
+	PageNumber uint64 `json:"page_number,omitempty"`
+	Keywords   string `json:"keywords"`
 }
 
 func NewQuerySecretRequest() *QuerySecretRequest {
-	return &QuerySecretRequest{}
+	return &QuerySecretRequest{
+		PageSize:   20,
+		PageNumber: 1,
+		Keywords:   "",
+	}
+}
+
+func (req *QuerySecretRequest) OffSet() int64 {
+	return int64(req.PageSize) * int64(req.PageNumber-1)
 }
 
 type DescribeSecretRequest struct {
@@ -62,6 +98,16 @@ type DescribeSecretRequest struct {
 
 func NewDescribeSecretRequest(id string) *DescribeSecretRequest {
 	return &DescribeSecretRequest{
+		Id: id,
+	}
+}
+
+type DeleteSecretRequest struct {
+	Id string
+}
+
+func NewDeleteSecretRequestWithID(id string) *DeleteSecretRequest {
+	return &DeleteSecretRequest{
 		Id: id,
 	}
 }
@@ -165,6 +211,7 @@ func (s *Secret) LoadAllowRegionFromString(regions string) {
 
 type SecretSet struct {
 	Items []*Secret `json:"items"`
+	Total int64     `json:"total"`
 }
 
 func NewSecretSet() *SecretSet {

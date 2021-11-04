@@ -123,6 +123,7 @@ func (t Vendor) MarshalJSON() ([]byte, error) {
 	b := bytes.NewBufferString(`"`)
 	b.WriteString(strings.ToUpper(t.String()))
 	b.WriteString(`"`)
+	
 	return b.Bytes(), nil
 }
 
@@ -133,5 +134,6 @@ func (t *Vendor) UnmarshalJSON(b []byte) error {
 		return err
 	}
 	*t = ins
+
 	return nil
 }

@@ -8,6 +8,8 @@ type SecretService interface {
 	// 查询Secret
 	QuerySecret(context.Context, *QuerySecretRequest) (*SecretSet, error)    // 列表查询
 	DescribeSecret(context.Context, *DescribeSecretRequest) (*Secret, error) // 详情页查询
+	// 删除Secret
+	// DeleteSecret(context.Context, *DeleteSecretRequest) (*Secret, error)
 }
 
 type SyncService interface {

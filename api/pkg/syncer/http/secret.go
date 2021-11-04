@@ -49,7 +49,7 @@ func (h *handler) CreateSecret(w http.ResponseWriter, r *http.Request, _ httprou
 }
 
 func (h *handler) QuerySecret(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	req := syncer.NewQuerySecretRequest()
+	req := syncer.NewQuerySecretRequestFromHTTP(r)
 	set, err := h.service.QuerySecret(r.Context(), req)
 	if err != nil {
 		response.Failed(w, err)

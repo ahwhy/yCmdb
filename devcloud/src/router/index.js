@@ -10,7 +10,7 @@ const routes = [
   {
     path: "/login",
     name: "Login",
-    component: () => import("@/views/keyauth/login/new.vue"),
+    component: () => import("@/views/keyauth/login/new"),
   },
   {
     path: "/",
@@ -19,7 +19,7 @@ const routes = [
     children: [
       {
         path: 'dashboard',
-        component: () => import('@/views/dashboard/index.vue'),
+        component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
       }
     ]
@@ -31,18 +31,23 @@ const routes = [
     children: [
       {
         path: 'search',
-        component: () => import('@/views/cmdb/search/index.vue'),
+        component: () => import('@/views/cmdb/search/index'),
         name: 'ResourceSearch',
       },
       {
         path: 'host/list',
-        component: () => import('@/views/cmdb/host/index.vue'),
+        component: () => import('@/views/cmdb/host/index'),
         name: 'ResourceHost',
       },
       {
         path: "host/detail",
         component: () => import("@/views/cmdb/host/detail"),
         name: "HostDetail",
+      },
+      {
+        path: "secret/list",
+        component: () => import("@/views/cmdb/secret/index"),
+        name: "SecretList",
       },
     ]
   },
