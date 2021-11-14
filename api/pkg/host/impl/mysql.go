@@ -3,10 +3,10 @@ package impl
 import (
 	"database/sql"
 
+	"github.com/ahwhy/yCmdb/api/conf"
+
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
-
-	"github.com/ahwhy/yCmdb/api/conf"
 )
 
 type service struct {

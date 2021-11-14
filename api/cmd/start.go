@@ -8,16 +8,16 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/infraboard/mcube/logger"
-	"github.com/infraboard/mcube/logger/zap"
-	"github.com/spf13/cobra"
-
-	"github.com/ahwhy/yCmdb/api/protocol"
 	"github.com/ahwhy/yCmdb/api/conf"
 	"github.com/ahwhy/yCmdb/api/pkg"
 	host "github.com/ahwhy/yCmdb/api/pkg/host/impl"
 	searcher "github.com/ahwhy/yCmdb/api/pkg/resource/impl"
 	syncer "github.com/ahwhy/yCmdb/api/pkg/syncer/impl"
+	"github.com/ahwhy/yCmdb/api/protocol"
+
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
+	"github.com/spf13/cobra"
 )
 
 type service struct {

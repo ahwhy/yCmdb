@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/ahwhy/yCmdb/api/pkg/resource"
+	
 	"github.com/go-playground/validator/v10"
 )
 
@@ -111,17 +112,16 @@ func NewDeleteHostRequestWithID(id string) *DeleteHostRequest {
 	return &DeleteHostRequest{Id: id}
 }
 
-type PagerResult struct {
-	Data    *HostSet
-	Err     error
-	HasNext bool
-}
-
 // 分页迭代器
 type Pager interface {
 	Next() *PagerResult
 }
 
+type PagerResult struct {
+	Data    *HostSet
+	Err     error
+	HasNext bool
+}
 
 func NewPagerResult() *PagerResult {
 	return &PagerResult{

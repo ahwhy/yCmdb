@@ -3,12 +3,12 @@ package http
 import (
 	"fmt"
 
+	"github.com/ahwhy/yCmdb/api/pkg"
+	"github.com/ahwhy/yCmdb/api/pkg/resource"
+
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	"github.com/julienschmidt/httprouter"
-
-	"github.com/ahwhy/yCmdb/api/pkg"
-	"github.com/ahwhy/yCmdb/api/pkg/resource"
 )
 
 type handler struct {
@@ -32,6 +32,8 @@ var (
 
 func RegistAPI(r *httprouter.Router) {
 	api.Config()
+
 	r.GET("/search", api.SearchResource)
 	r.GET("/vendors", api.ListVendor)
+	// r.GET("/regions", api.ListVendorRegion)
 }

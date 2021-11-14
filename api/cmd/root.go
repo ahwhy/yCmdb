@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/spf13/cobra"
-
 	"github.com/ahwhy/yCmdb/api/version"
+
+	"github.com/spf13/cobra"
 )
 
 var (

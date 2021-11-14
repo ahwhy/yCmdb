@@ -3,10 +3,10 @@ package http
 import (
 	"net/http"
 
+	"github.com/ahwhy/yCmdb/api/pkg/resource"
+
 	"github.com/infraboard/mcube/http/response"
 	"github.com/julienschmidt/httprouter"
-
-	"github.com/ahwhy/yCmdb/api/pkg/resource"
 )
 
 func (h *handler) SearchResource(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -17,6 +17,6 @@ func (h *handler) SearchResource(w http.ResponseWriter, r *http.Request, _ httpr
 
 		return
 	}
-	
+
 	response.Success(w, set)
 }

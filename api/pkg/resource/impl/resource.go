@@ -2,19 +2,18 @@ package impl
 
 import (
 	"context"
+	
+	"github.com/ahwhy/yCmdb/api/pkg/resource"
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/sqlbuilder"
-
-	"github.com/ahwhy/yCmdb/api/pkg/resource"
 )
 
 const (
 	queryResourceSQL = `SELECT * FROM resource`
 )
 
-func (s *service) Search(ctx context.Context, req *resource.SearchRequest) (
-	*resource.ResourceSet, error) {
+func (s *service) Search(ctx context.Context, req *resource.SearchRequest) (*resource.ResourceSet, error) {
 	query := sqlbuilder.NewQuery(queryResourceSQL)
 
 	if req.Keywords != "" {
