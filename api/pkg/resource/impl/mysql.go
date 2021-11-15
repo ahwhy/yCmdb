@@ -24,9 +24,9 @@ func (s *service) Config() error {
 	if err != nil {
 		return err
 	}
-	s.db = db
 
 	s.log = zap.L().Named("Resource")
+	s.db = db
 
 	return nil
 }

@@ -3,12 +3,11 @@ package http
 import (
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/ahwhy/yCmdb/api/pkg/host"
 
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
-
-	"github.com/ahwhy/yCmdb/api/pkg/host"
+	"github.com/julienschmidt/httprouter"
 )
 
 func (h *handler) CreateHost(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {

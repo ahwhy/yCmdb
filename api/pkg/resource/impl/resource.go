@@ -72,7 +72,7 @@ func (s *service) Search(ctx context.Context, req *resource.SearchRequest) (*res
 		return nil, exception.NewInternalServerError(err.Error())
 	}
 	defer countStmt.Close()
-	
+
 	err = countStmt.QueryRow(args...).Scan(&set.Total)
 	if err != nil {
 		return nil, exception.NewInternalServerError(err.Error())

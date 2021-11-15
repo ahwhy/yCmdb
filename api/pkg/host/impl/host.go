@@ -112,6 +112,7 @@ func (s *service) QueryHost(ctx context.Context, req *host.QueryHostRequest) (*h
 		return nil, exception.NewInternalServerError(err.Error())
 	}
 	defer countStmt.Close()
+
 	err = countStmt.QueryRow(args...).Scan(&set.Total)
 	if err != nil {
 		return nil, exception.NewInternalServerError(err.Error())
