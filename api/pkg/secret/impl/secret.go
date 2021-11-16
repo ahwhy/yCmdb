@@ -11,16 +11,6 @@ import (
 	"github.com/infraboard/mcube/sqlbuilder"
 )
 
-const (
-	insertSecretSQL = `INSERT INTO secret (
-		id,create_at,description,vendor,address,allow_regions,crendential_type,api_key,api_secret,request_rate
-	) VALUES (?,?,?,?,?,?,?,?,?,?);`
-
-	querySecretSQL = `SELECT * FROM secret`
-
-	deleteSecret = `DELETE FROM secret WHERE id = ?;`
-)
-
 func (s *service) CreateSecret(ctx context.Context, req *secret.CreateSecretRequest) (*secret.Secret, error) {
 	ins, err := secret.NewSecret(req)
 	if err != nil {

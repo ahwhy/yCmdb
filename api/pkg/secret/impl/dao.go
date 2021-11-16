@@ -7,6 +7,16 @@ import (
 	"github.com/ahwhy/yCmdb/api/pkg/secret"
 )
 
+const (
+	insertSecretSQL = `INSERT INTO secret (
+		id,create_at,description,vendor,address,allow_regions,crendential_type,api_key,api_secret,request_rate
+	) VALUES (?,?,?,?,?,?,?,?,?,?);`
+
+	querySecretSQL = `SELECT * FROM secret`
+
+	deleteSecret = `DELETE FROM secret WHERE id = ?;`
+)
+
 func (s *service) createSecret(ctx context.Context, ins *secret.Secret) error {
 	if ins == nil {
 		return fmt.Errorf("secret is nil")
