@@ -10,9 +10,10 @@ import (
 
 	"github.com/ahwhy/yCmdb/api/conf"
 	"github.com/ahwhy/yCmdb/api/pkg"
+	secretImpl "github.com/ahwhy/yCmdb/api/pkg/secret/impl"
+	taskImpl "github.com/ahwhy/yCmdb/api/pkg/task/impl"
 	host "github.com/ahwhy/yCmdb/api/pkg/host/impl"
 	searcher "github.com/ahwhy/yCmdb/api/pkg/resource/impl"
-	syncer "github.com/ahwhy/yCmdb/api/pkg/syncer/impl"
 	"github.com/ahwhy/yCmdb/api/protocol"
 
 	"github.com/infraboard/mcube/logger"
@@ -136,6 +137,24 @@ var serviceCmd = &cobra.Command{
 		}
 
 		// Ioc初始化
+		// 初始化secret.Service
+		if err := secretImpl.Service.Config(); err != nil {
+			return err
+		}
+		pkg.Secret = secretImpl.Service
+
+		// 初始化task.Service
+		if err := taskImpl.Service.Config(); err != nil {
+			return err
+		}
+		pkg.Task = taskImpl.Service
+
+		// 初始化host.Service
+		if err := host.Service.Config(); err != nil {
+			return err
+		}
+		pkg.Host = host.Service
+
 		// 初始化host.Service
 		if err := host.Service.Config(); err != nil {
 			return err
@@ -147,12 +166,6 @@ var serviceCmd = &cobra.Command{
 			return err
 		}
 		pkg.Resource = searcher.Service
-
-		//  初始化Syncer.Service
-		if err := syncer.Service.Config(); err != nil {
-			return err
-		}
-		pkg.Syncer = syncer.Service
 
 		// 启动服务
 		ch := make(chan os.Signal, 1)

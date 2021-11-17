@@ -6,15 +6,16 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/ahwhy/yCmdb/api/conf"
+	hostAPI "github.com/ahwhy/yCmdb/api/pkg/host/http"
+	searchAPI "github.com/ahwhy/yCmdb/api/pkg/resource/http"
+	secretAPI "github.com/ahwhy/yCmdb/api/pkg/secret/http"
+	taskAPI "github.com/ahwhy/yCmdb/api/pkg/task/http"
+
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	"github.com/julienschmidt/httprouter"
 	"github.com/rs/cors"
-
-	"github.com/ahwhy/yCmdb/api/conf"
-	hostAPI "github.com/ahwhy/yCmdb/api/pkg/host/http"
-	searcher "github.com/ahwhy/yCmdb/api/pkg/resource/http"
-	syncerAPI "github.com/ahwhy/yCmdb/api/pkg/syncer/http"
 )
 
 // HTTPService http服务
@@ -49,9 +50,10 @@ func NewHTTPService() *HTTPService {
 // Start 启动服务
 func (s *HTTPService) Start() error {
 	// 配置子服务路由
+	secretAPI.RegistAPI(s.r)
+	taskAPI.RegistAPI(s.r)
 	hostAPI.RegistAPI(s.r)
-	searcher.RegistAPI(s.r)
-	syncerAPI.RegistAPI(s.r)
+	searchAPI.RegistAPI(s.r)
 
 	// 启动 HTTP服务
 	s.l.Infof("HTTP服务启动成功, 监听地址: %s", s.server.Addr)
