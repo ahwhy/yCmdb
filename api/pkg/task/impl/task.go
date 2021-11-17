@@ -90,8 +90,8 @@ func (s *service) QueryTask(ctx context.Context, req *task.QueryTaskRequest) (*t
 	if err != nil {
 		return nil, exception.NewInternalServerError(err.Error())
 	}
-
 	defer countStmt.Close()
+	
 	err = countStmt.QueryRow(args...).Scan(&set.Total)
 	if err != nil {
 		return nil, exception.NewInternalServerError(err.Error())
