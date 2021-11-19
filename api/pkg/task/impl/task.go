@@ -19,8 +19,7 @@ func (s *service) SyncTaskCallback(t *task.Task) {
 	}
 }
 
-func (s *service) CreatTask(ctx context.Context, req *task.CreateTaskRequst) (
-	*task.Task, error) {
+func (s *service) CreatTask(ctx context.Context, req *task.CreateTaskRequst) (*task.Task, error) {
 	t, err := task.NewTaskFromReq(req)
 	if err != nil {
 		return nil, err

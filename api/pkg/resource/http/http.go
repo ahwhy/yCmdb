@@ -36,5 +36,5 @@ func RegistAPI(r *httprouter.Router) {
 
 	r.GET("/search", api.SearchResource)
 	r.GET("/vendors", api.ListVendor)
-	// r.GET("/regions", api.ListVendorRegion)
+	r.GET("/regions", api.ListVendorRegion)
 }

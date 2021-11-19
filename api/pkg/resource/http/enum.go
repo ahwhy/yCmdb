@@ -6,6 +6,10 @@ import (
 	"github.com/ahwhy/yCmdb/api/pkg/resource"
 	"github.com/ahwhy/yCmdb/api/utils"
 
+	ali_region "github.com/ahwhy/yCmdb/api/provider/aliyun/region"
+	hw_region "github.com/ahwhy/yCmdb/api/provider/huawei/region"
+	tx_region "github.com/ahwhy/yCmdb/api/provider/txyun/region"
+
 	"github.com/infraboard/mcube/http/response"
 	"github.com/julienschmidt/httprouter"
 )
@@ -21,12 +25,12 @@ func (h *handler) ListVendor(w http.ResponseWriter, r *http.Request, _ httproute
 	response.Success(w, resp)
 }
 
-// func (h *handler) ListVendorRegion(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-// 	resp := map[string][]utils.EnumDescribe{
-// 		resource.VendorAliYun.String():  ali_region.Regions,
-// 		resource.VendorTencent.String(): tx_region.Regions,
-// 		resource.VendorHuaWei.String():  hw_region.Regions,
-// 	}
+func (h *handler) ListVendorRegion(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	resp := map[string][]utils.EnumDescribe{
+		resource.VendorAliYun.String():  ali_region.Regions,
+		resource.VendorTencent.String(): tx_region.Regions,
+		resource.VendorHuaWei.String():  hw_region.Regions,
+	}
 
-// 	response.Success(w, resp)
-// }
+	response.Success(w, resp)
+}

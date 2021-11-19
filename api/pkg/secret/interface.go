@@ -10,4 +10,6 @@ type Service interface {
 	DescribeSecret(context.Context, *DescribeSecretRequest) (*Secret, error) // 详情页查询
 	// 删除Secret
 	DeleteSecret(context.Context, *DeleteSecretRequest) (*Secret, error)
+	// 同步资源
+	// 	Sync(context.Context, *SyncRequest) (*SyncReponse, error)
 }

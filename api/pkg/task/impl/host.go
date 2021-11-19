@@ -9,14 +9,14 @@ import (
 	"github.com/ahwhy/yCmdb/api/pkg/resource"
 	"github.com/ahwhy/yCmdb/api/pkg/secret"
 	"github.com/ahwhy/yCmdb/api/pkg/task"
-	// aliConn "github.com/infraboard/cmdb/provider/aliyun/connectivity"
-	// ecsOp "github.com/infraboard/cmdb/provider/aliyun/ecs"
-	// hwConn "github.com/infraboard/cmdb/provider/huawei/connectivity"
-	// hwEcsOp "github.com/infraboard/cmdb/provider/huawei/ecs"
-	// txConn "github.com/infraboard/cmdb/provider/txyun/connectivity"
-	// cvmOp "github.com/infraboard/cmdb/provider/txyun/cvm"
-	// vsConn "github.com/infraboard/cmdb/provider/vsphere/connectivity"
-	// vmOp "github.com/infraboard/cmdb/provider/vsphere/vm"
+	aliConn "github.com/ahwhy/yCmdb/api/provider/aliyun/connectivity"
+	ecsOp "github.com/ahwhy/yCmdb/api/provider/aliyun/ecs"
+	hwConn "github.com/ahwhy/yCmdb/api/provider/huawei/connectivity"
+	hwEcsOp "github.com/ahwhy/yCmdb/api/provider/huawei/ecs"
+	txConn "github.com/ahwhy/yCmdb/api/provider/txyun/connectivity"
+	cvmOp "github.com/ahwhy/yCmdb/api/provider/txyun/cvm"
+	vsConn "github.com/ahwhy/yCmdb/api/provider/vsphere/connectivity"
+	vmOp "github.com/ahwhy/yCmdb/api/provider/vsphere/vm"
 )
 
 type SyncTaskCallback func(*task.Task)
@@ -43,45 +43,45 @@ func (s *service) syncHost(ctx context.Context, secret *secret.Secret, t *task.T
 	switch secret.Vendor {
 	case resource.VendorAliYun:
 		s.log.Debugf("sync aliyun host ...")
-		// client := aliConn.NewAliCloudClient(secret.APIKey, secret.APISecret, t.Region)
-		// ec, err := client.EcsClient()
-		// if err != nil {
-		// 	t.Failed(err.Error())
-		// 	return
-		// }
-		// operater := ecsOp.NewEcsOperater(ec)
-		// req := ecsOp.NewPageQueryRequest()
-		// req.Rate = secret.RequestRate
-		// pager = operater.PageQuery(req)
+		client := aliConn.NewAliCloudClient(secret.APIKey, secret.APISecret, t.Region)
+		ec, err := client.EcsClient()
+		if err != nil {
+			t.Failed(err.Error())
+			return
+		}
+		operater := ecsOp.NewEcsOperater(ec)
+		req := ecsOp.NewPageQueryRequest()
+		req.Rate = secret.RequestRate
+		pager = operater.PageQuery(req)
 	case resource.VendorTencent:
 		s.log.Debugf("sync txyun host ...")
-		// client := txConn.NewTencentCloudClient(secret.APIKey, secret.APISecret, t.Region)
-		// operater := cvmOp.NewCVMOperater(client.CvmClient())
-		// pager = operater.PageQuery()
+		client := txConn.NewTencentCloudClient(secret.APIKey, secret.APISecret, t.Region)
+		operater := cvmOp.NewCVMOperater(client.CvmClient())
+		pager = operater.PageQuery()
 	case resource.VendorHuaWei:
 		s.log.Debugf("sync hwyun host ...")
-		// client := hwConn.NewHuaweiCloudClient(secret.APIKey, secret.APISecret, t.Region)
-		// ec, err := client.EcsClient()
-		// if err != nil {
-		// 	t.Failed(err.Error())
-		// 	return
-		// }
-		// operater := hwEcsOp.NewEcsOperater(ec)
-		// pager = operater.PageQuery()
+		client := hwConn.NewHuaweiCloudClient(secret.APIKey, secret.APISecret, t.Region)
+		ec, err := client.EcsClient()
+		if err != nil {
+			t.Failed(err.Error())
+			return
+		}
+		operater := hwEcsOp.NewEcsOperater(ec)
+		pager = operater.PageQuery()
 	case resource.VendorVsphere:
 		s.log.Debugf("sync vshpere host ...")
-		// client := vsConn.NewVsphereClient(secret.Address, secret.APIKey, secret.APISecret)
-		// ec, err := client.VimClient()
-		// if err != nil {
-		// 	t.Failed(err.Error())
-		// 	return
-		// }
-		// operater := vmOp.NewVmOperater(ec)
-		// hs, err = operater.Query()
-		// if err != nil {
-		// 	t.Failed(err.Error())
-		// 	return
-		// }
+		client := vsConn.NewVsphereClient(secret.Address, secret.APIKey, secret.APISecret)
+		ec, err := client.VimClient()
+		if err != nil {
+			t.Failed(err.Error())
+			return
+		}
+		operater := vmOp.NewVmOperater(ec)
+		hs, err = operater.Query()
+		if err != nil {
+			t.Failed(err.Error())
+			return
+		}
 	default:
 		t.Failed(fmt.Sprintf("unsuport vendor %s", secret.Vendor))
 		return

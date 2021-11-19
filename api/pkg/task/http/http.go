@@ -25,7 +25,7 @@ func (h *handler) Config() error {
 	if pkg.Task == nil {
 		return fmt.Errorf("dependence service task not ready")
 	}
-	
+
 	h.task = pkg.Task
 
 	return nil
@@ -35,5 +35,5 @@ func RegistAPI(r *httprouter.Router) {
 	api.Config()
 
 	r.GET("/tasks", api.QueryTask)
-	r.POST("/tasks", api.CreatTask)
+	r.POST("/tasks/:id", api.CreatTask)
 }

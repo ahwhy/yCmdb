@@ -42,4 +42,6 @@ func RegistAPI(r *httprouter.Router) {
 	r.DELETE("/secrets/:id", api.DeleteSecret)
 
 	r.GET("/crendential_types", api.ListCrendentialType)
+
+	// r.POST("/secrets/:id/sync", api.Sync)
 }
