@@ -1,9 +1,15 @@
 PROJECT_NAME=yCmdb
 MAIN_FILE=main.go
-PKG := "github.com/ahwhy/$(PROJECT_NAME)"
-MOD_DIR := $(shell go env GOMODCACHE)
+OUTPUT_NAME=cmdb-api
+PKG := "github.com/ahwhya/$(PROJECT_NAME)"
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
 GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/ | grep -v _test.go)
+
+BUILD_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
+BUILD_COMMIT := ${shell git rev-parse HEAD}
+BUILD_TIME := ${shell date '+%Y-%m-%d %H:%M:%S'}
+BUILD_GO_VERSION := $(shell go version | grep -o  'go[0-9].[0-9].*')
+VERSION_PATH := "${PKG}/version"
 
 .PHONY: all dep lint vet test test-coverage build clean
 
@@ -26,16 +32,23 @@ test-coverage: ## Run tests with coverage
 	@cat cover.out >> coverage.txt
 
 build: dep ## Build the binary file
-	@go build -ldflags "-s -w" -o dist/cmdb-api $(MAIN_FILE)
+	@go build -a -o dist/${OUTPUT_NAME} -ldflags "-s -w" -ldflags "-X '${VERSION_PATH}.GIT_BRANCH=${BUILD_BRANCH}' -X '${VERSION_PATH}.GIT_COMMIT=${BUILD_COMMIT}' -X '${VERSION_PATH}.BUILD_TIME=${BUILD_TIME}' -X '${VERSION_PATH}.GO_VERSION=${BUILD_GO_VERSION}'" ${MAIN_FILE}
 
 linux: dep ## Build the binary file
-	@GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o dist/cmdb-api $(MAIN_FILE)
+	@GOOS=linux GOARCH=amd64 go build -a -o dist/${OUTPUT_NAME} -ldflags "-s -w" -ldflags "-X '${VERSION_PATH}.GIT_BRANCH=${BUILD_BRANCH}' -X '${VERSION_PATH}.GIT_COMMIT=${BUILD_COMMIT}' -X '${VERSION_PATH}.BUILD_TIME=${BUILD_TIME}' -X '${VERSION_PATH}.GO_VERSION=${BUILD_GO_VERSION}'" ${MAIN_FILE}
 
 run: # Run Develop server
 	@go run $(MAIN_FILE) start -f etc/cmdb-api.toml
 
 clean: ## Remove previous build
 	@rm -f dist/*
+
+gen: ## generate code
+	@protoc -I=. --go_out=. --go-grpc_out=. --go_opt=module="${PKG}" --go-grpc_opt=module="${PKG}"  app/*/pb/*
+	@protoc-go-inject-tag -input=app/resource/*.pb.go
+	@protoc-go-inject-tag -input=app/host/*.pb.go
+	@protoc-go-inject-tag -input=app/secret/*.pb.go
+	@protoc-go-inject-tag -input=app/task/*.pb.go
 
 push: # push git to multi repo
 	@git push -u gitee

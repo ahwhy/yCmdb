@@ -27,7 +27,7 @@ func NewSearchRequestFromHTTP(r *http.Request) *SearchRequest {
 	if pnUint64 == 0 {
 		pnUint64 = 1
 	}
-	
+
 	return &SearchRequest{
 		PageSize:   psUint64,
 		PageNumber: pnUint64,
