@@ -1,9 +1,9 @@
 package http
 
 import (
+	"github.com/ahwhy/yCmdb/app"
 	"github.com/ahwhy/yCmdb/app/resource"
 
-	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 	"github.com/infraboard/mcube/logger"

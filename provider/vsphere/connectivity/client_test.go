@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ahwhy/yCmdb/api/provider/vsphere/connectivity"
+	"github.com/ahwhy/yCmdb/provider/vsphere/connectivity"
 )
 
 func TestClient(t *testing.T) {

@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ahwhy/yCmdb/api/provider/huawei/connectivity"
-	op "github.com/ahwhy/yCmdb/api/provider/huawei/ecs"
+	"github.com/ahwhy/yCmdb/provider/huawei/connectivity"
+	op "github.com/ahwhy/yCmdb/provider/huawei/ecs"
 )
 
 var (

@@ -3,7 +3,7 @@ package ecs
 import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
 
-	"github.com/ahwhy/yCmdb/api/pkg/host"
+	"github.com/ahwhy/yCmdb/app/host"
 )
 
 func (o *EcsOperater) Query(req *ecs.DescribeInstancesRequest) (*host.HostSet, error) {

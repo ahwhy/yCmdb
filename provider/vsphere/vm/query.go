@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/ahwhy/yCmdb/api/pkg/host"
+	"github.com/ahwhy/yCmdb/app/host"
 	"github.com/vmware/govmomi/object"
 	"github.com/vmware/govmomi/vim25/mo"
 )

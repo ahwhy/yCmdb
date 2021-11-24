@@ -1,10 +1,11 @@
 package ecs
 
 import (
+	"github.com/ahwhy/yCmdb/app/host"
+	
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/services/ecs/v2/model"
-
-	"github.com/ahwhy/yCmdb/api/pkg/host"
 )
+
 
 func (o *EcsOperater) Query(req *model.ListServersDetailsRequest) (*host.HostSet, error) {
 	set := host.NewHostSet()

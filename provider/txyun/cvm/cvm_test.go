@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 	
-	"github.com/ahwhy/yCmdb/api/provider/txyun/connectivity"
-	op "github.com/ahwhy/yCmdb/api/provider/txyun/cvm"
+	"github.com/ahwhy/yCmdb/provider/txyun/connectivity"
+	op "github.com/ahwhy/yCmdb/provider/txyun/cvm"
 
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/regions"
 

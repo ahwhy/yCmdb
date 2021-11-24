@@ -4,9 +4,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/ahwhy/yCmdb/api/pkg/host"
-	"github.com/ahwhy/yCmdb/api/pkg/resource"
-	"github.com/ahwhy/yCmdb/api/utils"
+	"github.com/ahwhy/yCmdb/app/host"
+	"github.com/ahwhy/yCmdb/app/resource"
+	"github.com/ahwhy/yCmdb/utils"
 
 	ecs "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/ecs/v2"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/services/ecs/v2/model"
@@ -37,7 +37,7 @@ func (o *EcsOperater) transferSet(list *[]model.ServerDetail) *host.HostSet {
 
 func (o *EcsOperater) transferOne(ins model.ServerDetail) *host.Host {
 	h := host.NewDefaultHost()
-	h.Base.Vendor = resource.VendorHuaWei
+	h.Base.Vendor = resource.Vendor_HUAWEI
 	h.Base.Zone = ins.OSEXTAZavailabilityZone
 	h.Base.CreateAt = o.parseTime(ins.Created)
 	h.Base.InstanceId = ins.Id
@@ -48,16 +48,17 @@ func (o *EcsOperater) transferOne(ins model.ServerDetail) *host.Host {
 	h.Information.Description = utils.PtrStrV(ins.Description)
 	h.Information.Status = ins.Status
 	h.Information.Tags = o.transferTags(ins.Tags)
-	h.Information.PrivateIP, h.Information.PublicIP = o.parseIp(ins.Addresses)
+	h.Information.PrivateIp, h.Information.PublicIp = o.parseIp(ins.Addresses)
 	h.Information.PayType = ins.Metadata["charging_mode"]
 
 	h.Describe.SerialNumber = ins.Id
-	h.Describe.CPU, _ = strconv.ParseInt(ins.Flavor.Vcpus, 10, 64)
+	h.Describe.Cpu, _ = strconv.ParseInt(ins.Flavor.Vcpus, 10, 64)
 	h.Describe.Memory, _ = strconv.ParseInt(ins.Flavor.Ram, 10, 64)
-	h.Describe.OSType = ins.Metadata["os_type"]
-	h.Describe.OSName = ins.Metadata["image_name"]
-	h.Describe.ImageID = ins.Image.Id
+	h.Describe.OsType = ins.Metadata["os_type"]
+	h.Describe.OsName = ins.Metadata["image_name"]
+	h.Describe.ImageId = ins.Image.Id
 	h.Describe.KeyPairName = []string{ins.KeyName}
+
 	return h
 }
 

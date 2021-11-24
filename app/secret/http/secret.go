@@ -3,37 +3,15 @@ package http
 import (
 	"net/http"
 
-	"github.com/ahwhy/yCmdb/api/pkg/secret"
+	"github.com/ahwhy/yCmdb/app/secret"
 
+	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
-	"github.com/julienschmidt/httprouter"
 )
 
-func (h *handler) CreateSecret(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (h *handler) CreateSecret(w http.ResponseWriter, r *http.Request) {
 	req := secret.NewCreateSecretRequest()
-
-	// // GetDataFromRequest 检测请求大小
-	// if r.ContentLength == 0 {
-	// 	return nil, exception.NewBadRequest("request body is empty")
-	// }
-	// if r.ContentLength > BodyMaxContenxLength {
-	// 	return nil, exception.NewBadRequest(
-	// 		"the body exceeding the maximum limit, max size %dM",
-	// 		BodyMaxContenxLength/1024/1024)
-	// }
-
-	// // 读取body数据
-	// body, err := ioutil.ReadAll(r.Body)
-	// defer r.Body.Close()
-
-	// if err != nil {
-	// 	return nil, exception.NewBadRequest(
-	// 		fmt.Sprintf("read request body error, %s", err))
-	// }
-
-	// json.Unmarshal(body, v)
-
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
@@ -48,7 +26,7 @@ func (h *handler) CreateSecret(w http.ResponseWriter, r *http.Request, _ httprou
 	response.Success(w, ins)
 }
 
-func (h *handler) QuerySecret(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (h *handler) QuerySecret(w http.ResponseWriter, r *http.Request) {
 	req := secret.NewQuerySecretRequestFromHTTP(r)
 	set, err := h.service.QuerySecret(r.Context(), req)
 	if err != nil {
@@ -59,8 +37,9 @@ func (h *handler) QuerySecret(w http.ResponseWriter, r *http.Request, _ httprout
 	response.Success(w, set)
 }
 
-func (h *handler) DescribeSecret(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	req := secret.NewDescribeSecretRequest(ps.ByName("id"))
+func (h *handler) DescribeSecret(w http.ResponseWriter, r *http.Request) {
+	ctx := context.GetContext(r)
+	req := secret.NewDescribeSecretRequest(ctx.PS.ByName("id"))
 	ins, err := h.service.DescribeSecret(r.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
@@ -72,13 +51,14 @@ func (h *handler) DescribeSecret(w http.ResponseWriter, r *http.Request, ps http
 	response.Success(w, ins)
 }
 
-func (h *handler) DeleteSecret(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	req := secret.NewDeleteSecretRequestWithID(ps.ByName("id"))
+func (h *handler) DeleteSecret(w http.ResponseWriter, r *http.Request) {
+	ctx := context.GetContext(r)
+	req := secret.NewDeleteSecretRequestWithID(ctx.PS.ByName("id"))
 	set, err := h.service.DeleteSecret(r.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
-	
+
 	response.Success(w, set)
 }

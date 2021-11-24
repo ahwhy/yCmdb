@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ahwhy/yCmdb/api/provider/aliyun/connectivity"
-	op "github.com/ahwhy/yCmdb/api/provider/aliyun/ecs"
+	"github.com/ahwhy/yCmdb/provider/aliyun/connectivity"
+	op "github.com/ahwhy/yCmdb/provider/aliyun/ecs"
 )
 
 var (

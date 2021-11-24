@@ -3,8 +3,8 @@ package vm
 import (
 	"time"
 
-	"github.com/ahwhy/yCmdb/api/pkg/host"
-	"github.com/ahwhy/yCmdb/api/pkg/resource"
+	"github.com/ahwhy/yCmdb/app/host"
+	"github.com/ahwhy/yCmdb/app/resource"
 
 	"github.com/vmware/govmomi/find"
 	"github.com/vmware/govmomi/vim25"
@@ -32,7 +32,7 @@ type VMOperater struct {
 
 func (o *VMOperater) transferOne(ins *mo.VirtualMachine, dcName string) *host.Host {
 	h := host.NewDefaultHost()
-	h.Base.Vendor = resource.VendorVsphere
+	h.Base.Vendor = resource.Vendor_VSPHERE
 	h.Base.Region = o.client.URL().Host
 	h.Base.Zone = dcName
 	h.Base.CreateAt = ins.Config.CreateDate.UnixNano() / 1000000
@@ -40,12 +40,13 @@ func (o *VMOperater) transferOne(ins *mo.VirtualMachine, dcName string) *host.Ho
 
 	h.Information.Name = ins.Name
 	h.Information.Status = string(ins.Summary.Runtime.PowerState)
-	h.Information.PrivateIP = []string{ins.Guest.IpAddress}
+	h.Information.PrivateIp = []string{ins.Guest.IpAddress}
 
-	h.Describe.CPU = int64(ins.Config.Hardware.NumCPU)
+	h.Describe.Cpu = int64(ins.Config.Hardware.NumCPU)
 	h.Describe.Memory = int64(ins.Config.Hardware.MemoryMB)
-	h.Describe.OSType = ins.Guest.GuestFamily
-	h.Describe.OSName = ins.Guest.GuestFullName
+	h.Describe.OsType = ins.Guest.GuestFamily
+	h.Describe.OsName = ins.Guest.GuestFullName
 	h.Describe.SerialNumber = ins.Config.Uuid
+	
 	return h
 }

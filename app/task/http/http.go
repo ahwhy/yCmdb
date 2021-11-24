@@ -1,39 +1,42 @@
 package http
 
 import (
-	"fmt"
+	"github.com/ahwhy/yCmdb/app"
+	"github.com/ahwhy/yCmdb/app/task"
 
-	"github.com/ahwhy/yCmdb/api/pkg"
-	"github.com/ahwhy/yCmdb/api/pkg/task"
-
+	"github.com/infraboard/mcube/http/label"
+	"github.com/infraboard/mcube/http/router"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
-	"github.com/julienschmidt/httprouter"
 )
 
 var (
-	api = &handler{}
+	h = &handler{}
 )
 
 type handler struct {
-	task task.Service
+	task task.ServiceServer
 	log  logger.Logger
 }
 
 func (h *handler) Config() error {
 	h.log = zap.L().Named("Task")
-	if pkg.Task == nil {
-		return fmt.Errorf("dependence service task not ready")
-	}
-
-	h.task = pkg.Task
+	h.task = app.GetGrpcApp(task.AppName).(task.ServiceServer)
 
 	return nil
 }
 
-func RegistAPI(r *httprouter.Router) {
-	api.Config()
+func (h *handler) Name() string {
+	return task.AppName
+}
 
-	r.GET("/tasks", api.QueryTask)
-	r.POST("/tasks/:id", api.CreatTask)
+func (h *handler) Registry(r router.SubRouter) {
+	tr := r.ResourceRouter("task")
+	tr.Permission(true)
+	tr.Handle("GET", "/tasks", h.QueryTask).AddLabel(label.List)
+	tr.Handle("POST", "/tasks", h.CreatTask).AddLabel(label.Create)
+}
+
+func init() {
+	app.RegistryHttpApp(h)
 }

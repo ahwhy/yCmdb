@@ -1,47 +1,45 @@
 package http
 
 import (
-	"fmt"
+	"github.com/ahwhy/yCmdb/app"
+	"github.com/ahwhy/yCmdb/app/secret"
 
-	"github.com/ahwhy/yCmdb/api/pkg"
-	"github.com/ahwhy/yCmdb/api/pkg/secret"
-
+	"github.com/infraboard/mcube/http/label"
+	"github.com/infraboard/mcube/http/router"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
-	"github.com/julienschmidt/httprouter"
+)
+
+var (
+	h = &handler{}
 )
 
 type handler struct {
-	service secret.Service
+	service secret.ServiceServer
 	log     logger.Logger
 }
 
 func (h *handler) Config() error {
-	h.log = zap.L().Named("Secret")
-	if pkg.Secret == nil {
-		return fmt.Errorf("dependence service secret not ready")
-	}
-
-	h.service = pkg.Secret
+	h.log = zap.L().Named(secret.AppName)
+	h.service = app.GetGrpcApp(secret.AppName).(secret.ServiceServer)
 
 	return nil
 }
 
-var (
-	api = &handler{}
-)
+func (h *handler) Name() string {
+	return secret.AppName
+}
 
-func RegistAPI(r *httprouter.Router) {
-	api.Config()
+func (h *handler) Registry(r router.SubRouter) {
+	sr := r.ResourceRouter("secret")
+	sr.Permission(true)
+	sr.Handle("POST", "/secrets", h.CreateSecret).AddLabel(label.Create)
+	sr.Handle("GET", "/secrets", h.QuerySecret).AddLabel(label.List)
+	sr.Handle("GET", "/secrets/:id", h.DescribeSecret).AddLabel(label.Get)
+	sr.Handle("DELETE", "/secrets/:id", h.DeleteSecret).AddLabel(label.Delete)
+	sr.Handle("GET", "/crendential_types", h.ListCrendentialType).DisablePermission()
+}
 
-	r.POST("/secrets", api.CreateSecret)
-
-	r.GET("/secrets", api.QuerySecret)
-	r.GET("/secrets/:id", api.DescribeSecret)
-
-	r.DELETE("/secrets/:id", api.DeleteSecret)
-
-	r.GET("/crendential_types", api.ListCrendentialType)
-
-	// r.POST("/secrets/:id/sync", api.Sync)
+func init() {
+	app.RegistryHttpApp(h)
 }

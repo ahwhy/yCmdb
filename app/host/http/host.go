@@ -12,6 +12,28 @@ import (
 
 func (h *handler) CreateHost(w http.ResponseWriter, r *http.Request) {
 	ins := host.NewDefaultHost()
+
+	// // GetDataFromRequest 检测请求大小
+	// if r.ContentLength == 0 {
+	// 	return nil, exception.NewBadRequest("request body is empty")
+	// }
+	// if r.ContentLength > BodyMaxContenxLength {
+	// 	return nil, exception.NewBadRequest(
+	// 		"the body exceeding the maximum limit, max size %dM",
+	// 		BodyMaxContenxLength/1024/1024)
+	// }
+
+	// // 读取body数据
+	// body, err := ioutil.ReadAll(r.Body)
+	// defer r.Body.Close()
+
+	// if err != nil {
+	// 	return nil, exception.NewBadRequest(
+	// 		fmt.Sprintf("read request body error, %s", err))
+	// }
+
+	// json.Unmarshal(body, v)
+
 	if err := request.GetDataFromRequest(r, ins); err != nil {
 		response.Failed(w, err)
 		return

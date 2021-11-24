@@ -3,18 +3,13 @@ package rds
 import (
 	"time"
 
-	cmdbRds "github.com/ahwhy/yCmdb/api/pkg/rds"
-	"github.com/ahwhy/yCmdb/api/pkg/resource"
+	cmdbRds "github.com/ahwhy/yCmdb/app/rds"
+	"github.com/ahwhy/yCmdb/app/resource"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/rds"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 )
-
-type RdsOperater struct {
-	client *rds.Client
-	log    logger.Logger
-}
 
 func NewRdsOperater(client *rds.Client) *RdsOperater {
 	return &RdsOperater{
@@ -23,19 +18,22 @@ func NewRdsOperater(client *rds.Client) *RdsOperater {
 	}
 }
 
-func (o *RdsOperater) parseTime(t string) int64 {
-	ts, err := time.Parse("2006-01-02T15:04:05Z", t)
-	if err != nil {
-		o.log.Errorf("parse time %s error, %s", t, err)
-		return 0
-	}
+type RdsOperater struct {
+	client *rds.Client
+	log    logger.Logger
+}
 
-	return ts.UnixNano() / 1000000
+func (o *RdsOperater) transferSet(items []rds.DBInstance) *cmdbRds.RdsSet {
+	set := cmdbRds.NewRdsSet()
+	for i := range items {
+		set.Add(o.transferOne(items[i]))
+	}
+	return set
 }
 
 func (o *RdsOperater) transferOne(ins rds.DBInstance) *cmdbRds.Rds {
 	r := cmdbRds.NewDefaultRds()
-	r.Base.Vendor = resource.VendorAliYun
+	r.Base.Vendor = resource.Vendor_ALIYUN
 	r.Base.Region = ins.RegionId
 	r.Base.Zone = ins.ZoneId
 	r.Base.CreateAt = o.parseTime(ins.CreateTime)
@@ -50,11 +48,12 @@ func (o *RdsOperater) transferOne(ins rds.DBInstance) *cmdbRds.Rds {
 	return r
 }
 
-func (o *RdsOperater) transferSet(items []rds.DBInstance) *cmdbRds.RdsSet {
-	set := cmdbRds.NewRdsSet()
-	for i := range items {
-		set.Add(o.transferOne(items[i]))
+func (o *RdsOperater) parseTime(t string) int64 {
+	ts, err := time.Parse("2006-01-02T15:04:05Z", t)
+	if err != nil {
+		o.log.Errorf("parse time %s error, %s", t, err)
+		return 0
 	}
 
-	return set
+	return ts.UnixNano() / 1000000
 }

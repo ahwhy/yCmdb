@@ -3,10 +3,10 @@ package cvm
 import (
 	"time"
 
-	"github.com/ahwhy/yCmdb/api/pkg/host"
-	"github.com/ahwhy/yCmdb/api/pkg/resource"
-	"github.com/ahwhy/yCmdb/api/utils"
-	
+	"github.com/ahwhy/yCmdb/app/host"
+	"github.com/ahwhy/yCmdb/app/resource"
+	"github.com/ahwhy/yCmdb/utils"
+
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
@@ -34,7 +34,7 @@ func (o *CVMOperater) transferSet(items []*cvm.Instance) *host.HostSet {
 
 func (o *CVMOperater) transferOne(ins *cvm.Instance) *host.Host {
 	h := host.NewDefaultHost()
-	h.Base.Vendor = resource.VendorTencent
+	h.Base.Vendor = resource.Vendor_TENCENT
 	h.Base.Region = o.client.GetRegion()
 	h.Base.Zone = utils.PtrStrV(ins.Placement.Zone)
 	h.Base.CreateAt = o.parseTime(utils.PtrStrV(ins.CreatedTime))
@@ -45,20 +45,21 @@ func (o *CVMOperater) transferOne(ins *cvm.Instance) *host.Host {
 	h.Information.Name = utils.PtrStrV(ins.InstanceName)
 	h.Information.Status = utils.PtrStrV(ins.InstanceState)
 	h.Information.Tags = transferTags(ins.Tags)
-	h.Information.PublicIP = utils.SlicePtrStrv(ins.PublicIpAddresses)
-	h.Information.PrivateIP = utils.SlicePtrStrv(ins.PrivateIpAddresses)
+	h.Information.PublicIp = utils.SlicePtrStrv(ins.PublicIpAddresses)
+	h.Information.PrivateIp = utils.SlicePtrStrv(ins.PrivateIpAddresses)
 	h.Information.PayType = utils.PtrStrV(ins.InstanceChargeType)
 
-	h.Describe.CPU = utils.PtrInt64(ins.CPU)
+	h.Describe.Cpu = utils.PtrInt64(ins.CPU)
 	h.Describe.Memory = utils.PtrInt64(ins.Memory)
-	h.Describe.OSName = utils.PtrStrV(ins.OsName)
+	h.Describe.OsName = utils.PtrStrV(ins.OsName)
 	h.Describe.SerialNumber = utils.PtrStrV(ins.Uuid)
-	h.Describe.ImageID = utils.PtrStrV(ins.ImageId)
+	h.Describe.ImageId = utils.PtrStrV(ins.ImageId)
 	if ins.InternetAccessible != nil {
 		h.Describe.InternetMaxBandwidthOut = utils.PtrInt64(ins.InternetAccessible.InternetMaxBandwidthOut)
 	}
 	h.Describe.KeyPairName = utils.SlicePtrStrv(ins.LoginSettings.KeyIds)
 	h.Describe.SecurityGroups = utils.SlicePtrStrv(ins.SecurityGroupIds)
+
 	return h
 }
 

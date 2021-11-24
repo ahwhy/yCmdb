@@ -4,19 +4,19 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ahwhy/yCmdb/api/conf"
-	"github.com/ahwhy/yCmdb/api/pkg/host"
-	"github.com/ahwhy/yCmdb/api/pkg/resource"
-	"github.com/ahwhy/yCmdb/api/pkg/secret"
-	"github.com/ahwhy/yCmdb/api/pkg/task"
-	aliConn "github.com/ahwhy/yCmdb/api/provider/aliyun/connectivity"
-	ecsOp "github.com/ahwhy/yCmdb/api/provider/aliyun/ecs"
-	hwConn "github.com/ahwhy/yCmdb/api/provider/huawei/connectivity"
-	hwEcsOp "github.com/ahwhy/yCmdb/api/provider/huawei/ecs"
-	txConn "github.com/ahwhy/yCmdb/api/provider/txyun/connectivity"
-	cvmOp "github.com/ahwhy/yCmdb/api/provider/txyun/cvm"
-	vsConn "github.com/ahwhy/yCmdb/api/provider/vsphere/connectivity"
-	vmOp "github.com/ahwhy/yCmdb/api/provider/vsphere/vm"
+	"github.com/ahwhy/yCmdb/app/host"
+	"github.com/ahwhy/yCmdb/app/resource"
+	"github.com/ahwhy/yCmdb/app/secret"
+	"github.com/ahwhy/yCmdb/app/task"
+	"github.com/ahwhy/yCmdb/conf"
+	aliConn "github.com/ahwhy/yCmdb/provider/aliyun/connectivity"
+	ecsOp "github.com/ahwhy/yCmdb/provider/aliyun/ecs"
+	hwConn "github.com/ahwhy/yCmdb/provider/huawei/connectivity"
+	hwEcsOp "github.com/ahwhy/yCmdb/provider/huawei/ecs"
+	txConn "github.com/ahwhy/yCmdb/provider/txyun/connectivity"
+	cvmOp "github.com/ahwhy/yCmdb/provider/txyun/cvm"
+	vsConn "github.com/ahwhy/yCmdb/provider/vsphere/connectivity"
+	vmOp "github.com/ahwhy/yCmdb/provider/vsphere/vm"
 )
 
 type SyncTaskCallback func(*task.Task)
@@ -41,9 +41,9 @@ func (s *service) syncHost(ctx context.Context, secret *secret.Secret, t *task.T
 
 	hs := host.NewHostSet()
 	switch secret.Vendor {
-	case resource.VendorAliYun:
+	case resource.Vendor_ALIYUN:
 		s.log.Debugf("sync aliyun host ...")
-		client := aliConn.NewAliCloudClient(secret.APIKey, secret.APISecret, t.Region)
+		client := aliConn.NewAliCloudClient(secret.ApiKey, secret.ApiSecret, t.Region)
 		ec, err := client.EcsClient()
 		if err != nil {
 			t.Failed(err.Error())
@@ -51,16 +51,16 @@ func (s *service) syncHost(ctx context.Context, secret *secret.Secret, t *task.T
 		}
 		operater := ecsOp.NewEcsOperater(ec)
 		req := ecsOp.NewPageQueryRequest()
-		req.Rate = secret.RequestRate
+		req.Rate = int(secret.RequestRate)
 		pager = operater.PageQuery(req)
-	case resource.VendorTencent:
+	case resource.Vendor_TENCENT:
 		s.log.Debugf("sync txyun host ...")
-		client := txConn.NewTencentCloudClient(secret.APIKey, secret.APISecret, t.Region)
+		client := txConn.NewTencentCloudClient(secret.ApiKey, secret.ApiSecret, t.Region)
 		operater := cvmOp.NewCVMOperater(client.CvmClient())
 		pager = operater.PageQuery()
-	case resource.VendorHuaWei:
+	case resource.Vendor_HUAWEI:
 		s.log.Debugf("sync hwyun host ...")
-		client := hwConn.NewHuaweiCloudClient(secret.APIKey, secret.APISecret, t.Region)
+		client := hwConn.NewHuaweiCloudClient(secret.ApiKey, secret.ApiSecret, t.Region)
 		ec, err := client.EcsClient()
 		if err != nil {
 			t.Failed(err.Error())
@@ -68,9 +68,9 @@ func (s *service) syncHost(ctx context.Context, secret *secret.Secret, t *task.T
 		}
 		operater := hwEcsOp.NewEcsOperater(ec)
 		pager = operater.PageQuery()
-	case resource.VendorVsphere:
+	case resource.Vendor_VSPHERE:
 		s.log.Debugf("sync vshpere host ...")
-		client := vsConn.NewVsphereClient(secret.Address, secret.APIKey, secret.APISecret)
+		client := vsConn.NewVsphereClient(secret.Address, secret.ApiKey, secret.ApiSecret)
 		ec, err := client.VimClient()
 		if err != nil {
 			t.Failed(err.Error())
@@ -111,9 +111,9 @@ func (s *service) syncHost(ctx context.Context, secret *secret.Secret, t *task.T
 		target := hs.Items[i]
 		_, err := s.host.SaveHost(ctx, target)
 		if err != nil {
-			t.AddDetailFailed(target.Name, err.Error())
+			t.AddDetailFailed(target.Information.Name, err.Error())
 		} else {
-			t.AddDetailSucceed(target.Name, "")
+			t.AddDetailSucceed(target.Information.Name, "")
 		}
 	}
 }

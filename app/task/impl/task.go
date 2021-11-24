@@ -3,9 +3,9 @@ package impl
 import (
 	"context"
 
-	"github.com/ahwhy/yCmdb/api/pkg/resource"
-	"github.com/ahwhy/yCmdb/api/pkg/secret"
-	"github.com/ahwhy/yCmdb/api/pkg/task"
+	"github.com/ahwhy/yCmdb/app/resource"
+	"github.com/ahwhy/yCmdb/app/secret"
+	"github.com/ahwhy/yCmdb/app/task"
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/sqlbuilder"
@@ -13,13 +13,14 @@ import (
 
 // 通过回调更新任务状态
 func (s *service) SyncTaskCallback(t *task.Task) {
-	err := s.save(context.Background(), t)
+	err := s.update(context.Background(), t)
 	if err != nil {
-		s.log.Error("save task error, %s", err)
+		s.log.Error(err)
 	}
 }
 
-func (s *service) CreatTask(ctx context.Context, req *task.CreateTaskRequst) (*task.Task, error) {
+func (s *service) CreatTask(ctx context.Context, req *task.CreateTaskRequst) (
+	*task.Task, error) {
 	t, err := task.NewTaskFromReq(req)
 	if err != nil {
 		return nil, err
@@ -29,9 +30,10 @@ func (s *service) CreatTask(ctx context.Context, req *task.CreateTaskRequst) (*t
 	if err != nil {
 		return nil, err
 	}
+	t.UpdateSecretDesc(secret.ShortDesc())
 
 	// 如果不是vsphere 需要检查region
-	if !secret.Vendor.Equal(resource.VendorVsphere) {
+	if !secret.Vendor.Equal(resource.Vendor_VSPHERE) {
 		if req.Region == "" {
 			return nil, exception.NewBadRequest("region required")
 		}
@@ -42,9 +44,15 @@ func (s *service) CreatTask(ctx context.Context, req *task.CreateTaskRequst) (*t
 
 	// 资源同步
 	switch req.ResourceType {
-	case resource.HostResource:
+	case resource.Type_HOST:
 		go s.syncHost(ctx, secret, t, s.SyncTaskCallback)
 	}
+
+	// 记录任务
+	if err := s.insert(ctx, t); err != nil {
+		return nil, err
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -74,8 +82,8 @@ func (s *service) QueryTask(ctx context.Context, req *task.QueryTaskRequest) (*t
 	for rows.Next() {
 		ins := task.NewDefaultTask()
 		err := rows.Scan(
-			&ins.Id, &ins.Region, &ins.ResourceType, &ins.SecretId, &ins.Timeout, &ins.Status,
-			&ins.Message, &ins.StartAt, &ins.EndAt, &ins.TotolSucceed, &ins.TotalFailed,
+			&ins.Id, &ins.Region, &ins.ResourceType, &ins.SecretId, &ins.SecretDescription, &ins.Timeout,
+			&ins.Status, &ins.Message, &ins.StartAt, &ins.EndAt, &ins.TotalSucceed, &ins.TotalFailed,
 		)
 		if err != nil {
 			return nil, exception.NewInternalServerError("query task error, %s", err.Error())
@@ -89,12 +97,11 @@ func (s *service) QueryTask(ctx context.Context, req *task.QueryTaskRequest) (*t
 	if err != nil {
 		return nil, exception.NewInternalServerError(err.Error())
 	}
+
 	defer countStmt.Close()
-	
 	err = countStmt.QueryRow(args...).Scan(&set.Total)
 	if err != nil {
 		return nil, exception.NewInternalServerError(err.Error())
 	}
-
 	return set, nil
 }

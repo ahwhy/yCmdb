@@ -3,8 +3,8 @@ package ecs
 import (
 	"time"
 
-	"github.com/ahwhy/yCmdb/api/pkg/host"
-	"github.com/ahwhy/yCmdb/api/pkg/resource"
+	"github.com/ahwhy/yCmdb/app/host"
+	"github.com/ahwhy/yCmdb/app/resource"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
 	"github.com/infraboard/mcube/logger"
@@ -31,7 +31,7 @@ func (o *EcsOperater) parseTime(t string) int64 {
 	ts, err := time.Parse("2006-01-02T15:04Z", t)
 	if err != nil {
 		o.log.Errorf("parse time %s error, %s", t, err)
-		
+
 		return 0
 	}
 
@@ -41,7 +41,7 @@ func (o *EcsOperater) parseTime(t string) int64 {
 // transferOne 转换单个实例配置
 func (o *EcsOperater) transferOne(ins ecs.Instance) *host.Host {
 	h := host.NewDefaultHost()
-	h.Base.Vendor = resource.VendorAliYun
+	h.Base.Vendor = resource.Vendor_ALIYUN
 	h.Base.Region = ins.RegionId
 	h.Base.Zone = ins.ZoneId
 
@@ -54,18 +54,18 @@ func (o *EcsOperater) transferOne(ins ecs.Instance) *host.Host {
 	h.Information.Description = ins.Description
 	h.Information.Status = ins.Status
 	h.Information.Tags = o.transferTags(ins.Tags.Tag)
-	h.Information.PublicIP = ins.PublicIpAddress.IpAddress
-	h.Information.PrivateIP = ins.InnerIpAddress.IpAddress
+	h.Information.PublicIp = ins.PublicIpAddress.IpAddress
+	h.Information.PrivateIp = ins.InnerIpAddress.IpAddress
 	h.Information.PayType = ins.InstanceChargeType
 
-	h.Describe.CPU = int64(ins.CPU)
+	h.Describe.Cpu = int64(ins.CPU)
 	h.Describe.Memory = int64(ins.Memory)
-	h.Describe.GPUAmount = ins.GPUAmount
-	h.Describe.GPUSpec = ins.GPUSpec
-	h.Describe.OSType = ins.OsType
-	h.Describe.OSName = ins.OSName
+	h.Describe.GpuAmount = int32(ins.GPUAmount)
+	h.Describe.GpuSpec = ins.GPUSpec
+	h.Describe.OsType = ins.OsType
+	h.Describe.OsName = ins.OSName
 	h.Describe.SerialNumber = ins.SerialNumber
-	h.Describe.ImageID = ins.ImageId
+	h.Describe.ImageId = ins.ImageId
 	h.Describe.InternetMaxBandwidthOut = int64(ins.InternetMaxBandwidthOut)
 	h.Describe.InternetMaxBandwidthIn = int64(ins.InternetMaxBandwidthIn)
 	h.Describe.KeyPairName = []string{ins.KeyPairName}

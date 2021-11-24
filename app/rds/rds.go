@@ -1,11 +1,11 @@
 package rds
 
-import "github.com/ahwhy/yCmdb/api/pkg/resource"
+import "github.com/ahwhy/yCmdb/app/resource"
 
 func NewDefaultRds() *Rds {
 	return &Rds{
 		&resource.Base{
-			ResourceType: resource.RdsResource,
+			ResourceType: resource.Type_RDS,
 		},
 		&resource.Information{},
 		&Describe{},

@@ -3,7 +3,7 @@ package ecs
 import (
 	"time"
 
-	"github.com/ahwhy/yCmdb/api/pkg/host"
+	"github.com/ahwhy/yCmdb/app/host"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"

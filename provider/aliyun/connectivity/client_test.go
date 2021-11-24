@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ahwhy/yCmdb/api/provider/aliyun/connectivity"
+	"github.com/ahwhy/yCmdb/provider/aliyun/connectivity"
 )
 
 func TestClient(t *testing.T) {

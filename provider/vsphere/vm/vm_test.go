@@ -5,10 +5,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ahwhy/yCmdb/api/provider/vsphere/connectivity"
-	"github.com/infraboard/mcube/logger/zap"
+	"github.com/ahwhy/yCmdb/provider/vsphere/connectivity"
+	op "github.com/ahwhy/yCmdb/provider/vsphere/vm"
 
-	op "github.com/ahwhy/yCmdb/api/provider/vsphere/vm"
+	"github.com/infraboard/mcube/logger/zap"
 )
 
 var (

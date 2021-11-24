@@ -3,11 +3,11 @@ package impl
 import (
 	"database/sql"
 
+	"github.com/ahwhy/yCmdb/conf"
+	"github.com/ahwhy/yCmdb/app"
 	"github.com/ahwhy/yCmdb/app/host"
 	"github.com/ahwhy/yCmdb/app/secret"
-	"github.com/ahwhy/yCmdb/conf"
 
-	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	"google.golang.org/grpc"
