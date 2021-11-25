@@ -33,8 +33,8 @@ func (h *handler) Name() string {
 func (h *handler) Registry(r router.SubRouter) {
 	tr := r.ResourceRouter("task")
 	tr.Permission(true)
-	tr.Handle("GET", "/tasks", h.QueryTask).AddLabel(label.List)
 	tr.Handle("POST", "/tasks", h.CreatTask).AddLabel(label.Create)
+	tr.Handle("GET", "/tasks", h.QueryTask).AddLabel(label.List)
 }
 
 func init() {

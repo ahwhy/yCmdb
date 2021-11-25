@@ -12,6 +12,9 @@ import (
 	"github.com/ahwhy/yCmdb/conf"
 	"github.com/ahwhy/yCmdb/protocol"
 
+	// 注册所有服务
+	_ "github.com/ahwhy/yCmdb/app/all"
+
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	"github.com/spf13/cobra"

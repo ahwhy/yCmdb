@@ -2,6 +2,7 @@ package impl
 
 import (
 	"context"
+	"time"
 
 	"github.com/ahwhy/yCmdb/app/resource"
 	"github.com/ahwhy/yCmdb/app/secret"
@@ -19,8 +20,7 @@ func (s *service) SyncTaskCallback(t *task.Task) {
 	}
 }
 
-func (s *service) CreatTask(ctx context.Context, req *task.CreateTaskRequst) (
-	*task.Task, error) {
+func (s *service) CreatTask(ctx context.Context, req *task.CreateTaskRequst) (*task.Task, error) {
 	t, err := task.NewTaskFromReq(req)
 	if err != nil {
 		return nil, err
@@ -43,9 +43,10 @@ func (s *service) CreatTask(ctx context.Context, req *task.CreateTaskRequst) (
 	}
 
 	// 资源同步
+	syncCtx, _ := context.WithTimeout(context.Background(), time.Minute*30)
 	switch req.ResourceType {
 	case resource.Type_HOST:
-		go s.syncHost(ctx, secret, t, s.SyncTaskCallback)
+		go s.syncHost(syncCtx, secret, t, s.SyncTaskCallback)
 	}
 
 	// 记录任务
