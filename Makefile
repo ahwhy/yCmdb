@@ -1,7 +1,7 @@
 PROJECT_NAME=yCmdb
 MAIN_FILE=main.go
 OUTPUT_NAME=cmdb-api
-PKG := "github.com/ahwhya/$(PROJECT_NAME)"
+PKG := "github.com/ahwhy/$(PROJECT_NAME)"
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
 GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/ | grep -v _test.go)
 
@@ -49,9 +49,10 @@ gen: ## generate code
 	@protoc-go-inject-tag -input=app/host/*.pb.go
 	@protoc-go-inject-tag -input=app/secret/*.pb.go
 	@protoc-go-inject-tag -input=app/task/*.pb.go
+	@protoc-go-inject-tag -input=app/bill/*.pb.go
 
 push: # push git to multi repo
-	@git push -u gitee
+	@git push -u master
 	@git push -u origin
 
 help: ## Display this help screen
