@@ -22,7 +22,7 @@ var (
 
 // FullVersion show the version info
 func FullVersion() string {
-	version := fmt.Sprintf("GIT_TA: %s\nBuild Time: %s\nGit Branch: %s\nGit Commit: %s\nGo Version: %s\n", GIT_TAG, BUILD_TIME, GIT_BRANCH, GIT_COMMIT, GO_VERSION)
+	version := fmt.Sprintf("Build Time: %s\nGit Branch: %s\nGit Commit: %s\nGo Version: %s\n", BUILD_TIME, GIT_BRANCH, GIT_COMMIT, GO_VERSION)
 
 	return version
 }
