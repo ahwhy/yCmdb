@@ -1,5 +1,7 @@
 # My_Cmdb
 
-- 前端Vue devcloud
-
-- 后端Golang api
+- 多云资产管理平台, 支持厂商
+    - 阿里云
+    - 腾讯云
+    - 华为云
+    - VMware
