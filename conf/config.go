@@ -8,7 +8,8 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-	// kc "github.com/infraboard/keyauth/client"
+	kc "github.com/infraboard/keyauth/client"
+	"github.com/infraboard/mcube/logger/zap"
 )
 
 const (
@@ -26,13 +27,9 @@ func newConfig() *Config {
 }
 
 type Config struct {
-	// app 配置项
-	App *app `toml:"app"`
-	// log 配置项
-	Log *log `toml:"log"`
-	// mysql 配置项
-	MySQL *mysql `toml:"mysql"`
-	// keyauth
+	App     *app     `toml:"app"`
+	Log     *log     `toml:"log"`
+	MySQL   *mysql   `toml:"mysql"`
 	Keyauth *keyauth `toml:"keyauth"`
 }
 
@@ -168,18 +165,18 @@ func (a *keyauth) Addr() string {
 	return a.Host + ":" + a.Port
 }
 
-// func (a *keyauth) Client() (*kc.Client, error) {
-// 	if kc.C() == nil {
-// 		conf := kc.NewDefaultConfig()
-// 		conf.SetAddress(a.Addr())
-// 		zap.L().Infof("connect to keyauth: %s", a.Addr())
-// 		conf.SetClientCredentials(a.ClientID, a.ClientSecret)
-// 		client, err := kc.NewClient(conf)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		kc.SetGlobal(client)
-// 	}
+func (a *keyauth) Client() (*kc.Client, error) {
+	if kc.C() == nil {
+		conf := kc.NewDefaultConfig()
+		conf.SetAddress(a.Addr())
+		zap.L().Infof("connect to keyauth: %s", a.Addr())
+		conf.SetClientCredentials(a.ClientID, a.ClientSecret)
+		client, err := kc.NewClient(conf)
+		if err != nil {
+			return nil, err
+		}
+		kc.SetGlobal(client)
+	}
 
-// 	return kc.C(), nil
-// }
+	return kc.C(), nil
+}

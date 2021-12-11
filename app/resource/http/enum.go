@@ -20,6 +20,7 @@ func (h *handler) ListVendor(w http.ResponseWriter, r *http.Request) {
 		{Value: resource.Vendor_HUAWEI.String(), Describe: "华为云"},
 		{Value: resource.Vendor_VSPHERE.String(), Describe: "Vsphere"},
 	}
+	
 	response.Success(w, resp)
 }
 
@@ -50,7 +51,8 @@ func (h *handler) ListVendorRegion(w http.ResponseWriter, r *http.Request) {
 		resource.Vendor_ALIYUN.String():  ali_region.Regions,
 		resource.Vendor_TENCENT.String(): tx_region.Regions,
 		resource.Vendor_HUAWEI.String():  hw_region.Regions,
+		resource.Vendor_VSPHERE.String(): hw_region.Regions,
 	}
-
+	
 	response.Success(w, resp)
 }
