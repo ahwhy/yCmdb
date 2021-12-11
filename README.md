@@ -19,17 +19,17 @@ import (
 )
 
 func main() {
-    // 配置yCmdb grpc服务调用地址和凭证
+	// 配置yCmdb grpc服务调用地址和凭证
 	conf := client.NewConfig("localhost:18060")
 	conf.WithClientCredentials("xx", "xx")
 
-    // 创建yCmdb客户端
+	// 创建yCmdb客户端
 	yCmdb, err := client.NewClient(conf)
 	if err != nil {
 		panic(err)
 	}
 
-    // 服务调用
+	// 服务调用
 	rs, err := yCmdb.Resource().Search(context.Background(), resource.NewSearchRequest())
 	if err != nil {
 		panic(err)
