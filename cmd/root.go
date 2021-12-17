@@ -23,7 +23,11 @@ var vers bool
 var RootCmd = &cobra.Command{
 	Use:   "yCmdb",
 	Short: "yCmdb 管理系统",
-	Long:  `yCmdb ...`,
+	Long:  `yCmdb 多云资产管理平台, 支持厂商
+	- 阿里云
+	- 腾讯云
+	- 华为云
+	- VMware`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if vers {
 			fmt.Println(version.FullVersion())
