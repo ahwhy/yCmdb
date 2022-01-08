@@ -45,15 +45,10 @@ clean: ## Remove previous build
 
 gen: ## generate code
 	@protoc -I=. --go_out=. --go-grpc_out=. --go_opt=module="${PKG}" --go-grpc_opt=module="${PKG}"  app/*/pb/*
-	@protoc-go-inject-tag -input=app/resource/*.pb.go
-	@protoc-go-inject-tag -input=app/host/*.pb.go
-	@protoc-go-inject-tag -input=app/secret/*.pb.go
-	@protoc-go-inject-tag -input=app/task/*.pb.go
-	@protoc-go-inject-tag -input=app/bill/*.pb.go
+	@protoc-go-inject-tag -input=app/*/*.pb.go
 
 push: # push git to multi repo
 	@git push -u master
-	@git push -u origin
 
 help: ## Display this help screen
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
