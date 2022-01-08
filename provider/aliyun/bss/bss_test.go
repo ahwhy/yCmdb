@@ -1,22 +1,23 @@
-package rds_test
+package bss_test
 
 import (
 	"fmt"
 	"os"
 	"testing"
 
+	op "github.com/ahwhy/yCmdb/provider/aliyun/bss"
 	"github.com/ahwhy/yCmdb/provider/aliyun/connectivity"
-	op "github.com/ahwhy/yCmdb/provider/aliyun/rds"
 )
 
 var (
-	operater *op.RdsOperater
+	operater *op.BssOperater
 )
 
 func TestQuery(t *testing.T) {
 	req := op.NewPageQueryRequest()
-	pager := operater.PageQuery(req)
+	req.Month = "2021-12"
 
+	pager := operater.PageQuery(req)
 	hasNext := true
 	for hasNext {
 		p := pager.Next()
@@ -38,11 +39,11 @@ func init() {
 		panic("empty AL_CLOUD_ACCESS_SECRET")
 	}
 
-	client := connectivity.NewAliCloudClient(secretID, secretKey, "cn-hangzhou")
+	client := connectivity.NewAliCloudClient(secretID, secretKey, "cn-zhangjiakou")
 
-	ec, err := client.RdsClient()
+	ec, err := client.BssClient()
 	if err != nil {
 		panic(err)
 	}
-	operater = op.NewRdsOperater(ec)
+	operater = op.NewBssOperater(ec)
 }

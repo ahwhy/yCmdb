@@ -3,19 +3,11 @@ package connectivity
 import (
 	"fmt"
 
+	"github.com/aliyun/alibaba-cloud-sdk-go/services/bssopenapi"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/rds"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/sts"
 )
-
-type AliCloudClient struct {
-	Region       string
-	AccessKey    string
-	AccessSecret string
-	accountId    string
-	ecsConn      *ecs.Client
-	rdsConn      *rds.Client
-}
 
 // NewAliCloudClient client
 func NewAliCloudClient(ak, sk, region string) *AliCloudClient {
@@ -24,6 +16,16 @@ func NewAliCloudClient(ak, sk, region string) *AliCloudClient {
 		AccessKey:    ak,
 		AccessSecret: sk,
 	}
+}
+
+type AliCloudClient struct {
+	Region       string
+	AccessKey    string
+	AccessSecret string
+	accountId    string
+	ecsConn      *ecs.Client
+	rdsConn      *rds.Client
+	bssConn      *bssopenapi.Client
 }
 
 // EcsClient 客户端
@@ -58,6 +60,22 @@ func (c *AliCloudClient) RdsClient() (*rds.Client, error) {
 	return client, nil
 }
 
+// BssClient 客户端
+func (c *AliCloudClient) BssClient() (*bssopenapi.Client, error) {
+	if c.bssConn != nil {
+		return c.bssConn, nil
+	}
+
+	client, err := bssopenapi.NewClientWithAccessKey(c.Region, c.AccessKey, c.AccessSecret)
+	if err != nil {
+		return nil, err
+	}
+
+	c.bssConn = client
+
+	return client, nil
+}
+
 // AccountID 获取客户端账户ID
 func (c *AliCloudClient) AccountID() (string, error) {
 	if c.accountId != "" {
@@ -72,7 +90,7 @@ func (c *AliCloudClient) AccountID() (string, error) {
 		return "", fmt.Errorf("unable to initialize the STS client: %#v", err)
 	}
 
-	stsClient.AppendUserAgent("Infraboard", "1.0")
+	stsClient.AppendUserAgent("ahwhy", "1.0")
 	identity, err := stsClient.GetCallerIdentity(args)
 	if err != nil {
 		return "", err

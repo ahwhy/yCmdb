@@ -6,22 +6,24 @@ import (
 	"github.com/ahwhy/yCmdb/app"
 	"github.com/ahwhy/yCmdb/conf"
 
+	"github.com/infraboard/keyauth/client/interceptor"
 	"github.com/infraboard/mcube/grpc/middleware/recovery"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	"google.golang.org/grpc"
-
-	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 )
 
 // NewGRPCService todo
 func NewGRPCService() *GRPCService {
 	log := zap.L().Named("GRPC Service")
 
+	c, err := conf.C().Keyauth.Client()
+	if err != nil {
+		panic(err)
+	}
+
 	rc := recovery.NewInterceptor(recovery.NewZapRecoveryHandler())
-	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-		rc.UnaryServerInterceptor(),
-	)))
+	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(rc.UnaryServerInterceptor(), interceptor.GrpcAuthUnaryServerInterceptor(c)))
 
 	return &GRPCService{
 		svr: grpcServer,

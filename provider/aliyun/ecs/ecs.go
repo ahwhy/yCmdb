@@ -11,11 +11,6 @@ import (
 	"github.com/infraboard/mcube/logger/zap"
 )
 
-type EcsOperater struct {
-	client *ecs.Client
-	log    logger.Logger
-}
-
 func NewEcsOperater(client *ecs.Client) *EcsOperater {
 	return &EcsOperater{
 		client: client,
@@ -23,19 +18,19 @@ func NewEcsOperater(client *ecs.Client) *EcsOperater {
 	}
 }
 
-func (o *EcsOperater) transferTags(tags []ecs.Tag) map[string]string {
-	return nil
+type EcsOperater struct {
+	client *ecs.Client
+	log    logger.Logger
 }
 
-func (o *EcsOperater) parseTime(t string) int64 {
-	ts, err := time.Parse("2006-01-02T15:04Z", t)
-	if err != nil {
-		o.log.Errorf("parse time %s error, %s", t, err)
-
-		return 0
+// transferSet 转换配置
+func (o *EcsOperater) transferSet(items []ecs.Instance) *host.HostSet {
+	set := host.NewHostSet()
+	for i := range items {
+		set.Add(o.transferOne(items[i]))
 	}
 
-	return ts.UnixNano() / 1000000
+	return set
 }
 
 // transferOne 转换单个实例配置
@@ -74,12 +69,17 @@ func (o *EcsOperater) transferOne(ins ecs.Instance) *host.Host {
 	return h
 }
 
-// transferSet 转换配置
-func (o *EcsOperater) transferSet(items []ecs.Instance) *host.HostSet {
-	set := host.NewHostSet()
-	for i := range items {
-		set.Add(o.transferOne(items[i]))
+func (o *EcsOperater) transferTags(tags []ecs.Tag) map[string]string {
+	return nil
+}
+
+func (o *EcsOperater) parseTime(t string) int64 {
+	ts, err := time.Parse("2006-01-02T15:04Z", t)
+	if err != nil {
+		o.log.Errorf("parse time %s error, %s", t, err)
+
+		return 0
 	}
 
-	return set
+	return ts.UnixNano() / 1000000
 }

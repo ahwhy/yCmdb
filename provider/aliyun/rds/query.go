@@ -18,6 +18,16 @@ func (o *RdsOperater) Query(req *rds.DescribeDBInstancesRequest) (*cmdbRds.RdsSe
 	return set, nil
 }
 
-func (o *RdsOperater) PageQuery() cmdbRds.Pager {
-	return newPager(20, o)
+func (o *RdsOperater) PageQuery(req *PageQueryRequest) cmdbRds.Pager {
+	return newPager(20, o, req.Rate)
+}
+
+func NewPageQueryRequest() *PageQueryRequest {
+	return &PageQueryRequest{
+		Rate: 1,
+	}
+}
+
+type PageQueryRequest struct {
+	Rate int
 }

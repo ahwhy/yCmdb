@@ -43,6 +43,11 @@ func (s *BillSet) Add(item *Bill) {
 	s.Items = append(s.Items, item)
 }
 
+// 分页迭代器
+type Pager interface {
+	Next() *PagerResult
+}
+
 func NewPagerResult() *PagerResult {
 	return &PagerResult{
 		Data: NewBillSet(),
@@ -53,9 +58,4 @@ type PagerResult struct {
 	Data    *BillSet
 	Err     error
 	HasNext bool
-}
-
-// 分页迭代器
-type Pager interface {
-	Next() *PagerResult
 }

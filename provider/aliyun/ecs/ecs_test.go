@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	operater *op.EcsOperater
+	operater  *op.EcsOperater
 )
 
 func TestQuery(t *testing.T) {
@@ -20,8 +20,11 @@ func TestQuery(t *testing.T) {
 	hasNext := true
 	for hasNext {
 		p := pager.Next()
+		if p.Err != nil {
+			panic(p.Err)
+		}
 		hasNext = p.HasNext
-		fmt.Printf("%v\n", p.Data)
+		fmt.Println(p.Data)
 	}
 }
 
@@ -35,7 +38,7 @@ func init() {
 		panic("empty AL_CLOUD_ACCESS_SECRET")
 	}
 
-	client := connectivity.NewAliCloudClient(secretID, secretKey, "cn-zhangjiakou")
+	client := connectivity.NewAliCloudClient(secretID, secretKey, "cn-hangzhou")
 
 	ec, err := client.EcsClient()
 	if err != nil {

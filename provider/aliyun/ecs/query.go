@@ -1,10 +1,14 @@
 package ecs
 
 import (
-	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
-
 	"github.com/ahwhy/yCmdb/app/host"
+
+	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
 )
+
+func (o *EcsOperater) PageQuery(req *PageQueryRequest) host.Pager {
+	return newPager(20, o, req.Rate)
+}
 
 func (o *EcsOperater) Query(req *ecs.DescribeInstancesRequest) (*host.HostSet, error) {
 	set := host.NewHostSet()
@@ -20,16 +24,12 @@ func (o *EcsOperater) Query(req *ecs.DescribeInstancesRequest) (*host.HostSet, e
 	return set, nil
 }
 
-type PageQueryRequest struct {
-	Rate int
-}
-
 func NewPageQueryRequest() *PageQueryRequest {
 	return &PageQueryRequest{
 		Rate: 1,
 	}
 }
 
-func (o *EcsOperater) PageQuery(req *PageQueryRequest) host.Pager {
-	return newPager(20, o, req.Rate)
+type PageQueryRequest struct {
+	Rate int
 }

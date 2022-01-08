@@ -9,7 +9,8 @@ import (
 )
 
 func TestClient(t *testing.T) {
-	var secretID, secretKey string
+	var secretID, secretKey string 
+	
 	if secretID = os.Getenv("AL_CLOUD_ACCESS_KEY"); secretID == "" {
 		t.Fatal("empty AL_CLOUD_ACCESS_KEY")
 	}
