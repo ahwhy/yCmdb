@@ -34,7 +34,7 @@ message Task {
     string region = 2;
     // 同步的资源
     // @gotags: json:"resource_type"
-    infraboard.cmdb.resource.Type resource_type = 3;
+    ahwhy.yCmdb.resource.Type resource_type = 3;
     // 关联secret
     // @gotags: json:"secret_id"
     string secret_id = 4;
