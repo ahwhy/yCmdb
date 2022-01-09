@@ -20,8 +20,6 @@ type handler struct {
 
 func (h *handler) Config() error {
 	h.log = zap.L().Named(bill.AppName)
-	// 使用GetGrpcApp方法，http接口的暴露，需要依赖后端的grpc接口
-	// 将GRPCApp这个接口对象，断言成host.ServiceServer接口，以使用对应的方法
 	h.service = app.GetGrpcApp(bill.AppName).(bill.ServiceServer)
 
 	return nil

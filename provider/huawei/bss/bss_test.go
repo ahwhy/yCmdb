@@ -1,21 +1,24 @@
-package ecs_test
+package bss_test
 
 import (
 	"fmt"
 	"os"
 	"testing"
 
+	
+	op "github.com/ahwhy/yCmdb/provider/huawei/bss"
 	"github.com/ahwhy/yCmdb/provider/huawei/connectivity"
-	op "github.com/ahwhy/yCmdb/provider/huawei/ecs"
 )
 
 var (
-	operater *op.EcsOperater
+	operater *op.BssOperater
 )
 
 func TestQuery(t *testing.T) {
-	pager := operater.PageQuery()
+	req := op.NewPageQueryRequest()
+	req.Month = "2021-10"
 
+	pager := operater.PageQuery(req)
 	hasNext := true
 	for hasNext {
 		p := pager.Next()
@@ -39,9 +42,10 @@ func init() {
 
 	client := connectivity.NewHuaweiCloudClient(secretID, secretKey, "cn-north-4")
 
-	ec, err := client.EcsClient()
+	ec, err := client.BssClient()
 	if err != nil {
 		panic(err)
 	}
-	operater = op.NewEcsOperater(ec)
+
+	operater = op.NewBssOperater(ec)
 }

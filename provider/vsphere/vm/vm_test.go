@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/ahwhy/yCmdb/app/host"
 	"github.com/ahwhy/yCmdb/provider/vsphere/connectivity"
 	op "github.com/ahwhy/yCmdb/provider/vsphere/vm"
 
@@ -16,13 +17,11 @@ var (
 )
 
 func TestQuery(t *testing.T) {
-	resp, err := operater.Query()
+	err := operater.Query(func(h *host.Host){
+		fmt.Println(h)
+	})
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	for i := range resp.Items {
-		fmt.Println(resp.Items[i])
 	}
 }
 

@@ -29,6 +29,7 @@ func (o *CVMOperater) transferSet(items []*cvm.Instance) *host.HostSet {
 	for i := range items {
 		set.Add(o.transferOne(items[i]))
 	}
+	
 	return set
 }
 

@@ -77,7 +77,12 @@ func (s *service) syncHost(ctx context.Context, secret *secret.Secret, t *task.T
 			return
 		}
 		operater := vmOp.NewVmOperater(ec)
-		hs, err = operater.Query()
+		// 通过回调直接保存
+		err = operater.Query(func(h *host.Host) {
+			// 补充管理信息
+			h.Base.SecretId = secret.Id
+			// s.SaveOrUpdateHost(ctx, h, t)
+		})
 		if err != nil {
 			t.Failed(err.Error())
 			return

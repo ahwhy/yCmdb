@@ -32,6 +32,7 @@ func (o *EcsOperater) transferSet(list *[]model.ServerDetail) *host.HostSet {
 	for i := range items {
 		set.Add(o.transferOne(items[i]))
 	}
+
 	return set
 }
 
@@ -91,5 +92,6 @@ func (o *EcsOperater) parseIp(address map[string][]model.ServerAddress) (private
 			}
 		}
 	}
+	
 	return
 }

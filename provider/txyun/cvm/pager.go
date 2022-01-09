@@ -40,18 +40,19 @@ func (p *pager) Next() *host.PagerResult {
 		result.Err = err
 		return result
 	}
-	p.total = resp.Total
 
+	p.total = resp.Total
 	result.Data = resp
 	result.HasNext = p.hasNext()
-
 	p.number++
+
 	return result
 }
 
 func (p *pager) nextReq() *cvm.DescribeInstancesRequest {
 	p.log.Debugf("请求第%d页数据", p.number)
 	p.req.Offset = common.Int64Ptr(p.offset())
+	
 	return p.req
 }
 

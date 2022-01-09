@@ -15,6 +15,7 @@ require (
 	github.com/rs/xid v1.3.0
 	github.com/spf13/cobra v1.2.1
 	github.com/stretchr/testify v1.7.0
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/billing v1.0.324
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdb v1.0.294
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.295
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.295

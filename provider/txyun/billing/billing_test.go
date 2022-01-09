@@ -1,24 +1,26 @@
-package cvm_test
+package billing_test
 
 import (
 	"fmt"
 	"os"
 	"testing"
-	
+
+	op "github.com/ahwhy/yCmdb/provider/txyun/billing"
 	"github.com/ahwhy/yCmdb/provider/txyun/connectivity"
-	op "github.com/ahwhy/yCmdb/provider/txyun/cvm"
 
+	"github.com/infraboard/mcube/logger/zap"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/regions"
-
 )
 
 var (
-	operater *op.CVMOperater
+	operater *op.BillingOperater
 )
 
 func TestQuery(t *testing.T) {
-	pager := operater.PageQuery()
+	req := op.NewPageQueryRequest()
+	req.Month = "2021-10"
 
+	pager := operater.PageQuery(req)
 	hasNext := true
 	for hasNext {
 		p := pager.Next()
@@ -31,6 +33,8 @@ func TestQuery(t *testing.T) {
 }
 
 func init() {
+	zap.DevelopmentSetup()
+
 	var secretID, secretKey string
 	if secretID = os.Getenv("TX_CLOUD_SECRET_ID"); secretID == "" {
 		panic("empty TX_CLOUD_SECRET_ID")
@@ -41,5 +45,5 @@ func init() {
 	}
 
 	client := connectivity.NewTencentCloudClient(secretID, secretKey, regions.Shanghai)
-	operater = op.NewCVMOperater(client.CvmClient())
+	operater = op.NewBillingOperater(client.BillingClient())
 }
