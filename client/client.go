@@ -1,6 +1,7 @@
 package client
 
 import (
+	"github.com/ahwhy/yCmdb/app/bill"
 	"github.com/ahwhy/yCmdb/app/host"
 	"github.com/ahwhy/yCmdb/app/resource"
 	"github.com/ahwhy/yCmdb/app/secret"
@@ -37,17 +38,27 @@ type Client struct {
 	log  logger.Logger
 }
 
-// Resource todo
+// Resource service
 func (c *Client) Resource() resource.ServiceClient {
 	return resource.NewServiceClient(c.conn)
 }
 
-// Host todos
+// Host service
 func (c *Client) Host() host.ServiceClient {
 	return host.NewServiceClient(c.conn)
 }
 
-// Host todos
+// Secret service
 func (c *Client) Secret() secret.ServiceClient {
 	return secret.NewServiceClient(c.conn)
 }
+
+// Bill service
+func (c *Client) Bill() bill.ServiceClient {
+	return bill.NewServiceClient(c.conn)
+}
+
+// Rds service
+// func (c *Client) Rds() rds.ServiceClient {
+// 	return rds.NewServiceClient(c.conn)
+// }

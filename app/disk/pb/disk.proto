@@ -7,7 +7,7 @@ import "app/resource/pb/resource.proto";
 
 service Service {
     rpc SaveDisk(Disk) returns(Disk) {}
-    rpc QueryDisk(QueryDiskRequest) returns(Set) {}
+    rpc QueryDisk(QueryDiskRequest) returns(DiskSet) {}
 }
 
 message Disk {
@@ -49,13 +49,13 @@ message Describe {
     bool delete_with_instance = 10;
 }
 
-message Set {
-    // 列表项
-    // @gotags: json:"items"
-    repeated Disk items = 1;
-    // 总数量
+message DiskSet {
+    // 总条数
     // @gotags: json:"total"
-    int64 total = 2;
+    int64 total = 1;
+    // 具体条目
+    // @gotags: json:"items"
+    repeated Disk items = 2;
 }
 
 message PageRequest {

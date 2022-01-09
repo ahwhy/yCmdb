@@ -7,7 +7,7 @@ import "app/resource/pb/resource.proto";
 
 service Service {
     rpc SaveDomain(Domain) returns(Domain) {}
-    rpc QueryDomain(QueryDomainRequest) returns(Set) {}
+    rpc QueryDomain(QueryDomainRequest) returns(DomainSet) {}
 }
 
 message Domain {
@@ -40,27 +40,6 @@ message Describe {
     // 域名下的解析记录默认的 TTL 值
     // @gotags: json:"ttl"
     int64 ttl = 7;
-}
-
-message Set {
-    // 列表项
-    // @gotags: json:"items"
-    repeated Domain items = 1;
-    // 总数量
-    // @gotags: json:"total"
-    int64 total = 2;
-}
-
-message PageRequest {
-    uint64 page_size = 1;
-    uint64 page_number = 2;
-    int64 offset = 3;
-}
-
-message QueryDomainRequest {
-    // 分页参数
-    // @gotags: json:"page"
-    PageRequest page = 1;
 }
 
 message Record {
@@ -97,10 +76,31 @@ message Record {
 }
 
 message RecordSet {
-    // 列表项
-    // @gotags: json:"items"
-    repeated Record items = 1;
     // 总数量
     // @gotags: json:"total"
-    int64 total = 2;
+    int64 total = 1;
+    // 具体条目
+    // @gotags: json:"items"
+    repeated Record items = 2;
+}
+
+message DomainSet {
+    // 总条数
+    // @gotags: json:"total"
+    int64 total = 1;
+    // 具体条目
+    // @gotags: json:"items"
+    repeated Domain items = 2;
+}
+
+message PageRequest {
+    uint64 page_size = 1;
+    uint64 page_number = 2;
+    int64 offset = 3;
+}
+
+message QueryDomainRequest {
+    // 分页参数
+    // @gotags: json:"page"
+    PageRequest page = 1;
 }

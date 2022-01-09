@@ -7,7 +7,7 @@ import "app/resource/pb/resource.proto";
 
 service Service {
     rpc SaveSLB(SLB) returns(SLB) {}
-    rpc QuerySLB(QuerySLBRequest) returns(Set) {}
+    rpc QuerySLB(QuerySLBRequest) returns(SLBSet) {}
 }
 
 message SLB {
@@ -31,11 +31,13 @@ message Describe {
     string network_type = 4;
 }
 
-message Set {
-    // 列表项
-    repeated SLB items = 1;
-    // 总数量
-    int64 total = 2;
+message SLBSet {
+    // 总条数
+    // @gotags: json:"total"
+    int64 total = 1;
+    // 具体条目
+    // @gotags: json:"items"
+    repeated SLB items = 2;
 }
 
 message PageRequest {

@@ -6,84 +6,103 @@ option go_package="github.com/ahwhy/yCmdb/app/host";
 import "app/resource/pb/resource.proto";
 
 service Service {
-    // 储存Host
     rpc SaveHost(Host) returns(Host) {}
-    // 查询Host
     rpc QueryHost(QueryHostRequest) returns(HostSet) {}
     rpc DescribeHost(DescribeHostRequest) returns(Host) {}
-    // 更新Host
     rpc UpdateHost(UpdateHostRequest) returns(Host) {}
-    // 删除Host
     rpc DeleteHost(DeleteHostRequest) returns(Host) {}
+}
+
+message Host {
+    // @gotags: json:"base"
+    ahwhy.yCmdb.resource.Base base = 1;
+    // @gotags: json:"information"
+    ahwhy.yCmdb.resource.Information information = 2;
+    // @gotags: json:"describe"
+    Describe describe = 3;
+}
+
+message Describe {
+    // 核数
+    // @gotags: json:"cpu"
+    int64 cpu = 1;
+    // 内存
+    // @gotags: json:"memory"
+    int64 memory = 2;
+    // GPU数量
+    // @gotags: json:"gpu_amount"
+    int32 gpu_amount = 3;
+    // GPU类型
+    // @gotags: json:"gpu_spec"
+    string gpu_spec = 4;
+    // 操作系统类型，分为Windows和Linux
+    // @gotags: json:"os_type"
+    string os_type = 5;
+    // 操作系统名称
+    // @gotags: json:"os_name"
+    string os_name = 6;
+    // 序列号
+    // @gotags: json:"serial_number"
+    string serial_number = 7;
+    // 镜像ID
+    // @gotags: json:"image_id"
+    string image_id = 8;
+    // 公网出带宽最大值，单位为 Mbps
+    // @gotags: json:"internet_max_bandwidth_out"
+    int64 internet_max_bandwidth_out = 9;
+    // 公网入带宽最大值，单位为 Mbps
+    // @gotags: json:"internet_max_bandwidth_in"
+    int64 internet_max_bandwidth_in = 10;
+    // 秘钥对名称
+    // @gotags: json:"key_pair_name"
+    repeated string key_pair_name = 11;
+    // 安全组  采用逗号分隔
+    // @gotags: json:"security_groups"
+    repeated string security_groups = 12;
+    // 额外的无法通用的一些属性, 比如只有腾讯云独有的一些属性
+    // @gotags: json:"extra"
+    map<string, string> extra = 13;
+}
+
+message HostSet {
+    // 总条数
+    // @gotags: json:"total"
+    int64 total = 1;
+    // 具体条目
+    // @gotags: json:"items"
+    repeated Host items = 2;
+}
+
+message PageRequest {
+    uint64 page_size = 1;
+    uint64 page_number = 2;
+    int64 offset = 3;
+}
+
+message QueryHostRequest {
+    // 分页参数
+    // @gotags: json:"page"
+    PageRequest page = 1;
+    // 关键字参数
+    // @gotags: json:"keywords"
+    string keywords = 2;
+}
+
+enum DescribeBy {
+    HOST_ID = 0;
+    INSTANCE_ID = 1;
+}
+
+message DescribeHostRequest {
+    // @gotags: json:"describe_by"
+    DescribeBy describe_by = 1;
+    // @gotags: json:"value" validate:"required"
+    string value = 2;
 }
 
 enum UpdateMode {
     PUT = 0;
     PATCH = 1;
-}
-
-message Host {
-    ahwhy.yCmdb.resource.Base base = 1;
-    ahwhy.yCmdb.resource.Information information = 2;
-    Describe describe = 3;
-}
-
-message Describe {
-    // 关联Resource
-    // @gotags: json:"resource_id"
-    string resource_id = 1;
-    // 核数
-    // @gotags: json:"cpu"
-    int64 cpu = 2;
-    // 内存
-    // @gotags: json:"memory"
-    int64 memory = 3;
-    // GPU数量
-    // @gotags: json:"gpu_amount"
-    int32 gpu_amount = 4;
-    // GPU类型
-    // @gotags: json:"gpu_spec"
-    string gpu_spec = 5;
-    // 操作系统类型，分为Windows和Linux
-    // @gotags: json:"os_type"
-    string os_type = 6;
-    // 操作系统名称
-    // @gotags: json:"os_name"
-    string os_name = 7;
-    // 序列号
-    // @gotags: json:"serial_number"
-    string serial_number = 8;
-    // 镜像ID
-    // @gotags: json:"image_id""
-    string image_id = 9;
-    // 公网出带宽最大值，单位为 Mbps
-    // @gotags: json:"internet_max_bandwidth_out"
-    int64 internet_max_bandwidth_out = 10;
-    // 公网入带宽最大值，单位为 Mbps
-    // @gotags: json:"internet_max_bandwidth_in"
-    int64 internet_max_bandwidth_in = 11;
-    // 秘钥对名称
-    // @gotags: json:"key_pair_name,omitempty"
-    repeated string key_pair_name = 12;
-    // 安全组  采用逗号分隔
-    // @gotags: json:"security_groups"
-    repeated string security_groups = 13;
-}
-
-message HostSet {
-    repeated Host items = 1;
-    int64 total = 2;
-}
-
-message QueryHostRequest {
-    uint64 page_size = 1;
-    uint64 page_number = 2;
-    string keywords = 3;
-}
-
-message DescribeHostRequest {
-    // @gotags: json:"id" validate:"required"
-    string id = 1;
 }
 
 message UpdateHostRequest {
@@ -96,7 +115,9 @@ message UpdateHostRequest {
 }
 
 message UpdateHostData {
+    // @gotags: json:"information"
     ahwhy.yCmdb.resource.Information information = 1;
+    // @gotags: json:"describe"
     Describe describe = 2;
 }
 

@@ -5,7 +5,6 @@ option go_package="github.com/ahwhy/yCmdb/app/resource";
 
 
 service Service {
-    // 搜索Resource
     rpc Search (SearchRequest) returns (ResourceSet);
 }
 
@@ -33,13 +32,6 @@ message Resource {
     Information information = 2;
 }
 
-message ResourceSet {
-    // @gotags: json:"items"
-    repeated Resource items = 1;
-    // @gotags: json:"total"
-    int64 total = 2;
-}
-
 message Base {
     // 全局唯一Id
     // @gotags: json:"id"
@@ -64,7 +56,7 @@ message Base {
     string zone = 7; 
     // 创建时间
     // @gotags: json:"create_at"
-    int64  create_at = 8;
+    int64 create_at = 8;
     // 实例ID
     // @gotags: json:"instance_id"
     string instance_id =9;
@@ -113,6 +105,15 @@ message Information {
     // 实例付费方式
     // @gotags: json:"pay_type"
     string pay_type = 12;
+}
+
+message ResourceSet {
+    // 总条数
+    // @gotags: json:"total"
+    int64 total = 1;
+    // 具体条目
+    // @gotags: json:"items"
+    repeated Resource items = 2;
 }
 
 message SearchRequest {
