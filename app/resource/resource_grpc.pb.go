@@ -18,7 +18,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ServiceClient interface {
-	// 搜索Resource
 	Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*ResourceSet, error)
 }
 
@@ -43,7 +42,6 @@ func (c *serviceClient) Search(ctx context.Context, in *SearchRequest, opts ...g
 // All implementations must embed UnimplementedServiceServer
 // for forward compatibility
 type ServiceServer interface {
-	// 搜索Resource
 	Search(context.Context, *SearchRequest) (*ResourceSet, error)
 	mustEmbedUnimplementedServiceServer()
 }

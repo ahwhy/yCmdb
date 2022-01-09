@@ -19,7 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ServiceClient interface {
 	SaveSLB(ctx context.Context, in *SLB, opts ...grpc.CallOption) (*SLB, error)
-	QuerySLB(ctx context.Context, in *QuerySLBRequest, opts ...grpc.CallOption) (*Set, error)
+	QuerySLB(ctx context.Context, in *QuerySLBRequest, opts ...grpc.CallOption) (*SLBSet, error)
 }
 
 type serviceClient struct {
@@ -39,8 +39,8 @@ func (c *serviceClient) SaveSLB(ctx context.Context, in *SLB, opts ...grpc.CallO
 	return out, nil
 }
 
-func (c *serviceClient) QuerySLB(ctx context.Context, in *QuerySLBRequest, opts ...grpc.CallOption) (*Set, error) {
-	out := new(Set)
+func (c *serviceClient) QuerySLB(ctx context.Context, in *QuerySLBRequest, opts ...grpc.CallOption) (*SLBSet, error) {
+	out := new(SLBSet)
 	err := c.cc.Invoke(ctx, "/ahwhy.yCmdb.slb.Service/QuerySLB", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (c *serviceClient) QuerySLB(ctx context.Context, in *QuerySLBRequest, opts 
 // for forward compatibility
 type ServiceServer interface {
 	SaveSLB(context.Context, *SLB) (*SLB, error)
-	QuerySLB(context.Context, *QuerySLBRequest) (*Set, error)
+	QuerySLB(context.Context, *QuerySLBRequest) (*SLBSet, error)
 	mustEmbedUnimplementedServiceServer()
 }
 
@@ -64,7 +64,7 @@ type UnimplementedServiceServer struct {
 func (UnimplementedServiceServer) SaveSLB(context.Context, *SLB) (*SLB, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SaveSLB not implemented")
 }
-func (UnimplementedServiceServer) QuerySLB(context.Context, *QuerySLBRequest) (*Set, error) {
+func (UnimplementedServiceServer) QuerySLB(context.Context, *QuerySLBRequest) (*SLBSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QuerySLB not implemented")
 }
 func (UnimplementedServiceServer) mustEmbedUnimplementedServiceServer() {}

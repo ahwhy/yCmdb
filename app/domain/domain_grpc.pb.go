@@ -19,7 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ServiceClient interface {
 	SaveDomain(ctx context.Context, in *Domain, opts ...grpc.CallOption) (*Domain, error)
-	QueryDomain(ctx context.Context, in *QueryDomainRequest, opts ...grpc.CallOption) (*Set, error)
+	QueryDomain(ctx context.Context, in *QueryDomainRequest, opts ...grpc.CallOption) (*DomainSet, error)
 }
 
 type serviceClient struct {
@@ -39,8 +39,8 @@ func (c *serviceClient) SaveDomain(ctx context.Context, in *Domain, opts ...grpc
 	return out, nil
 }
 
-func (c *serviceClient) QueryDomain(ctx context.Context, in *QueryDomainRequest, opts ...grpc.CallOption) (*Set, error) {
-	out := new(Set)
+func (c *serviceClient) QueryDomain(ctx context.Context, in *QueryDomainRequest, opts ...grpc.CallOption) (*DomainSet, error) {
+	out := new(DomainSet)
 	err := c.cc.Invoke(ctx, "/ahwhy.yCmdb.domain.Service/QueryDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (c *serviceClient) QueryDomain(ctx context.Context, in *QueryDomainRequest,
 // for forward compatibility
 type ServiceServer interface {
 	SaveDomain(context.Context, *Domain) (*Domain, error)
-	QueryDomain(context.Context, *QueryDomainRequest) (*Set, error)
+	QueryDomain(context.Context, *QueryDomainRequest) (*DomainSet, error)
 	mustEmbedUnimplementedServiceServer()
 }
 
@@ -64,7 +64,7 @@ type UnimplementedServiceServer struct {
 func (UnimplementedServiceServer) SaveDomain(context.Context, *Domain) (*Domain, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SaveDomain not implemented")
 }
-func (UnimplementedServiceServer) QueryDomain(context.Context, *QueryDomainRequest) (*Set, error) {
+func (UnimplementedServiceServer) QueryDomain(context.Context, *QueryDomainRequest) (*DomainSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryDomain not implemented")
 }
 func (UnimplementedServiceServer) mustEmbedUnimplementedServiceServer() {}

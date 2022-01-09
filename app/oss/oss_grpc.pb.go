@@ -19,7 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ServiceClient interface {
 	SaveOSS(ctx context.Context, in *OSS, opts ...grpc.CallOption) (*OSS, error)
-	QueryOSS(ctx context.Context, in *QueryOSSRequest, opts ...grpc.CallOption) (*Set, error)
+	QueryOSS(ctx context.Context, in *QueryOSSRequest, opts ...grpc.CallOption) (*OSSSet, error)
 }
 
 type serviceClient struct {
@@ -39,8 +39,8 @@ func (c *serviceClient) SaveOSS(ctx context.Context, in *OSS, opts ...grpc.CallO
 	return out, nil
 }
 
-func (c *serviceClient) QueryOSS(ctx context.Context, in *QueryOSSRequest, opts ...grpc.CallOption) (*Set, error) {
-	out := new(Set)
+func (c *serviceClient) QueryOSS(ctx context.Context, in *QueryOSSRequest, opts ...grpc.CallOption) (*OSSSet, error) {
+	out := new(OSSSet)
 	err := c.cc.Invoke(ctx, "/ahwhy.yCmdb.oss.Service/QueryOSS", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (c *serviceClient) QueryOSS(ctx context.Context, in *QueryOSSRequest, opts 
 // for forward compatibility
 type ServiceServer interface {
 	SaveOSS(context.Context, *OSS) (*OSS, error)
-	QueryOSS(context.Context, *QueryOSSRequest) (*Set, error)
+	QueryOSS(context.Context, *QueryOSSRequest) (*OSSSet, error)
 	mustEmbedUnimplementedServiceServer()
 }
 
@@ -64,7 +64,7 @@ type UnimplementedServiceServer struct {
 func (UnimplementedServiceServer) SaveOSS(context.Context, *OSS) (*OSS, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SaveOSS not implemented")
 }
-func (UnimplementedServiceServer) QueryOSS(context.Context, *QueryOSSRequest) (*Set, error) {
+func (UnimplementedServiceServer) QueryOSS(context.Context, *QueryOSSRequest) (*OSSSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryOSS not implemented")
 }
 func (UnimplementedServiceServer) mustEmbedUnimplementedServiceServer() {}

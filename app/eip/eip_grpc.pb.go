@@ -19,7 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ServiceClient interface {
 	SaveEIP(ctx context.Context, in *EIP, opts ...grpc.CallOption) (*EIP, error)
-	QueryEIP(ctx context.Context, in *QueryEIPRequest, opts ...grpc.CallOption) (*Set, error)
+	QueryEIP(ctx context.Context, in *QueryEIPRequest, opts ...grpc.CallOption) (*EIPSet, error)
 }
 
 type serviceClient struct {
@@ -39,8 +39,8 @@ func (c *serviceClient) SaveEIP(ctx context.Context, in *EIP, opts ...grpc.CallO
 	return out, nil
 }
 
-func (c *serviceClient) QueryEIP(ctx context.Context, in *QueryEIPRequest, opts ...grpc.CallOption) (*Set, error) {
-	out := new(Set)
+func (c *serviceClient) QueryEIP(ctx context.Context, in *QueryEIPRequest, opts ...grpc.CallOption) (*EIPSet, error) {
+	out := new(EIPSet)
 	err := c.cc.Invoke(ctx, "/ahwhy.yCmdb.eip.Service/QueryEIP", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (c *serviceClient) QueryEIP(ctx context.Context, in *QueryEIPRequest, opts 
 // for forward compatibility
 type ServiceServer interface {
 	SaveEIP(context.Context, *EIP) (*EIP, error)
-	QueryEIP(context.Context, *QueryEIPRequest) (*Set, error)
+	QueryEIP(context.Context, *QueryEIPRequest) (*EIPSet, error)
 	mustEmbedUnimplementedServiceServer()
 }
 
@@ -64,7 +64,7 @@ type UnimplementedServiceServer struct {
 func (UnimplementedServiceServer) SaveEIP(context.Context, *EIP) (*EIP, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SaveEIP not implemented")
 }
-func (UnimplementedServiceServer) QueryEIP(context.Context, *QueryEIPRequest) (*Set, error) {
+func (UnimplementedServiceServer) QueryEIP(context.Context, *QueryEIPRequest) (*EIPSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryEIP not implemented")
 }
 func (UnimplementedServiceServer) mustEmbedUnimplementedServiceServer() {}

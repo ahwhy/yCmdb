@@ -18,14 +18,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ServiceClient interface {
-	// 创建Secret
 	CreateSecret(ctx context.Context, in *CreateSecretRequest, opts ...grpc.CallOption) (*Secret, error)
-	// 查询Secret
-	// 列表查询
 	QuerySecret(ctx context.Context, in *QuerySecretRequest, opts ...grpc.CallOption) (*SecretSet, error)
-	// 详情页查询
 	DescribeSecret(ctx context.Context, in *DescribeSecretRequest, opts ...grpc.CallOption) (*Secret, error)
-	// 删除Secret
 	DeleteSecret(ctx context.Context, in *DeleteSecretRequest, opts ...grpc.CallOption) (*Secret, error)
 }
 
@@ -77,14 +72,9 @@ func (c *serviceClient) DeleteSecret(ctx context.Context, in *DeleteSecretReques
 // All implementations must embed UnimplementedServiceServer
 // for forward compatibility
 type ServiceServer interface {
-	// 创建Secret
 	CreateSecret(context.Context, *CreateSecretRequest) (*Secret, error)
-	// 查询Secret
-	// 列表查询
 	QuerySecret(context.Context, *QuerySecretRequest) (*SecretSet, error)
-	// 详情页查询
 	DescribeSecret(context.Context, *DescribeSecretRequest) (*Secret, error)
-	// 删除Secret
 	DeleteSecret(context.Context, *DeleteSecretRequest) (*Secret, error)
 	mustEmbedUnimplementedServiceServer()
 }

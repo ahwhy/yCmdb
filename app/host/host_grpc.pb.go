@@ -18,14 +18,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ServiceClient interface {
-	// 储存Host
 	SaveHost(ctx context.Context, in *Host, opts ...grpc.CallOption) (*Host, error)
-	// 查询Host
 	QueryHost(ctx context.Context, in *QueryHostRequest, opts ...grpc.CallOption) (*HostSet, error)
 	DescribeHost(ctx context.Context, in *DescribeHostRequest, opts ...grpc.CallOption) (*Host, error)
-	// 更新Host
 	UpdateHost(ctx context.Context, in *UpdateHostRequest, opts ...grpc.CallOption) (*Host, error)
-	// 删除Host
 	DeleteHost(ctx context.Context, in *DeleteHostRequest, opts ...grpc.CallOption) (*Host, error)
 }
 
@@ -86,14 +82,10 @@ func (c *serviceClient) DeleteHost(ctx context.Context, in *DeleteHostRequest, o
 // All implementations must embed UnimplementedServiceServer
 // for forward compatibility
 type ServiceServer interface {
-	// 储存Host
 	SaveHost(context.Context, *Host) (*Host, error)
-	// 查询Host
 	QueryHost(context.Context, *QueryHostRequest) (*HostSet, error)
 	DescribeHost(context.Context, *DescribeHostRequest) (*Host, error)
-	// 更新Host
 	UpdateHost(context.Context, *UpdateHostRequest) (*Host, error)
-	// 删除Host
 	DeleteHost(context.Context, *DeleteHostRequest) (*Host, error)
 	mustEmbedUnimplementedServiceServer()
 }
