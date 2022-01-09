@@ -45,7 +45,6 @@ clean: ## Remove previous build
 
 gen: ## generate code
 	@protoc -I=. --go_out=. --go-grpc_out=. --go_opt=module="${PKG}" --go-grpc_opt=module="${PKG}"  app/*/pb/*
-	@protoc-go-inject-tag -input=app/*/*.pb.go
 
 push: # push git to multi repo
 	@git push -u master

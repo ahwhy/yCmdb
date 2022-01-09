@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package ahwhy.yCmdb.oss;
+option go_package="github.com/ahwhy/yCmdb/app/oss";
+
+import "app/resource/pb/resource.proto";
+
+service Service {
+    rpc SaveOSS(OSS) returns(OSS) {}
+    rpc QueryOSS(QueryOSSRequest) returns(Set) {}
+}
+
+message OSS {
+    // 资源元数据
+    // @gotags: json:"base"
+    ahwhy.yCmdb.resource.Base base = 1;
+    // 资源基础信息
+    // @gotags: json:"information"
+    ahwhy.yCmdb.resource.Information information = 2;
+    // Oss详细信息
+    // @gotags: json:"describe"
+    Describe describe = 3;
+}
+
+message Describe {
+}
+
+message Set {
+    // 列表项
+    // @gotags: json:"items"
+    repeated OSS items = 1;
+    // 总数量
+    // @gotags: json:"total"
+    int64 total = 2;
+}
+
+message PageRequest {
+    uint64 page_size = 1;
+    uint64 page_number = 2;
+    int64 offset = 3;
+}
+
+message QueryOSSRequest {
+    // 分页参数
+    // @gotags: json:"page"
+    PageRequest page = 1;
+}
