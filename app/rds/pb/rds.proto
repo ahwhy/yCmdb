@@ -112,8 +112,14 @@ message RDSSet {
     repeated RDS items = 2;
 }
 
+message PageRequest {
+    uint64 page_size = 1;
+    uint64 page_number = 2;
+    int64 offset = 3;
+}
+
 message QueryRDSRequest {
     // 分页参数
     // @gotags: json:"page"
-    infraboard.mcube.page.PageRequest page = 1;
+    PageRequest page = 1;
 }
