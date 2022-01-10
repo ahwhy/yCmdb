@@ -4,6 +4,7 @@ package ahwhy.yCmdb.host;
 option go_package="github.com/ahwhy/yCmdb/app/host";
 
 import "app/resource/pb/resource.proto";
+import "github.com/infraboard/mcube/pb/page/page.proto";
 
 service Service {
     rpc SaveHost(Host) returns(Host) {}
@@ -73,16 +74,10 @@ message HostSet {
     repeated Host items = 2;
 }
 
-message PageRequest {
-    uint64 page_size = 1;
-    uint64 page_number = 2;
-    int64 offset = 3;
-}
-
 message QueryHostRequest {
     // 分页参数
     // @gotags: json:"page"
-    PageRequest page = 1;
+    infraboard.mcube.page.PageRequest page = 1;
     // 关键字参数
     // @gotags: json:"keywords"
     string keywords = 2;
@@ -126,6 +121,6 @@ message DeleteHostRequest {
     string id = 1;
 }
 
-// protoc -I=. --go_out=./app/host --go_opt=module="github.com/ahwhy/yCmdb/app/host" \
+// protoc -I=/usr/local/include/ -I=. --go_out=./app/host --go_opt=module="github.com/ahwhy/yCmdb/app/host" \
 // --go-grpc_out=./app/host --go-grpc_opt=module="github.com/ahwhy/yCmdb/app/host" \
 // app/host/pb/host.proto

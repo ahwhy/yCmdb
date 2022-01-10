@@ -4,6 +4,7 @@ package ahwhy.yCmdb.eip;
 option go_package="github.com/ahwhy/yCmdb/app/eip";
 
 import "app/resource/pb/resource.proto";
+import "github.com/infraboard/mcube/pb/page/page.proto";
 
 service Service {
     rpc SaveEIP(EIP) returns(EIP) {}
@@ -46,14 +47,8 @@ message EIPSet {
     repeated EIP items = 2;
 }
 
-message PageRequest {
-    uint64 page_size = 1;
-    uint64 page_number = 2;
-    int64 offset = 3;
-}
-
 message QueryEIPRequest {
     // 分页参数
     // @gotags: json:"page"
-    PageRequest page = 1;
+    infraboard.mcube.page.PageRequest page = 1;
 }

@@ -10,8 +10,9 @@ import (
 
 	"github.com/ahwhy/yCmdb/app/resource"
 
-	"github.com/infraboard/mcube/types/ftime"
 	"github.com/go-playground/validator/v10"
+	"github.com/infraboard/mcube/http/request"
+	"github.com/infraboard/mcube/types/ftime"
 )
 
 const (
@@ -31,6 +32,10 @@ func NewDefaultHost() *Host {
 		Information: &resource.Information{},
 		Describe:    &Describe{},
 	}
+}
+
+func (h *Host) ShortDesc() string {
+	return fmt.Sprintf("%s %s", h.Information.Name, h.Information.PrivateIp)
 }
 
 func (h *Host) Put(req *UpdateHostData) {
@@ -86,6 +91,7 @@ func (h *Host) GenHash() error {
 	hash.Reset()
 	hash.Write(b)
 	h.Base.DescribeHash = fmt.Sprintf("%x", hash.Sum(nil))
+
 	return nil
 }
 
@@ -126,6 +132,7 @@ func (s *HostSet) ToJsonString() string {
 
 func NewQueryHostRequestFromHTTP(r *http.Request) *QueryHostRequest {
 	qs := r.URL.Query()
+	page := request.NewPageRequestFromHTTP(r)
 
 	ps := qs.Get("page_size")
 	pn := qs.Get("page_number")
@@ -140,11 +147,39 @@ func NewQueryHostRequestFromHTTP(r *http.Request) *QueryHostRequest {
 	if pnUint64 == 0 {
 		pnUint64 = 1
 	}
-
 	return &QueryHostRequest{
-		PageSize:   psUint64,
-		PageNumber: pnUint64,
-		Keywords:   kw,
+		Page:     &page.PageRequest,
+		Keywords: kw,
+	}
+}
+
+func (req *QueryHostRequest) OffSet() int64 {
+	return int64(req.Page.PageSize) * int64(req.Page.PageNumber-1)
+}
+
+
+func NewDescribeHostRequestWithID(id string) *DescribeHostRequest {
+	return &DescribeHostRequest{
+		DescribeBy: DescribeBy_HOST_ID,
+		Value:      id,
+	}
+}
+
+func NewDescribeHostRequestInstanceID(instanceId string) *DescribeHostRequest {
+	return &DescribeHostRequest{
+		DescribeBy: DescribeBy_INSTANCE_ID,
+		Value:      instanceId,
+	}
+}
+
+func (req *DescribeHostRequest) Where() (string, interface{}) {
+	switch req.DescribeBy {
+	case DescribeBy_HOST_ID:
+		return "id = ?", req.Value
+	case DescribeBy_INSTANCE_ID:
+		return "instance_id = ?", req.Value
+	default:
+		return "", nil
 	}
 }
 
@@ -158,16 +193,6 @@ func NewUpdateHostRequest(id string) *UpdateHostRequest {
 
 func (req *UpdateHostRequest) Validate() error {
 	return validate.Struct(req)
-}
-
-func (req *QueryHostRequest) OffSet() int64 {
-	return int64(req.PageSize) * int64(req.PageNumber-1)
-}
-
-func NewDescribeHostRequestWithID(id string) *DescribeHostRequest {
-	return &DescribeHostRequest{
-		Id: id,
-	}
 }
 
 func NewDeleteHostRequestWithID(id string) *DeleteHostRequest {

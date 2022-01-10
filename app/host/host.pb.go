@@ -8,6 +8,7 @@ package host
 
 import (
 	resource "github.com/ahwhy/yCmdb/app/resource"
+	page "github.com/infraboard/mcube/pb/page"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -407,69 +408,6 @@ func (x *HostSet) GetItems() []*Host {
 	return nil
 }
 
-type PageRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	PageSize   uint64 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	PageNumber uint64 `protobuf:"varint,2,opt,name=page_number,json=pageNumber,proto3" json:"page_number,omitempty"`
-	Offset     int64  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
-}
-
-func (x *PageRequest) Reset() {
-	*x = PageRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_app_host_pb_host_proto_msgTypes[3]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *PageRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PageRequest) ProtoMessage() {}
-
-func (x *PageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_host_pb_host_proto_msgTypes[3]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PageRequest.ProtoReflect.Descriptor instead.
-func (*PageRequest) Descriptor() ([]byte, []int) {
-	return file_app_host_pb_host_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *PageRequest) GetPageSize() uint64 {
-	if x != nil {
-		return x.PageSize
-	}
-	return 0
-}
-
-func (x *PageRequest) GetPageNumber() uint64 {
-	if x != nil {
-		return x.PageNumber
-	}
-	return 0
-}
-
-func (x *PageRequest) GetOffset() int64 {
-	if x != nil {
-		return x.Offset
-	}
-	return 0
-}
-
 type QueryHostRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -477,7 +415,7 @@ type QueryHostRequest struct {
 
 	// 分页参数
 	// @gotags: json:"page"
-	Page *PageRequest `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Page *page.PageRequest `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	// 关键字参数
 	// @gotags: json:"keywords"
 	Keywords string `protobuf:"bytes,2,opt,name=keywords,proto3" json:"keywords,omitempty"`
@@ -486,7 +424,7 @@ type QueryHostRequest struct {
 func (x *QueryHostRequest) Reset() {
 	*x = QueryHostRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_app_host_pb_host_proto_msgTypes[4]
+		mi := &file_app_host_pb_host_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -499,7 +437,7 @@ func (x *QueryHostRequest) String() string {
 func (*QueryHostRequest) ProtoMessage() {}
 
 func (x *QueryHostRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_host_pb_host_proto_msgTypes[4]
+	mi := &file_app_host_pb_host_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -512,10 +450,10 @@ func (x *QueryHostRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QueryHostRequest.ProtoReflect.Descriptor instead.
 func (*QueryHostRequest) Descriptor() ([]byte, []int) {
-	return file_app_host_pb_host_proto_rawDescGZIP(), []int{4}
+	return file_app_host_pb_host_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *QueryHostRequest) GetPage() *PageRequest {
+func (x *QueryHostRequest) GetPage() *page.PageRequest {
 	if x != nil {
 		return x.Page
 	}
@@ -543,7 +481,7 @@ type DescribeHostRequest struct {
 func (x *DescribeHostRequest) Reset() {
 	*x = DescribeHostRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_app_host_pb_host_proto_msgTypes[5]
+		mi := &file_app_host_pb_host_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -556,7 +494,7 @@ func (x *DescribeHostRequest) String() string {
 func (*DescribeHostRequest) ProtoMessage() {}
 
 func (x *DescribeHostRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_host_pb_host_proto_msgTypes[5]
+	mi := &file_app_host_pb_host_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -569,7 +507,7 @@ func (x *DescribeHostRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DescribeHostRequest.ProtoReflect.Descriptor instead.
 func (*DescribeHostRequest) Descriptor() ([]byte, []int) {
-	return file_app_host_pb_host_proto_rawDescGZIP(), []int{5}
+	return file_app_host_pb_host_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *DescribeHostRequest) GetDescribeBy() DescribeBy {
@@ -602,7 +540,7 @@ type UpdateHostRequest struct {
 func (x *UpdateHostRequest) Reset() {
 	*x = UpdateHostRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_app_host_pb_host_proto_msgTypes[6]
+		mi := &file_app_host_pb_host_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -615,7 +553,7 @@ func (x *UpdateHostRequest) String() string {
 func (*UpdateHostRequest) ProtoMessage() {}
 
 func (x *UpdateHostRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_host_pb_host_proto_msgTypes[6]
+	mi := &file_app_host_pb_host_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -628,7 +566,7 @@ func (x *UpdateHostRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateHostRequest.ProtoReflect.Descriptor instead.
 func (*UpdateHostRequest) Descriptor() ([]byte, []int) {
-	return file_app_host_pb_host_proto_rawDescGZIP(), []int{6}
+	return file_app_host_pb_host_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UpdateHostRequest) GetId() string {
@@ -666,7 +604,7 @@ type UpdateHostData struct {
 func (x *UpdateHostData) Reset() {
 	*x = UpdateHostData{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_app_host_pb_host_proto_msgTypes[7]
+		mi := &file_app_host_pb_host_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -679,7 +617,7 @@ func (x *UpdateHostData) String() string {
 func (*UpdateHostData) ProtoMessage() {}
 
 func (x *UpdateHostData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_host_pb_host_proto_msgTypes[7]
+	mi := &file_app_host_pb_host_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -692,7 +630,7 @@ func (x *UpdateHostData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateHostData.ProtoReflect.Descriptor instead.
 func (*UpdateHostData) Descriptor() ([]byte, []int) {
-	return file_app_host_pb_host_proto_rawDescGZIP(), []int{7}
+	return file_app_host_pb_host_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *UpdateHostData) GetInformation() *resource.Information {
@@ -721,7 +659,7 @@ type DeleteHostRequest struct {
 func (x *DeleteHostRequest) Reset() {
 	*x = DeleteHostRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_app_host_pb_host_proto_msgTypes[8]
+		mi := &file_app_host_pb_host_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -734,7 +672,7 @@ func (x *DeleteHostRequest) String() string {
 func (*DeleteHostRequest) ProtoMessage() {}
 
 func (x *DeleteHostRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_host_pb_host_proto_msgTypes[8]
+	mi := &file_app_host_pb_host_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -747,7 +685,7 @@ func (x *DeleteHostRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteHostRequest.ProtoReflect.Descriptor instead.
 func (*DeleteHostRequest) Descriptor() ([]byte, []int) {
-	return file_app_host_pb_host_proto_rawDescGZIP(), []int{8}
+	return file_app_host_pb_host_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *DeleteHostRequest) GetId() string {
@@ -764,7 +702,10 @@ var file_app_host_pb_host_proto_rawDesc = []byte{
 	0x73, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x10, 0x61, 0x68, 0x77, 0x68, 0x79, 0x2e,
 	0x79, 0x43, 0x6d, 0x64, 0x62, 0x2e, 0x68, 0x6f, 0x73, 0x74, 0x1a, 0x1e, 0x61, 0x70, 0x70, 0x2f,
 	0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x2f, 0x70, 0x62, 0x2f, 0x72, 0x65, 0x73, 0x6f,
-	0x75, 0x72, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xb3, 0x01, 0x0a, 0x04, 0x48,
+	0x75, 0x72, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x2e, 0x67, 0x69, 0x74, 0x68,
+	0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x69, 0x6e, 0x66, 0x72, 0x61, 0x62, 0x6f, 0x61, 0x72,
+	0x64, 0x2f, 0x6d, 0x63, 0x75, 0x62, 0x65, 0x2f, 0x70, 0x62, 0x2f, 0x70, 0x61, 0x67, 0x65, 0x2f,
+	0x70, 0x61, 0x67, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xb3, 0x01, 0x0a, 0x04, 0x48,
 	0x6f, 0x73, 0x74, 0x12, 0x2e, 0x0a, 0x04, 0x62, 0x61, 0x73, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
 	0x0b, 0x32, 0x1a, 0x2e, 0x61, 0x68, 0x77, 0x68, 0x79, 0x2e, 0x79, 0x43, 0x6d, 0x64, 0x62, 0x2e,
 	0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x2e, 0x42, 0x61, 0x73, 0x65, 0x52, 0x04, 0x62,
@@ -814,17 +755,11 @@ var file_app_host_pb_host_proto_rawDesc = []byte{
 	0x74, 0x61, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x74, 0x6f, 0x74, 0x61, 0x6c,
 	0x12, 0x2c, 0x0a, 0x05, 0x69, 0x74, 0x65, 0x6d, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32,
 	0x16, 0x2e, 0x61, 0x68, 0x77, 0x68, 0x79, 0x2e, 0x79, 0x43, 0x6d, 0x64, 0x62, 0x2e, 0x68, 0x6f,
-	0x73, 0x74, 0x2e, 0x48, 0x6f, 0x73, 0x74, 0x52, 0x05, 0x69, 0x74, 0x65, 0x6d, 0x73, 0x22, 0x63,
-	0x0a, 0x0b, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1b, 0x0a,
-	0x09, 0x70, 0x61, 0x67, 0x65, 0x5f, 0x73, 0x69, 0x7a, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04,
-	0x52, 0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x12, 0x1f, 0x0a, 0x0b, 0x70, 0x61,
-	0x67, 0x65, 0x5f, 0x6e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x04, 0x52,
-	0x0a, 0x70, 0x61, 0x67, 0x65, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x12, 0x16, 0x0a, 0x06, 0x6f,
-	0x66, 0x66, 0x73, 0x65, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x6f, 0x66, 0x66,
-	0x73, 0x65, 0x74, 0x22, 0x61, 0x0a, 0x10, 0x51, 0x75, 0x65, 0x72, 0x79, 0x48, 0x6f, 0x73, 0x74,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x31, 0x0a, 0x04, 0x70, 0x61, 0x67, 0x65, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x61, 0x68, 0x77, 0x68, 0x79, 0x2e, 0x79, 0x43,
-	0x6d, 0x64, 0x62, 0x2e, 0x68, 0x6f, 0x73, 0x74, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71,
+	0x73, 0x74, 0x2e, 0x48, 0x6f, 0x73, 0x74, 0x52, 0x05, 0x69, 0x74, 0x65, 0x6d, 0x73, 0x22, 0x66,
+	0x0a, 0x10, 0x51, 0x75, 0x65, 0x72, 0x79, 0x48, 0x6f, 0x73, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x12, 0x36, 0x0a, 0x04, 0x70, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
+	0x32, 0x22, 0x2e, 0x69, 0x6e, 0x66, 0x72, 0x61, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x2e, 0x6d, 0x63,
+	0x75, 0x62, 0x65, 0x2e, 0x70, 0x61, 0x67, 0x65, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71,
 	0x75, 0x65, 0x73, 0x74, 0x52, 0x04, 0x70, 0x61, 0x67, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x6b, 0x65,
 	0x79, 0x77, 0x6f, 0x72, 0x64, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6b, 0x65,
 	0x79, 0x77, 0x6f, 0x72, 0x64, 0x73, 0x22, 0x6a, 0x0a, 0x13, 0x44, 0x65, 0x73, 0x63, 0x72, 0x69,
@@ -904,40 +839,40 @@ func file_app_host_pb_host_proto_rawDescGZIP() []byte {
 }
 
 var file_app_host_pb_host_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_app_host_pb_host_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_app_host_pb_host_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_app_host_pb_host_proto_goTypes = []interface{}{
 	(DescribeBy)(0),              // 0: ahwhy.yCmdb.host.DescribeBy
 	(UpdateMode)(0),              // 1: ahwhy.yCmdb.host.UpdateMode
 	(*Host)(nil),                 // 2: ahwhy.yCmdb.host.Host
 	(*Describe)(nil),             // 3: ahwhy.yCmdb.host.Describe
 	(*HostSet)(nil),              // 4: ahwhy.yCmdb.host.HostSet
-	(*PageRequest)(nil),          // 5: ahwhy.yCmdb.host.PageRequest
-	(*QueryHostRequest)(nil),     // 6: ahwhy.yCmdb.host.QueryHostRequest
-	(*DescribeHostRequest)(nil),  // 7: ahwhy.yCmdb.host.DescribeHostRequest
-	(*UpdateHostRequest)(nil),    // 8: ahwhy.yCmdb.host.UpdateHostRequest
-	(*UpdateHostData)(nil),       // 9: ahwhy.yCmdb.host.UpdateHostData
-	(*DeleteHostRequest)(nil),    // 10: ahwhy.yCmdb.host.DeleteHostRequest
-	nil,                          // 11: ahwhy.yCmdb.host.Describe.ExtraEntry
-	(*resource.Base)(nil),        // 12: ahwhy.yCmdb.resource.Base
-	(*resource.Information)(nil), // 13: ahwhy.yCmdb.resource.Information
+	(*QueryHostRequest)(nil),     // 5: ahwhy.yCmdb.host.QueryHostRequest
+	(*DescribeHostRequest)(nil),  // 6: ahwhy.yCmdb.host.DescribeHostRequest
+	(*UpdateHostRequest)(nil),    // 7: ahwhy.yCmdb.host.UpdateHostRequest
+	(*UpdateHostData)(nil),       // 8: ahwhy.yCmdb.host.UpdateHostData
+	(*DeleteHostRequest)(nil),    // 9: ahwhy.yCmdb.host.DeleteHostRequest
+	nil,                          // 10: ahwhy.yCmdb.host.Describe.ExtraEntry
+	(*resource.Base)(nil),        // 11: ahwhy.yCmdb.resource.Base
+	(*resource.Information)(nil), // 12: ahwhy.yCmdb.resource.Information
+	(*page.PageRequest)(nil),     // 13: infraboard.mcube.page.PageRequest
 }
 var file_app_host_pb_host_proto_depIdxs = []int32{
-	12, // 0: ahwhy.yCmdb.host.Host.base:type_name -> ahwhy.yCmdb.resource.Base
-	13, // 1: ahwhy.yCmdb.host.Host.information:type_name -> ahwhy.yCmdb.resource.Information
+	11, // 0: ahwhy.yCmdb.host.Host.base:type_name -> ahwhy.yCmdb.resource.Base
+	12, // 1: ahwhy.yCmdb.host.Host.information:type_name -> ahwhy.yCmdb.resource.Information
 	3,  // 2: ahwhy.yCmdb.host.Host.describe:type_name -> ahwhy.yCmdb.host.Describe
-	11, // 3: ahwhy.yCmdb.host.Describe.extra:type_name -> ahwhy.yCmdb.host.Describe.ExtraEntry
+	10, // 3: ahwhy.yCmdb.host.Describe.extra:type_name -> ahwhy.yCmdb.host.Describe.ExtraEntry
 	2,  // 4: ahwhy.yCmdb.host.HostSet.items:type_name -> ahwhy.yCmdb.host.Host
-	5,  // 5: ahwhy.yCmdb.host.QueryHostRequest.page:type_name -> ahwhy.yCmdb.host.PageRequest
+	13, // 5: ahwhy.yCmdb.host.QueryHostRequest.page:type_name -> infraboard.mcube.page.PageRequest
 	0,  // 6: ahwhy.yCmdb.host.DescribeHostRequest.describe_by:type_name -> ahwhy.yCmdb.host.DescribeBy
 	1,  // 7: ahwhy.yCmdb.host.UpdateHostRequest.update_mode:type_name -> ahwhy.yCmdb.host.UpdateMode
-	9,  // 8: ahwhy.yCmdb.host.UpdateHostRequest.update_host_data:type_name -> ahwhy.yCmdb.host.UpdateHostData
-	13, // 9: ahwhy.yCmdb.host.UpdateHostData.information:type_name -> ahwhy.yCmdb.resource.Information
+	8,  // 8: ahwhy.yCmdb.host.UpdateHostRequest.update_host_data:type_name -> ahwhy.yCmdb.host.UpdateHostData
+	12, // 9: ahwhy.yCmdb.host.UpdateHostData.information:type_name -> ahwhy.yCmdb.resource.Information
 	3,  // 10: ahwhy.yCmdb.host.UpdateHostData.describe:type_name -> ahwhy.yCmdb.host.Describe
 	2,  // 11: ahwhy.yCmdb.host.Service.SaveHost:input_type -> ahwhy.yCmdb.host.Host
-	6,  // 12: ahwhy.yCmdb.host.Service.QueryHost:input_type -> ahwhy.yCmdb.host.QueryHostRequest
-	7,  // 13: ahwhy.yCmdb.host.Service.DescribeHost:input_type -> ahwhy.yCmdb.host.DescribeHostRequest
-	8,  // 14: ahwhy.yCmdb.host.Service.UpdateHost:input_type -> ahwhy.yCmdb.host.UpdateHostRequest
-	10, // 15: ahwhy.yCmdb.host.Service.DeleteHost:input_type -> ahwhy.yCmdb.host.DeleteHostRequest
+	5,  // 12: ahwhy.yCmdb.host.Service.QueryHost:input_type -> ahwhy.yCmdb.host.QueryHostRequest
+	6,  // 13: ahwhy.yCmdb.host.Service.DescribeHost:input_type -> ahwhy.yCmdb.host.DescribeHostRequest
+	7,  // 14: ahwhy.yCmdb.host.Service.UpdateHost:input_type -> ahwhy.yCmdb.host.UpdateHostRequest
+	9,  // 15: ahwhy.yCmdb.host.Service.DeleteHost:input_type -> ahwhy.yCmdb.host.DeleteHostRequest
 	2,  // 16: ahwhy.yCmdb.host.Service.SaveHost:output_type -> ahwhy.yCmdb.host.Host
 	4,  // 17: ahwhy.yCmdb.host.Service.QueryHost:output_type -> ahwhy.yCmdb.host.HostSet
 	2,  // 18: ahwhy.yCmdb.host.Service.DescribeHost:output_type -> ahwhy.yCmdb.host.Host
@@ -993,18 +928,6 @@ func file_app_host_pb_host_proto_init() {
 			}
 		}
 		file_app_host_pb_host_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*PageRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_app_host_pb_host_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*QueryHostRequest); i {
 			case 0:
 				return &v.state
@@ -1016,7 +939,7 @@ func file_app_host_pb_host_proto_init() {
 				return nil
 			}
 		}
-		file_app_host_pb_host_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+		file_app_host_pb_host_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DescribeHostRequest); i {
 			case 0:
 				return &v.state
@@ -1028,7 +951,7 @@ func file_app_host_pb_host_proto_init() {
 				return nil
 			}
 		}
-		file_app_host_pb_host_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+		file_app_host_pb_host_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateHostRequest); i {
 			case 0:
 				return &v.state
@@ -1040,7 +963,7 @@ func file_app_host_pb_host_proto_init() {
 				return nil
 			}
 		}
-		file_app_host_pb_host_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+		file_app_host_pb_host_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateHostData); i {
 			case 0:
 				return &v.state
@@ -1052,7 +975,7 @@ func file_app_host_pb_host_proto_init() {
 				return nil
 			}
 		}
-		file_app_host_pb_host_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+		file_app_host_pb_host_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteHostRequest); i {
 			case 0:
 				return &v.state
@@ -1071,7 +994,7 @@ func file_app_host_pb_host_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_app_host_pb_host_proto_rawDesc,
 			NumEnums:      2,
-			NumMessages:   10,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

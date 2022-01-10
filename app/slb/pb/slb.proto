@@ -4,6 +4,7 @@ package ahwhy.yCmdb.slb;
 option go_package="github.com/ahwhy/yCmdb/app/slb";
 
 import "app/resource/pb/resource.proto";
+import "github.com/infraboard/mcube/pb/page/page.proto";
 
 service Service {
     rpc SaveSLB(SLB) returns(SLB) {}
@@ -40,14 +41,8 @@ message SLBSet {
     repeated SLB items = 2;
 }
 
-message PageRequest {
-    uint64 page_size = 1;
-    uint64 page_number = 2;
-    int64 offset = 3;
-}
-
 message QuerySLBRequest {
     // 分页参数
     // @gotags: json:"page"
-    PageRequest page = 1;
+    infraboard.mcube.page.PageRequest page = 1;
 }

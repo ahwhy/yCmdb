@@ -4,6 +4,7 @@ package ahwhy.yCmdb.disk;
 option go_package="github.com/ahwhy/yCmdb/app/disk";
 
 import "app/resource/pb/resource.proto";
+import "github.com/infraboard/mcube/pb/page/page.proto";
 
 service Service {
     rpc SaveDisk(Disk) returns(Disk) {}
@@ -58,14 +59,8 @@ message DiskSet {
     repeated Disk items = 2;
 }
 
-message PageRequest {
-    uint64 page_size = 1;
-    uint64 page_number = 2;
-    int64 offset = 3;
-}
-
 message QueryDiskRequest {
     // 分页参数
     // @gotags: json:"page"
-    PageRequest page = 1;
+    infraboard.mcube.page.PageRequest page = 1;
 }

@@ -4,6 +4,7 @@ package ahwhy.yCmdb.bill;
 option go_package="github.com/ahwhy/yCmdb/app/bill";
 
 import "app/resource/pb/resource.proto";
+import "github.com/infraboard/mcube/pb/page/page.proto";
 
 service Service {
     rpc SaveBill(Bill) returns(Bill) {}
@@ -104,16 +105,10 @@ message BillSet {
     repeated Bill items = 2;
 }
 
-message PageRequest {
-    uint64 page_size = 1;
-    uint64 page_number = 2;
-    int64 offset = 3;
-}
-
 message QueryBillRequest {
     // 分页
     // @gotags: json:"page"
-    PageRequest page = 1;
+    infraboard.mcube.page.PageRequest page = 1;
     // 厂商
     // @gotags: json:"vendor"
     ahwhy.yCmdb.resource.Vendor vendor = 2;
