@@ -1,6 +1,9 @@
 package resource
 
 import (
+	"crypto/sha1"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -70,6 +73,17 @@ func (i *Information) LoadPublicIPString(s string) {
 	if s != "" {
 		i.PublicIp = strings.Split(s, ",")
 	}
+}
+
+func (i *Information) Hash() string {
+	hash := sha1.New()
+	b, err := json.Marshal(i)
+	if err != nil {
+		return ""
+	}
+	hash.Write(b)
+	
+	return fmt.Sprintf("%x", hash.Sum(nil))
 }
 
 func NewResourceSet() *ResourceSet {

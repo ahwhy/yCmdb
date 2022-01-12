@@ -59,6 +59,18 @@ func (h *handler) QueryHost(w http.ResponseWriter, r *http.Request) {
 	response.Success(w, set)
 }
 
+func (h *handler) DescribeHost(w http.ResponseWriter, r *http.Request) {
+	ctx := context.GetContext(r)
+	req := host.NewDescribeHostRequestWithID(ctx.PS.ByName("id"))
+	set, err := h.service.DescribeHost(r.Context(), req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, set)
+}
+
 func (h *handler) PatchHost(w http.ResponseWriter, r *http.Request) {
 	ctx := context.GetContext(r)
 	req := host.NewUpdateHostRequest(ctx.PS.ByName("id"))
@@ -94,18 +106,6 @@ func (h *handler) PutHost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, ins)
-}
-
-func (h *handler) DescribeHost(w http.ResponseWriter, r *http.Request) {
-	ctx := context.GetContext(r)
-	req := host.NewDescribeHostRequestWithID(ctx.PS.ByName("id"))
-	set, err := h.service.DescribeHost(r.Context(), req)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	response.Success(w, set)
 }
 
 func (h *handler) DeleteHost(w http.ResponseWriter, r *http.Request) {

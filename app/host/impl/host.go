@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/ahwhy/yCmdb/app/host"
+	"github.com/ahwhy/yCmdb/app/resource/impl"
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/sqlbuilder"
@@ -15,7 +16,6 @@ import (
 
 func (s *service) SaveHost(ctx context.Context, h *host.Host) (*host.Host, error) {
 	h.Base.Id = xid.New().String()
-	h.Describe.ResourceId = h.Base.Id
 	h.Base.SyncAt = ftime.Now().Timestamp()
 
 	if err := s.save(ctx, h); err != nil {
@@ -38,7 +38,7 @@ func (s *service) QueryHost(ctx context.Context, req *host.QueryHostRequest) (*h
 		)
 	}
 
-	querySQL, args := query.Order("sync_at").Desc().Limit(req.OffSet(), uint(req.PageSize)).BuildQuery()
+	querySQL, args := query.Order("sync_at").Desc().Limit(req.OffSet(), uint(req.Page.PageSize)).BuildQuery()
 	s.log.Debugf("sql: %s", querySQL)
 
 	queryStmt, err := s.db.Prepare(querySQL)
@@ -66,7 +66,8 @@ func (s *service) QueryHost(ctx context.Context, req *host.QueryHostRequest) (*h
 			&base.Id, &base.Vendor, &base.Region, &base.Zone, &base.CreateAt, &info.ExpireAt,
 			&info.Category, &info.Type, &base.InstanceId, &info.Name, &info.Description,
 			&info.Status, &info.UpdateAt, &base.SyncAt, &info.SyncAccount,
-			&publicIPList, &privateIPList, &info.PayType, &base.DescribeHash, &base.ResourceHash, &desc.ResourceId,
+			&publicIPList, &privateIPList, &info.PayType, &base.DescribeHash, &base.ResourceHash,
+			&base.SecretId, &base.Id,
 			&desc.Cpu, &desc.Memory, &desc.GpuAmount, &desc.GpuSpec, &desc.OsType, &desc.OsName,
 			&desc.SerialNumber, &desc.ImageId, &desc.InternetMaxBandwidthOut, &desc.InternetMaxBandwidthIn,
 			&keyPairNameList, &securityGroupsList,
@@ -99,7 +100,8 @@ func (s *service) QueryHost(ctx context.Context, req *host.QueryHostRequest) (*h
 
 func (s *service) DescribeHost(ctx context.Context, req *host.DescribeHostRequest) (*host.Host, error) {
 	query := sqlbuilder.NewQuery(queryHostSQL)
-	querySQL, args := query.Where("id = ?", req.Id).BuildQuery()
+	cond, val := req.Where()
+	querySQL, args := query.Where(cond, val).BuildQuery()
 	s.log.Debugf("sql: %s", querySQL)
 
 	queryStmt, err := s.db.Prepare(querySQL)
@@ -119,7 +121,8 @@ func (s *service) DescribeHost(ctx context.Context, req *host.DescribeHostReques
 		&base.Id, &base.Vendor, &base.Region, &base.Zone, &base.CreateAt, &info.ExpireAt,
 		&info.Category, &info.Type, &base.InstanceId, &info.Name, &info.Description,
 		&info.Status, &info.UpdateAt, &base.SyncAt, &info.SyncAccount,
-		&publicIPList, &privateIPList, &info.PayType, &base.DescribeHash, &base.ResourceHash, &desc.ResourceId,
+		&publicIPList, &privateIPList, &info.PayType, &base.DescribeHash, &base.ResourceHash,
+		&base.SecretId, &base.Id,
 		&desc.Cpu, &desc.Memory, &desc.GpuAmount, &desc.GpuSpec, &desc.OsType, &desc.OsName,
 		&desc.SerialNumber, &desc.ImageId, &desc.InternetMaxBandwidthOut, &desc.InternetMaxBandwidthIn,
 		&keyPairNameList, &securityGroupsList,
@@ -178,7 +181,7 @@ func (s *service) UpdateHost(ctx context.Context, req *host.UpdateHostRequest) (
 
 	if oldRH != ins.Base.ResourceHash {
 		// 避免SQL注入, 请使用Prepare
-		stmt, err = tx.Prepare(updateResourceSQL)
+		stmt, err = tx.Prepare(impl.SQLUpdateResource)
 		if err != nil {
 			return nil, err
 		}
@@ -190,7 +193,7 @@ func (s *service) UpdateHost(ctx context.Context, req *host.UpdateHostRequest) (
 			info.ExpireAt, info.Category, info.Type, info.Name, info.Description,
 			info.Status, info.UpdateAt, base.SyncAt, info.SyncAccount,
 			info.PublicIp, info.PrivateIp, info.PayType, base.DescribeHash, base.ResourceHash,
-			ins.Describe.ResourceId,
+			ins.Base.SecretId, ins.Base.Id,
 		)
 		if err != nil {
 			return nil, err
@@ -227,6 +230,36 @@ func (s *service) UpdateHost(ctx context.Context, req *host.UpdateHostRequest) (
 	}
 
 	return ins, nil
+}
+
+func (s *service) SaveOrUpdateHost(ctx context.Context, ins *host.Host) (*host.Host, error) {
+	exist, err := s.DescribeHost(ctx, host.NewDescribeHostRequestInstanceID(ins.Base.InstanceId))
+	if err != nil {
+		// 如果不是Not Found则直接返回
+		if !exception.IsNotFoundError(err) {
+			return nil, err
+		}
+	}
+
+	// 如果检查ins已经存在则更新ins
+	if exist != nil {
+		updateReq := host.NewUpdateHostRequest(exist.Base.Id)
+		updateReq.UpdateHostData.Information = ins.Information
+		updateReq.UpdateHostData.Describe = ins.Describe
+		ins, err := s.UpdateHost(ctx, updateReq)
+		if err != nil {
+			return nil, err
+		}
+		return ins, nil
+	}
+
+	// 如果没有则直接保存
+	resp, err := s.SaveHost(ctx, ins)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 func (s *service) DeleteHost(ctx context.Context, req *host.DeleteHostRequest) (*host.Host, error) {

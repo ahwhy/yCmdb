@@ -123,7 +123,3 @@ message SearchRequest {
     Type type = 4;
     string keywords = 5;
 }
-
-// protoc -I=. --go_out=./app/resource --go_opt=module="github.com/ahwhy/yCmdb/app/resource" \
-// --go-grpc_out=./app/resource --go-grpc_opt=module="github.com/ahwhy/yCmdb/app/resource" \
-// app/resource/pb/resource.proto

@@ -6,33 +6,7 @@ import (
 	"fmt"
 
 	"github.com/ahwhy/yCmdb/app/host"
-)
-
-const (
-	insertResourceSQL = `INSERT INTO resource (
-		id,vendor,region,zone,create_at,expire_at,category,type,instance_id,
-		name,description,status,update_at,sync_at,sync_accout,public_ip,
-		private_ip,pay_type,describe_hash,resource_hash
-	) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`
-	insertHostSQL = `INSERT INTO host (
-		resource_id,cpu,memory,gpu_amount,gpu_spec,os_type,os_name,
-		serial_number,image_id,internet_max_bandwidth_out,
-		internet_max_bandwidth_in,key_pair_name,security_groups
-	) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);`
-	updateResourceSQL = `UPDATE resource SET 
-		expire_at=?,category=?,type=?,name=?,description=?,
-		status=?,update_at=?,sync_at=?,sync_accout=?,
-		public_ip=?,private_ip=?,pay_type=?,describe_hash=?,resource_hash=?
-	WHERE id = ?`
-	updateHostSQL = `UPDATE host SET 
-		cpu=?,memory=?,gpu_amount=?,gpu_spec=?,os_type=?,os_name=?,
-		image_id=?,internet_max_bandwidth_out=?,
-		internet_max_bandwidth_in=?,key_pair_name=?,security_groups=?
-	WHERE resource_id = ?`
-
-	queryHostSQL      = `SELECT * FROM resource as r LEFT JOIN host h ON r.id=h.resource_id`
-	deleteHostSQL     = `DELETE FROM host WHERE resource_id = ?;`
-	deleteResourceSQL = `DELETE FROM resource WHERE id = ?;`
+	"github.com/ahwhy/yCmdb/app/resource/impl"
 )
 
 func (s *service) save(ctx context.Context, h *host.Host) error {
@@ -61,7 +35,7 @@ func (s *service) save(ctx context.Context, h *host.Host) error {
 	}()
 
 	// 避免SQL注入, 使用Prepare
-	stmt, err = tx.Prepare(insertResourceSQL)
+	stmt, err = tx.Prepare(impl.SQLInsertResource)
 	if err != nil {
 		return err
 	}
@@ -77,7 +51,7 @@ func (s *service) save(ctx context.Context, h *host.Host) error {
 	_, err = stmt.Exec(
 		base.Id, base.Vendor, base.Region, base.Zone, base.CreateAt, info.ExpireAt, info.Category, info.Type, base.InstanceId,
 		info.Name, info.Description, info.Status, info.UpdateAt, base.SyncAt, info.SyncAccount, info.PublicIPToString(),
-		info.PrivateIPToString(), info.PayType, base.DescribeHash, base.ResourceHash,
+		info.PrivateIPToString(), info.PayType, base.DescribeHash, base.ResourceHash, base.SecretId,
 	)
 	if err != nil {
 		return fmt.Errorf("save host resource info error, %s", err)
@@ -92,7 +66,7 @@ func (s *service) save(ctx context.Context, h *host.Host) error {
 
 	desc := h.Describe
 	_, err = stmt.Exec(
-		desc.ResourceId, desc.Cpu, desc.Memory, desc.GpuAmount, desc.GpuSpec, desc.OsType, desc.OsName,
+		base.Id, desc.Cpu, desc.Memory, desc.GpuAmount, desc.GpuSpec, desc.OsType, desc.OsName,
 		desc.SerialNumber, desc.ImageId, desc.InternetMaxBandwidthOut,
 		desc.InternetMaxBandwidthIn, desc.KeyPairNameToString(), desc.SecurityGroupsToString(),
 	)
@@ -132,7 +106,7 @@ func (s *service) delete(ctx context.Context, req *host.DeleteHostRequest) error
 		return err
 	}
 
-	stmt, err = s.db.Prepare(deleteResourceSQL)
+	stmt, err = s.db.Prepare(impl.SQLDeleteResource)
 	if err != nil {
 		return err
 	}

@@ -112,6 +112,19 @@ func (s *Secret) ShortDesc() string {
 	return fmt.Sprintf("%s[%s]", s.Description, s.ApiKey)
 }
 
+func (s *Secret) DensenseKey() string {
+	if s.ApiKey == "" {
+		return ""
+	}
+	
+	total := len(s.ApiKey)
+	if total > 8 {
+		return fmt.Sprintf("%s****%s", s.ApiKey[:4], s.ApiKey[total-4:])
+	}
+
+	return s.ApiKey
+}
+
 func (s *Secret) AllowRegionString() string {
 	return strings.Join(s.AllowRegions, ",")
 }
