@@ -137,7 +137,3 @@ message QueryTaskRecordRequest {
     // @gotags: json:"task_id" validate:"required"
     string task_id = 1;
 }
-
-// protoc -I=. --go_out=./app/task --go_opt=module="github.com/ahwhy/yCmdb/app/task" \
-// --go-grpc_out=./app/task --go-grpc_opt=module="github.com/ahwhy/yCmdb/app/task" \
-// app/task/pb/task.proto

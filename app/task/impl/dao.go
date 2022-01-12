@@ -7,18 +7,6 @@ import (
 	"github.com/ahwhy/yCmdb/app/task"
 )
 
-const (
-	insertTaskSQL = `INSERT INTO task (
-		id,region,resource_type,secret_id,secret_desc,timeout,status,
-		message,start_at,end_at,total_succeed,total_failed
-	) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);`
-
-	updateTaskSQL = `UPDATE task SET status=?,message=?,end_at=?,
-	total_succeed=?,total_failed=? WHERE id = ?`
-
-	queryTaskSQL = `SELECT * FROM task`
-)
-
 func (s *service) insert(ctx context.Context, t *task.Task) error {
 	stmt, err := s.db.Prepare(insertTaskSQL)
 	if err != nil {
@@ -53,3 +41,22 @@ func (s *service) update(ctx context.Context, t *task.Task) error {
 
 	return nil
 }
+
+func (s *service) insertTaskDetail(ctx context.Context, detail *task.Record) error {
+	stmt, err := s.db.Prepare(updateTaskRecordSQL)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(
+		detail.InstanceId, detail.Name, detail.IsSuccess, detail.Message,
+		detail.TaskId, detail.CreateAt,
+	)
+	if err != nil {
+		return fmt.Errorf("insert or update task %s detail info error, %s", detail.TaskId, err)
+	}
+
+	return nil
+}
+

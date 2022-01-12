@@ -8,7 +8,6 @@ import (
 	"github.com/ahwhy/yCmdb/app/resource"
 	"github.com/ahwhy/yCmdb/app/secret"
 	"github.com/ahwhy/yCmdb/app/task"
-	"github.com/ahwhy/yCmdb/conf"
 	aliConn "github.com/ahwhy/yCmdb/provider/aliyun/connectivity"
 	ecsOp "github.com/ahwhy/yCmdb/provider/aliyun/ecs"
 	hwConn "github.com/ahwhy/yCmdb/provider/huawei/connectivity"
@@ -18,8 +17,6 @@ import (
 	vsConn "github.com/ahwhy/yCmdb/provider/vsphere/connectivity"
 	vmOp "github.com/ahwhy/yCmdb/provider/vsphere/vm"
 )
-
-type SyncTaskCallback func(*task.Task)
 
 func (s *service) syncHost(ctx context.Context, secret *secret.Secret, t *task.Task, cb SyncTaskCallback) {
 	var (
@@ -33,16 +30,9 @@ func (s *service) syncHost(ctx context.Context, secret *secret.Secret, t *task.T
 		cb(t)
 	}()
 
-	// 解密secret
-	err := secret.DecryptAPISecret(conf.C().App.EncryptKey)
-	if err != nil {
-		s.log.Warnf("decrypt api secret error, %s", err)
-	}
-
-	hs := host.NewHostSet()
 	switch secret.Vendor {
 	case resource.Vendor_ALIYUN:
-		s.log.Debugf("sync aliyun host ...")
+		s.log.Debugf("sync aliyun ecs ...")
 		client := aliConn.NewAliCloudClient(secret.ApiKey, secret.ApiSecret, t.Region)
 		ec, err := client.EcsClient()
 		if err != nil {
@@ -54,12 +44,12 @@ func (s *service) syncHost(ctx context.Context, secret *secret.Secret, t *task.T
 		req.Rate = int(secret.RequestRate)
 		pager = operater.PageQuery(req)
 	case resource.Vendor_TENCENT:
-		s.log.Debugf("sync txyun host ...")
+		s.log.Debugf("sync txyun cvm ...")
 		client := txConn.NewTencentCloudClient(secret.ApiKey, secret.ApiSecret, t.Region)
 		operater := cvmOp.NewCVMOperater(client.CvmClient())
 		pager = operater.PageQuery()
 	case resource.Vendor_HUAWEI:
-		s.log.Debugf("sync hwyun host ...")
+		s.log.Debugf("sync hwyun ecs ...")
 		client := hwConn.NewHuaweiCloudClient(secret.ApiKey, secret.ApiSecret, t.Region)
 		ec, err := client.EcsClient()
 		if err != nil {
@@ -69,7 +59,7 @@ func (s *service) syncHost(ctx context.Context, secret *secret.Secret, t *task.T
 		operater := hwEcsOp.NewEcsOperater(ec)
 		pager = operater.PageQuery()
 	case resource.Vendor_VSPHERE:
-		s.log.Debugf("sync vshpere host ...")
+		s.log.Debugf("sync vshpere vm ...")
 		client := vsConn.NewVsphereClient(secret.Address, secret.ApiKey, secret.ApiSecret)
 		ec, err := client.VimClient()
 		if err != nil {
@@ -81,7 +71,7 @@ func (s *service) syncHost(ctx context.Context, secret *secret.Secret, t *task.T
 		err = operater.Query(func(h *host.Host) {
 			// 补充管理信息
 			h.Base.SecretId = secret.Id
-			// s.SaveOrUpdateHost(ctx, h, t)
+			s.SaveOrUpdateHost(ctx, h, t)
 		})
 		if err != nil {
 			t.Failed(err.Error())
@@ -106,19 +96,29 @@ func (s *service) syncHost(ctx context.Context, secret *secret.Secret, t *task.T
 
 			// 调用host服务保持数据
 			for i := range p.Data.Items {
-				hs.Add(p.Data.Items[i])
+				target := p.Data.Items[i]
+				// 补充管理信息
+				target.Base.SecretId = secret.Id
+				s.SaveOrUpdateHost(ctx, target, t)
 			}
 		}
 	}
+}
 
-	// 调用host服务保持数据
-	for i := range hs.Items {
-		target := hs.Items[i]
-		_, err := s.host.SaveHost(ctx, target)
-		if err != nil {
-			t.AddDetailFailed(target.Information.Name, err.Error())
-		} else {
-			t.AddDetailSucceed(target.Information.Name, "")
-		}
+// Host主机数据入库
+func (s *service) SaveOrUpdateHost(ctx context.Context, ins *host.Host, t *task.Task) {
+	h, err := s.host.SaveOrUpdateHost(ctx, ins)
+	var detail *task.Record
+	if err != nil {
+		s.log.Warnf("save host error, %s", err)
+		detail = task.NewSyncFailedRecord(t.Id, ins.Base.InstanceId, ins.Information.Name, err.Error())
+	} else {
+		s.log.Debugf("save host %s to db", h.ShortDesc())
+		detail = task.NewSyncSucceedRecord(t.Id, ins.Base.InstanceId, ins.Information.Name)
+	}
+
+	t.AddDetail(detail)
+	if err := s.insertTaskDetail(ctx, detail); err != nil {
+		s.log.Errorf("update detail error, %s", err)
 	}
 }

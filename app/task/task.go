@@ -19,9 +19,7 @@ var (
 )
 
 func NewDefaultTask() *Task {
-	return &Task{
-		Details: []*Detail{},
-	}
+	return &Task{}
 }
 
 func NewTaskFromReq(req *CreateTaskRequst) (*Task, error) {
@@ -34,7 +32,6 @@ func NewTaskFromReq(req *CreateTaskRequst) (*Task, error) {
 		Region:       req.Region,
 		ResourceType: req.ResourceType,
 		SecretId:     req.SecretId,
-		Details:      []*Detail{},
 	}, nil
 }
 
@@ -63,22 +60,12 @@ func (s *Task) Failed(message string) {
 	s.Message = message
 }
 
-func (s *Task) AddDetailFailed(name, message string) {
-	s.Details = append(s.Details, &Detail{
-		IsSuccess: false,
-		Name:      name,
-		Message:   message,
-	})
-	s.TotalFailed++
-}
-
-func (s *Task) AddDetailSucceed(name, message string) {
-	s.Details = append(s.Details, &Detail{
-		IsSuccess: true,
-		Name:      name,
-		Message:   message,
-	})
-	s.TotalSucceed++
+func (s *Task) AddDetail(d *Record) {
+	if d.IsSuccess {
+		s.TotalSucceed++
+	} else {
+		s.TotalFailed++
+	}
 }
 
 func NewTaskSet() *TaskSet {
@@ -89,6 +76,41 @@ func NewTaskSet() *TaskSet {
 
 func (r *TaskSet) Add(item *Task) {
 	r.Items = append(r.Items, item)
+}
+
+func NewDefaultTaskRecord() *Record {
+	return &Record{}
+}
+
+func NewRecordSet() *RecordSet {
+	return &RecordSet{
+		Items: []*Record{},
+	}
+}
+
+func (s *RecordSet) Add(item *Record) {
+	s.Items = append(s.Items, item)
+}
+
+func NewSyncSucceedRecord(taskId, instanceId, instanceName string) *Record {
+	return &Record{
+		TaskId:     taskId,
+		IsSuccess:  true,
+		InstanceId: instanceId,
+		Name:       instanceName,
+		CreateAt:   ftime.Now().Timestamp(),
+	}
+}
+
+func NewSyncFailedRecord(taskId, instanceId, instanceName, message string) *Record {
+	return &Record{
+		TaskId:     taskId,
+		IsSuccess:  false,
+		CreateAt:   ftime.Now().Timestamp(),
+		InstanceId: instanceId,
+		Name:       instanceName,
+		Message:    message,
+	}
 }
 
 func NewCreateTaskRequst() *CreateTaskRequst {
@@ -122,6 +144,18 @@ func NewQueryTaskRequestFromHTTP(r *http.Request) *QueryTaskRequest {
 	}
 }
 
+func NewQueryTaskRecordRequest(id string) *QueryTaskRecordRequest {
+	return &QueryTaskRecordRequest{
+		TaskId: id,
+	}
+}
+
 func (req *QueryTaskRequest) OffSet() int64 {
 	return int64(req.PageSize) * int64(req.PageNumber-1)
+}
+
+func NewDescribeTaskRequestWithId(id string) *DescribeTaskRequest {
+	return &DescribeTaskRequest{
+		Id: id,
+	}
 }

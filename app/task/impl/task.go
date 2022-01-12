@@ -7,10 +7,13 @@ import (
 	"github.com/ahwhy/yCmdb/app/resource"
 	"github.com/ahwhy/yCmdb/app/secret"
 	"github.com/ahwhy/yCmdb/app/task"
+	"github.com/ahwhy/yCmdb/conf"
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/sqlbuilder"
 )
+
+type SyncTaskCallback func(*task.Task)
 
 // 通过回调更新任务状态
 func (s *service) SyncTaskCallback(t *task.Task) {
@@ -33,13 +36,19 @@ func (s *service) CreatTask(ctx context.Context, req *task.CreateTaskRequst) (*t
 	t.UpdateSecretDesc(secret.ShortDesc())
 
 	// 如果不是vsphere 需要检查region
-	if !secret.Vendor.Equal(resource.Vendor_VSPHERE) {
+	if !(secret.Vendor.Equal(resource.Vendor_VSPHERE) || req.ResourceType.IsIn(resource.Type_BILL)) {
 		if req.Region == "" {
 			return nil, exception.NewBadRequest("region required")
 		}
 		if !secret.IsAllowRegion(req.Region) {
 			return nil, exception.NewBadRequest("this secret not allow sync region %s", req.Region)
 		}
+	}
+
+	// 解密secret
+	err = secret.DecryptAPISecret(conf.C().App.EncryptKey)
+	if err != nil {
+		s.log.Warnf("decrypt api secret error, %s", err)
 	}
 
 	// 资源同步

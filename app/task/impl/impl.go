@@ -4,7 +4,9 @@ import (
 	"database/sql"
 
 	"github.com/ahwhy/yCmdb/app"
+	"github.com/ahwhy/yCmdb/app/bill"
 	"github.com/ahwhy/yCmdb/app/host"
+	"github.com/ahwhy/yCmdb/app/rds"
 	"github.com/ahwhy/yCmdb/app/secret"
 	"github.com/ahwhy/yCmdb/app/task"
 	"github.com/ahwhy/yCmdb/conf"
@@ -20,11 +22,14 @@ var (
 )
 
 type service struct {
-	db     *sql.DB
-	log    logger.Logger
-	host   host.ServiceServer
-	secret secret.ServiceServer
+	db  *sql.DB
+	log logger.Logger
 	task.UnimplementedServiceServer
+
+	host   host.ServiceServer
+	rds    rds.ServiceServer
+	secret secret.ServiceServer
+	bill   bill.ServiceServer
 }
 
 func (s *service) Config() error {
@@ -36,8 +41,10 @@ func (s *service) Config() error {
 	s.log = zap.L().Named(s.Name())
 	s.db = db
 	s.host = app.GetGrpcApp(host.AppName).(host.ServiceServer)
+	s.rds = app.GetGrpcApp(rds.AppName).(rds.ServiceServer)
 	s.secret = app.GetGrpcApp(secret.AppName).(secret.ServiceServer)
-	
+	s.bill = app.GetGrpcApp(bill.AppName).(bill.ServiceServer)
+
 	return nil
 }
 
