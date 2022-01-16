@@ -34,7 +34,7 @@ func (d *Describe) Hash() string {
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }
 
-func NewSet() *RDSSet {
+func NewRDSSet() *RDSSet {
 	return &RDSSet{
 		Items: []*RDS{},
 	}
@@ -55,7 +55,7 @@ type Pager interface {
 
 func NewPagerResult() *PagerResult {
 	return &PagerResult{
-		Data: NewSet(),
+		Data: NewRDSSet(),
 	}
 }
 

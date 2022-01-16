@@ -1,17 +1,17 @@
-package ecs
+package rds
 
 import (
-	"github.com/ahwhy/yCmdb/app/host"
+	"github.com/ahwhy/yCmdb/app/rds"
 	"github.com/ahwhy/yCmdb/utils"
-
-	"github.com/huaweicloud/huaweicloud-sdk-go-v3/services/ecs/v2/model"
 
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
+
+	"github.com/huaweicloud/huaweicloud-sdk-go-v3/services/rds/v3/model"
 )
 
-func newPager(pageSize int, operater *EcsOperater) *pager {
-	req := &model.ListServersDetailsRequest{}
+func newPager(pageSize int, operater *RdsOperater) *pager {
+	req := &model.ListInstancesRequest{}
 	req.Limit = utils.Int32Ptr(int32(pageSize))
 
 	return &pager{
@@ -27,13 +27,13 @@ type pager struct {
 	size     int
 	number   int
 	total    int64
-	operater *EcsOperater
-	req      *model.ListServersDetailsRequest
+	operater *RdsOperater
+	req      *model.ListInstancesRequest
 	log      logger.Logger
 }
 
-func (p *pager) Next() *host.PagerResult {
-	result := host.NewPagerResult()
+func (p *pager) Next() *rds.PagerResult {
+	result := rds.NewPagerResult()
 
 	resp, err := p.operater.Query(p.nextReq())
 	if err != nil {
@@ -49,11 +49,11 @@ func (p *pager) Next() *host.PagerResult {
 	return result
 }
 
-func (p *pager) nextReq() *model.ListServersDetailsRequest {
+func (p *pager) nextReq() *model.ListInstancesRequest {
 	p.log.Debugf("请求第%d页数据", p.number)
 	// 注意: 华为云的Offse表示的是页码
 	p.req.Offset = utils.Int32Ptr(int32(p.number))
-	
+
 	return p.req
 }
 
