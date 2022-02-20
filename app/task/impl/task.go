@@ -13,6 +13,7 @@ import (
 	"github.com/infraboard/mcube/sqlbuilder"
 )
 
+// 任务回调
 type SyncTaskCallback func(*task.Task)
 
 // 通过回调更新任务状态
@@ -56,6 +57,10 @@ func (s *service) CreatTask(ctx context.Context, req *task.CreateTaskRequst) (*t
 	switch req.ResourceType {
 	case resource.Type_HOST:
 		go s.syncHost(syncCtx, secret, t, s.SyncTaskCallback)
+	case resource.Type_BILL:
+		go s.syncBill(syncCtx, secret, t, s.SyncTaskCallback)
+	case resource.Type_RDS:
+		go s.syncRds(syncCtx, secret, t, s.SyncTaskCallback)
 	}
 
 	// 记录任务
@@ -113,5 +118,71 @@ func (s *service) QueryTask(ctx context.Context, req *task.QueryTaskRequest) (*t
 	if err != nil {
 		return nil, exception.NewInternalServerError(err.Error())
 	}
+
+	return set, nil
+}
+
+func (s *service) DescribeTask(ctx context.Context, req *task.DescribeTaskRequest) (*task.Task, error) {
+	query := sqlbuilder.NewQuery(queryTaskSQL)
+	query.Where("id = ?", req.Id)
+
+	querySQL, args := query.BuildQuery()
+	queryStmt, err := s.db.Prepare(querySQL)
+	if err != nil {
+		return nil, err
+	}
+	defer queryStmt.Close()
+
+	ins := task.NewDefaultTask()
+	err = queryStmt.QueryRow(args...).Scan(
+		&ins.Id, &ins.Region, &ins.ResourceType, &ins.SecretId, &ins.SecretDescription, &ins.Timeout,
+		&ins.Status, &ins.Message, &ins.StartAt, &ins.EndAt, &ins.TotalSucceed, &ins.TotalFailed,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return ins, nil
+}
+
+func (s *service) QueryTaskRecord(ctx context.Context, req *task.QueryTaskRecordRequest) (*task.RecordSet, error) {
+	query := sqlbuilder.NewQuery(queryTaskRecordSQL)
+	query.Where("task_id = ?", req.TaskId)
+
+	querySQL, args := query.BuildQuery()
+	queryStmt, err := s.db.Prepare(querySQL)
+	if err != nil {
+		return nil, err
+	}
+	defer queryStmt.Close()
+
+	set := task.NewRecordSet()
+
+	rows, err := queryStmt.Query(args...)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		rc := task.NewDefaultTaskRecord()
+		rows.Scan(
+			&rc.InstanceId, &rc.Name, &rc.IsSuccess, &rc.Message,
+			&rc.TaskId, &rc.CreateAt,
+		)
+		set.Add(rc)
+	}
+
+	// 获取total SELECT COUNT(*) FROMT t Where ....
+	countSQL, args := query.BuildCount()
+	countStmt, err := s.db.Prepare(countSQL)
+	if err != nil {
+		return nil, exception.NewInternalServerError(err.Error())
+	}
+
+	defer countStmt.Close()
+	err = countStmt.QueryRow(args...).Scan(&set.Total)
+	if err != nil {
+		return nil, exception.NewInternalServerError(err.Error())
+	}
+
 	return set, nil
 }

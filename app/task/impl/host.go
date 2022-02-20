@@ -108,6 +108,7 @@ func (s *service) syncHost(ctx context.Context, secret *secret.Secret, t *task.T
 // Host主机数据入库
 func (s *service) SaveOrUpdateHost(ctx context.Context, ins *host.Host, t *task.Task) {
 	h, err := s.host.SaveOrUpdateHost(ctx, ins)
+	
 	var detail *task.Record
 	if err != nil {
 		s.log.Warnf("save host error, %s", err)

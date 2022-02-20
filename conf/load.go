@@ -27,6 +27,7 @@ func LoadConfigFromToml(filePath string) error {
 
 	// 加载全局配置单例
 	global = cfg
+	
 	return nil
 }
 
@@ -39,5 +40,6 @@ func LoadConfigFromEnv() error {
 
 	// 加载全局配置单例
 	global = cfg
+
 	return nil
 }
