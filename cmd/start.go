@@ -26,8 +26,8 @@ import (
 // startCmd represents the start command
 var serviceCmd = &cobra.Command{
 	Use:   "start",
-	Short: "yCmdb后端API服务",
-	Long:  `yCmdb后端API服务`,
+	Short: "yCmdb 后端API服务",
+	Long:  `yCmdb 后端API服务`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// 初始化全局变量
 		if err := loadGlobalConfig(confType); err != nil {
