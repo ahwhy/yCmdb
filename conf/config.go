@@ -8,7 +8,12 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-	kc "github.com/infraboard/keyauth/client"
+	orm_mysql "gorm.io/driver/mysql"
+	"gorm.io/gorm"
+
+	"github.com/infraboard/mcenter/client/rpc"
+	"github.com/infraboard/mcube/cache/memory"
+	"github.com/infraboard/mcube/cache/redis"
 	"github.com/infraboard/mcube/logger/zap"
 )
 
@@ -22,15 +27,30 @@ func newConfig() *Config {
 		App:     newDefaultAPP(),
 		Log:     newDefaultLog(),
 		MySQL:   newDefaultMySQL(),
-		Keyauth: newDefaultKeyauth(),
+		Cache:   newDefaultCache(),
+		Mcenter: rpc.NewDefaultConfig(),
 	}
 }
 
 type Config struct {
-	App     *app     `toml:"app"`
-	Log     *log     `toml:"log"`
-	MySQL   *mysql   `toml:"mysql"`
-	Keyauth *keyauth `toml:"keyauth"`
+	App     *app        `toml:"app"`
+	Log     *log        `toml:"log"`
+	MySQL   *mysql      `toml:"mysql"`
+	Mcenter *rpc.Config `toml:"mcenter"`
+	Cache   *_cache     `toml:"cache"`
+}
+
+// InitGloabl 注入全局变量
+func (c *Config) InitGloabl() error {
+	// 加载全局配置单例
+	global = c
+
+	// 提前加载好 mcenter客户端
+	err := rpc.LoadClientFromConfig(c.Mcenter)
+	if err != nil {
+		panic("load mcenter client from config error: " + err.Error())
+	}
+	return nil
 }
 
 // app 配置项
@@ -66,6 +86,7 @@ func (a *app) GRPCAddr() string {
 // newDefaultLog todo
 func newDefaultLog() *log {
 	return &log{
+		Dir:    "logs",
 		Level:  "debug",
 		Format: "text",
 		To:     "stdout",
@@ -73,10 +94,10 @@ func newDefaultLog() *log {
 }
 
 type log struct {
-	Level   string    `toml:"level" env:"LOG_LEVEL"`
-	PathDir string    `toml:"path_dir" env:"LOG_PATH_DIR"`
-	Format  LogFormat `toml:"format" env:"LOG_FORMAT"`
-	To      LogTo     `toml:"to" env:"LOG_TO"`
+	Level  string    `toml:"level" env:"LOG_LEVEL"`
+	Dir    string    `toml:"dir" env:"LOG_PATH_DIR"`
+	Format LogFormat `toml:"format" env:"LOG_FORMAT"`
+	To     LogTo     `toml:"to" env:"LOG_TO"`
 }
 
 // mysql 配置项
@@ -111,7 +132,25 @@ var (
 	db *sql.DB
 )
 
-// GetDB todo
+func (m *mysql) ORM() (*gorm.DB, error) {
+	conn, err := m.GetDB()
+	if err != nil {
+		return nil, err
+	}
+
+	return gorm.Open(orm_mysql.New(orm_mysql.Config{
+		Conn: conn,
+	}), &gorm.Config{
+		// 执行任何 SQL 时都创建并缓存预编译语句，可以提高后续的调用速度
+		PrepareStmt: true,
+		// 对于写操作（创建、更新、删除），为了确保数据的完整性，GORM 会将它们封装在事务内运行。
+		// 但这会降低性能，如果没有这方面的要求，您可以在初始化时禁用它，这将获得大约 30%+ 性能提升
+		SkipDefaultTransaction: true,
+		// 要有效地插入大量记录，请将一个 slice 传递给 Create 方法
+		CreateBatchSize: 200,
+	})
+}
+
 func (m *mysql) GetDB() (*sql.DB, error) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
@@ -130,6 +169,7 @@ func (m *mysql) GetDB() (*sql.DB, error) {
 
 // getDBConn use to get db connection pool
 func (m *mysql) getDBConn() (*sql.DB, error) {
+	zap.L().Named("config").Infof("connect to mysql: %s:%s", m.Host, m.Port)
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&multiStatements=true", m.UserName, m.Password, m.Host, m.Port, m.Database)
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -150,33 +190,47 @@ func (m *mysql) getDBConn() (*sql.DB, error) {
 	return db, nil
 }
 
-func newDefaultKeyauth() *keyauth {
-	return &keyauth{}
-}
-
-type keyauth struct {
-	Host         string `toml:"host" env:"KEYAUTH_HOST"`
-	Port         string `toml:"port" env:"KEYAUTH_PORT"`
-	ClientID     string `toml:"client_id" env:"KEYAUTH_CLIENT_ID"`
-	ClientSecret string `toml:"client_secret" env:"KEYAUTH_CLIENT_SECRET"`
-}
-
-func (a *keyauth) Addr() string {
-	return a.Host + ":" + a.Port
-}
-
-func (a *keyauth) Client() (*kc.Client, error) {
-	if kc.C() == nil {
-		conf := kc.NewDefaultConfig()
-		conf.SetAddress(a.Addr())
-		zap.L().Infof("connect to keyauth: %s", a.Addr())
-		conf.SetClientCredentials(a.ClientID, a.ClientSecret)
-		client, err := kc.NewClient(conf)
-		if err != nil {
-			return nil, err
-		}
-		kc.SetGlobal(client)
+func newDefaultCache() *_cache {
+	return &_cache{
+		Type:   "memory",
+		Memory: memory.NewDefaultConfig(),
+		Redis:  redis.NewDefaultConfig(),
 	}
-
-	return kc.C(), nil
 }
+
+type _cache struct {
+	Type   string         `toml:"type" json:"type" yaml:"type" env:"MCENTER_CACHE_TYPE"`
+	Memory *memory.Config `toml:"memory" json:"memory" yaml:"memory"`
+	Redis  *redis.Config  `toml:"redis" json:"redis" yaml:"redis"`
+}
+
+// func newDefaultKeyauth() *keyauth {
+// 	return &keyauth{}
+// }
+
+// type keyauth struct {
+// 	Host         string `toml:"host" env:"KEYAUTH_HOST"`
+// 	Port         string `toml:"port" env:"KEYAUTH_PORT"`
+// 	ClientID     string `toml:"client_id" env:"KEYAUTH_CLIENT_ID"`
+// 	ClientSecret string `toml:"client_secret" env:"KEYAUTH_CLIENT_SECRET"`
+// }
+
+// func (a *keyauth) Addr() string {
+// 	return a.Host + ":" + a.Port
+// }
+
+// func (a *keyauth) Client() (*kc.Client, error) {
+// 	if kc.C() == nil {
+// 		conf := kc.NewDefaultConfig()
+// 		conf.SetAddress(a.Addr())
+// 		zap.L().Infof("connect to keyauth: %s", a.Addr())
+// 		conf.SetClientCredentials(a.ClientID, a.ClientSecret)
+// 		client, err := kc.NewClient(conf)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		kc.SetGlobal(client)
+// 	}
+
+// 	return kc.C(), nil
+// }

@@ -65,6 +65,29 @@ var serviceCmd = &cobra.Command{
 	},
 }
 
+// config 为全局变量, 只需要load即可全局使用
+func loadGlobalConfig(configType string) error {
+	// 配置加载
+	switch configType {
+	case "file":
+		err := conf.LoadConfigFromToml(confFile)
+		if err != nil {
+			return err
+		}
+	case "env":
+		err := conf.LoadConfigFromEnv()
+		if err != nil {
+			return err
+		}
+	case "etcd":
+		return errors.New("not implemented")
+	default:
+		return errors.New("unknown config type")
+	}
+
+	return nil
+}
+
 func newService(cnf *conf.Config) (*service, error) {
 	http := protocol.NewHTTPService()
 	grpc := protocol.NewGRPCService()
@@ -104,29 +127,6 @@ func (s *service) waitSign(sign chan os.Signal) {
 			return
 		}
 	}
-}
-
-// config 为全局变量, 只需要load即可全局使用
-func loadGlobalConfig(configType string) error {
-	// 配置加载
-	switch configType {
-	case "file":
-		err := conf.LoadConfigFromToml(confFile)
-		if err != nil {
-			return err
-		}
-	case "env":
-		err := conf.LoadConfigFromEnv()
-		if err != nil {
-			return err
-		}
-	case "etcd":
-		return errors.New("not implemented")
-	default:
-		return errors.New("unknown config type")
-	}
-
-	return nil
 }
 
 // log 为全局变量, 只需要load 即可全局使用, 依赖全局配置先初始化

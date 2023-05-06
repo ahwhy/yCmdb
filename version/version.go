@@ -13,7 +13,6 @@ const (
 )
 
 var (
-	GIT_TAG    string
 	BUILD_TIME string
 	GIT_BRANCH string
 	GIT_COMMIT string
