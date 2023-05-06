@@ -6,6 +6,8 @@ require (
 	github.com/BurntSushi/toml v1.2.1
 	github.com/aliyun/alibaba-cloud-sdk-go v1.62.304
 	github.com/caarlos0/env/v6 v6.10.1
+	github.com/emicklei/go-restful/v3 v3.10.2
+	github.com/gin-gonic/gin v1.9.0
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/go-playground/validator/v10 v10.13.0
 	github.com/go-sql-driver/mysql v1.7.1

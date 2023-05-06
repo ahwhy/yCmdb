@@ -15,6 +15,9 @@ import (
 	// 注册所有服务
 	_ "github.com/ahwhy/yCmdb/app/all"
 
+	"github.com/infraboard/mcube/cache"
+	"github.com/infraboard/mcube/cache/memory"
+	"github.com/infraboard/mcube/cache/redis"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	"github.com/spf13/cobra"
@@ -36,7 +39,11 @@ var serviceCmd = &cobra.Command{
 			return err
 		}
 
-		// Ioc初始化
+		// 加载缓存
+		if err := loadCache(); err != nil {
+			return err
+		}
+
 		// 初始化全局app
 		if err := app.InitAllApp(); err != nil {
 			return err
@@ -88,6 +95,72 @@ func loadGlobalConfig(configType string) error {
 	return nil
 }
 
+// log 为全局变量, 只需要load 即可全局使用, 依赖全局配置先初始化
+func loadGlobalLogger() error {
+	var (
+		logInitMsg string
+		level      zap.Level
+	)
+	lc := conf.C().Log
+	lv, err := zap.NewLevel(lc.Level)
+
+	if err != nil {
+		logInitMsg = fmt.Sprintf("%s, use default level INFO", err)
+		level = zap.InfoLevel
+	} else {
+		level = lv
+		logInitMsg = fmt.Sprintf("log level: %s", lv)
+	}
+
+	zapConfig := zap.DefaultConfig()
+	zapConfig.Level = level
+
+	switch lc.To {
+	case conf.ToStdout:
+		zapConfig.ToStderr = true
+		zapConfig.ToFiles = false
+	case conf.ToFile:
+		zapConfig.ToFiles = true
+		zapConfig.ToStderr = false
+		zapConfig.Files.RotateOnStartup = true
+		zapConfig.Files.Name = "api.log"
+		zapConfig.Files.Path = lc.Dir
+	}
+
+	switch lc.Format {
+	case conf.JSONFormat:
+		zapConfig.JSON = true
+	}
+	if err := zap.Configure(zapConfig); err != nil {
+		return err
+	}
+
+	zap.L().Named("INIT").Info(logInitMsg)
+
+	return nil
+}
+
+func loadCache() error {
+	l := zap.L().Named("INIT")
+	c := conf.C()
+
+	// 设置全局缓存
+	switch c.Cache.Type {
+	case "memory", "":
+		ins := memory.NewCache(c.Cache.Memory)
+		cache.SetGlobal(ins)
+		l.Info("use cache in local memory")
+	case "redis":
+		ins := redis.NewCache(c.Cache.Redis)
+		cache.SetGlobal(ins)
+		l.Info("use redis to cache")
+	default:
+		return fmt.Errorf("unknown cache type: %s", c.Cache.Type)
+	}
+
+	return nil
+}
+
 func newService(cnf *conf.Config) (*service, error) {
 	http := protocol.NewHTTPService()
 	grpc := protocol.NewGRPCService()
@@ -127,49 +200,6 @@ func (s *service) waitSign(sign chan os.Signal) {
 			return
 		}
 	}
-}
-
-// log 为全局变量, 只需要load 即可全局使用, 依赖全局配置先初始化
-func loadGlobalLogger() error {
-	var (
-		logInitMsg string
-		level      zap.Level
-	)
-	lc := conf.C().Log
-	lv, err := zap.NewLevel(lc.Level)
-
-	if err != nil {
-		logInitMsg = fmt.Sprintf("%s, use default level INFO", err)
-		level = zap.InfoLevel
-	} else {
-		level = lv
-		logInitMsg = fmt.Sprintf("log level: %s", lv)
-	}
-
-	zapConfig := zap.DefaultConfig()
-	zapConfig.Level = level
-	zapConfig.Files.RotateOnStartup = false
-
-	switch lc.To {
-	case conf.ToStdout:
-		zapConfig.ToStderr = true
-		zapConfig.ToFiles = false
-	case conf.ToFile:
-		zapConfig.Files.Name = "api.log"
-		zapConfig.Files.Path = lc.PathDir
-	}
-
-	switch lc.Format {
-	case conf.JSONFormat:
-		zapConfig.JSON = true
-	}
-	if err := zap.Configure(zapConfig); err != nil {
-		return err
-	}
-
-	zap.L().Named("INIT").Info(logInitMsg)
-
-	return nil
 }
 
 func init() {
