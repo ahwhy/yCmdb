@@ -6,13 +6,15 @@ require (
 	github.com/BurntSushi/toml v1.2.1
 	github.com/aliyun/alibaba-cloud-sdk-go v1.62.304
 	github.com/caarlos0/env/v6 v6.10.1
+	github.com/emicklei/go-restful-openapi/v2 v2.9.1
 	github.com/emicklei/go-restful/v3 v3.10.2
+	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/gin-gonic/gin v1.9.0
+	github.com/go-openapi/spec v0.20.6
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/go-playground/validator/v10 v10.13.0
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.38
-	github.com/infraboard/keyauth v0.8.1
 	github.com/infraboard/mcenter v0.0.10
 	github.com/infraboard/mcube v1.9.15
 	github.com/rs/xid v1.5.0

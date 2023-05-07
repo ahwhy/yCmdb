@@ -8,26 +8,37 @@ import (
 
 	"github.com/ahwhy/yCmdb/app"
 	"github.com/ahwhy/yCmdb/conf"
+	"github.com/ahwhy/yCmdb/swagger"
+	"github.com/ahwhy/yCmdb/version"
 
-	"github.com/infraboard/mcube/http/middleware/accesslog"
-	"github.com/infraboard/mcube/http/middleware/cors"
-	"github.com/infraboard/mcube/http/middleware/recovery"
-	"github.com/infraboard/mcube/http/router"
-	"github.com/infraboard/mcube/http/router/httprouter"
+	restfulspec "github.com/emicklei/go-restful-openapi/v2"
+	"github.com/emicklei/go-restful/v3"
+	"github.com/infraboard/mcenter/apps/endpoint"
+	"github.com/infraboard/mcenter/client/rpc"
+	"github.com/infraboard/mcenter/client/rpc/middleware"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 )
 
 // NewHTTPService 构建函数
 func NewHTTPService() *HTTPService {
+	c, err := rpc.NewClient(conf.C().Mcenter)
+	if err != nil {
+		panic(err)
+	}
 
-	r := httprouter.New()
-	r.Use(recovery.NewWithLogger(zap.L().Named("Recovery")))
-	r.Use(accesslog.NewWithLogger(zap.L().Named("AccessLog")))
-	r.Use(cors.AllowAll())
-	r.EnableAPIRoot()
-	// r.SetAuther(auther)
-	r.Auth(true)
+	r := restful.DefaultContainer
+
+	// Optionally, you may need to enable CORS for the UI to work.
+	cors := restful.CrossOriginResourceSharing{
+		AllowedHeaders: []string{"*"},
+		AllowedDomains: []string{"*"},
+		AllowedMethods: []string{"HEAD", "OPTIONS", "GET", "POST", "PUT", "PATCH", "DELETE"},
+		CookiesAllowed: false,
+		Container:      r,
+	}
+	r.Filter(cors.Filter)
+	r.Filter(middleware.RestfulServerInterceptor())
 
 	server := &http.Server{
 		ReadHeaderTimeout: 60 * time.Second,
@@ -36,34 +47,50 @@ func NewHTTPService() *HTTPService {
 		IdleTimeout:       60 * time.Second,
 		MaxHeaderBytes:    1 << 20, // 1M
 		Addr:              conf.C().App.HTTPAddr(),
-		Handler:           cors.AllowAll().Handler(r),
+		Handler:           r,
 	}
 
 	return &HTTPService{
-		r:      r,
-		server: server,
-		l:      zap.L().Named("HTTP Service"),
-		c:      conf.C(),
+		r:        r,
+		server:   server,
+		l:        zap.L().Named("server.http"),
+		c:        conf.C(),
+		endpoint: c.Endpoint(),
 	}
 }
 
 // HTTPService http服务
 type HTTPService struct {
-	r      router.Router
+	r      *restful.Container
 	l      logger.Logger
 	c      *conf.Config
 	server *http.Server
-}
 
-func (s *HTTPService) Addr() string {
-	return fmt.Sprintf("%s/api/v1", s.c.App.Name)
+	endpoint endpoint.RPCClient
 }
 
 // Start 启动服务
 func (s *HTTPService) Start() error {
-	// 配置子服务路由
-	app.LoadHttpApp(s.Addr(), s.r)
-	
+	// 装置子服务路由
+	app.LoadRESTfulApp(s.PathPrefix(), s.r)
+
+	// API Doc
+	config := restfulspec.Config{
+		WebServices:                   restful.RegisteredWebServices(), // you control what services are visible
+		APIPath:                       "/apidocs.json",
+		PostBuildSwaggerObjectHandler: swagger.Docs,
+		DefinitionNameHandler: func(name string) string {
+			if name == "state" || name == "sizeCache" || name == "unknownFields" {
+				return ""
+			}
+			return name
+		},
+	}
+	s.r.Add(restfulspec.NewOpenAPIService(config))
+	s.l.Infof("Get the API using http://%s%s", s.c.App.HTTPAddr(), config.APIPath)
+	// 注册路由条目
+	s.RegistryEndpoint()
+
 	// 启动 HTTP服务
 	s.l.Infof("HTTP服务启动成功, 监听地址: %s", s.server.Addr)
 	if err := s.server.ListenAndServe(); err != nil {
@@ -76,6 +103,10 @@ func (s *HTTPService) Start() error {
 	return nil
 }
 
+func (s *HTTPService) PathPrefix() string {
+	return fmt.Sprintf("/%s/api", s.c.App.Name)
+}
+
 // Stop 停止server
 func (s *HTTPService) Stop() error {
 	s.l.Info("start graceful shutdown")
@@ -86,6 +117,25 @@ func (s *HTTPService) Stop() error {
 	if err := s.server.Shutdown(ctx); err != nil {
 		s.l.Errorf("graceful shutdown timeout, force exit")
 	}
-
 	return nil
+}
+
+func (s *HTTPService) RegistryEndpoint() {
+	// 注册服务权限条目
+	s.l.Info("start registry endpoints ...")
+
+	entries := []*endpoint.Entry{}
+	wss := s.r.RegisteredWebServices()
+	for i := range wss {
+		es := endpoint.TransferRoutesToEntry(wss[i].Routes())
+		entries = append(entries, es...)
+	}
+
+	req := endpoint.NewRegistryRequest(version.Short(), entries)
+	_, err := s.endpoint.RegistryEndpoint(context.Background(), req)
+	if err != nil {
+		s.l.Warnf("registry endpoints error, %s", err)
+	} else {
+		s.l.Debug("service endpoints registry success")
+	}
 }

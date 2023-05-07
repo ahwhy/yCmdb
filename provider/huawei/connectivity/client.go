@@ -31,7 +31,7 @@ type HuaweiCloudClient struct {
 	bssConn      *bss.BssClient
 }
 
-func (c *HuaweiCloudClient) Credentials() basic.Credentials {
+func (c *HuaweiCloudClient) Credentials() *basic.Credentials {
 	auth := basic.NewCredentialsBuilder().
 		WithAk(c.AccessKey).
 		WithSk(c.AccessSecret).
@@ -40,7 +40,7 @@ func (c *HuaweiCloudClient) Credentials() basic.Credentials {
 	return auth
 }
 
-func (c *HuaweiCloudClient) GlobalCredentials() global.Credentials {
+func (c *HuaweiCloudClient) GlobalCredentials() *global.Credentials {
 	auth := global.NewCredentialsBuilder().
 		WithAk(c.AccessKey).
 		WithSk(c.AccessSecret).
