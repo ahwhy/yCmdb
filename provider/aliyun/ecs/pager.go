@@ -3,7 +3,7 @@ package ecs
 import (
 	"time"
 
-	"github.com/ahwhy/yCmdb/app/host"
+	"github.com/ahwhy/yCmdb/apps/host"
 
 	"github.com/infraboard/mcube/flowcontrol/tokenbucket"
 	"github.com/infraboard/mcube/logger"

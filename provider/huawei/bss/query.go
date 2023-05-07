@@ -1,7 +1,7 @@
 package bss
 
 import (
-	"github.com/ahwhy/yCmdb/app/bill"
+	"github.com/ahwhy/yCmdb/apps/bill"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/services/bss/v2/model"
 )

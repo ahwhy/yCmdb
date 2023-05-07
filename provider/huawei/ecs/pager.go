@@ -1,7 +1,7 @@
 package ecs
 
 import (
-	"github.com/ahwhy/yCmdb/app/host"
+	"github.com/ahwhy/yCmdb/apps/host"
 	"github.com/ahwhy/yCmdb/utils"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/services/ecs/v2/model"

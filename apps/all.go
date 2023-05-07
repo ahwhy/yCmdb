@@ -1,4 +1,4 @@
-package app
+package apps
 
 func InitAllApp() error {
 	// 优先初始化内部app

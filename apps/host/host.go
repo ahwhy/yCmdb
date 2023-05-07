@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ahwhy/yCmdb/app/resource"
+	"github.com/ahwhy/yCmdb/apps/resource"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/infraboard/mcube/http/request"

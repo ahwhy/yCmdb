@@ -3,8 +3,8 @@ package vm
 import (
 	"time"
 
-	"github.com/ahwhy/yCmdb/app/host"
-	"github.com/ahwhy/yCmdb/app/resource"
+	"github.com/ahwhy/yCmdb/apps/host"
+	"github.com/ahwhy/yCmdb/apps/resource"
 
 	"github.com/vmware/govmomi/find"
 	"github.com/vmware/govmomi/vim25"

@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/ahwhy/yCmdb/app/rds"
-	"github.com/ahwhy/yCmdb/app/resource"
+	"github.com/ahwhy/yCmdb/apps/rds"
+	"github.com/ahwhy/yCmdb/apps/resource"
 	"github.com/ahwhy/yCmdb/utils"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"

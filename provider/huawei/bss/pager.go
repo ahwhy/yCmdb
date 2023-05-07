@@ -1,7 +1,7 @@
 package bss
 
 import (
-	"github.com/ahwhy/yCmdb/app/bill"
+	"github.com/ahwhy/yCmdb/apps/bill"
 	"github.com/ahwhy/yCmdb/utils"
 
 	"github.com/infraboard/mcube/flowcontrol/tokenbucket"

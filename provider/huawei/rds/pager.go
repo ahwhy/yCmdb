@@ -1,7 +1,7 @@
 package rds
 
 import (
-	"github.com/ahwhy/yCmdb/app/rds"
+	"github.com/ahwhy/yCmdb/apps/rds"
 	"github.com/ahwhy/yCmdb/utils"
 
 	"github.com/infraboard/mcube/logger"

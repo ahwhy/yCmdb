@@ -1,7 +1,7 @@
 package ecs
 
 import (
-	"github.com/ahwhy/yCmdb/app/host"
+	"github.com/ahwhy/yCmdb/apps/host"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
 )

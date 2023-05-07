@@ -1,7 +1,7 @@
 package billing
 
 import (
-	"github.com/ahwhy/yCmdb/app/bill"
+	"github.com/ahwhy/yCmdb/apps/bill"
 	"github.com/ahwhy/yCmdb/utils"
 	
 	billing "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/billing/v20180709"

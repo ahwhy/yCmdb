@@ -1,7 +1,7 @@
 package rds
 
 import (
-	cmdbRds "github.com/ahwhy/yCmdb/app/rds"
+	cmdbRds "github.com/ahwhy/yCmdb/apps/rds"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/rds"
 )

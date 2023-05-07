@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/ahwhy/yCmdb/app"
+	"github.com/ahwhy/yCmdb/apps"
 	"github.com/ahwhy/yCmdb/conf"
 	"github.com/ahwhy/yCmdb/swagger"
 	"github.com/ahwhy/yCmdb/version"
@@ -72,7 +72,7 @@ type HTTPService struct {
 // Start 启动服务
 func (s *HTTPService) Start() error {
 	// 装置子服务路由
-	app.LoadRESTfulApp(s.PathPrefix(), s.r)
+	apps.LoadRESTfulApp(s.PathPrefix(), s.r)
 
 	// API Doc
 	config := restfulspec.Config{

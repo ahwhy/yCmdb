@@ -1,7 +1,7 @@
 package rds
 
 import (
-	"github.com/ahwhy/yCmdb/app/rds"
+	"github.com/ahwhy/yCmdb/apps/rds"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/services/rds/v3/model"
 )
 

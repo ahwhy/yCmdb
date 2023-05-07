@@ -7,7 +7,7 @@
 package secret
 
 import (
-	resource "github.com/ahwhy/yCmdb/app/resource"
+	resource "github.com/ahwhy/yCmdb/apps/resource"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

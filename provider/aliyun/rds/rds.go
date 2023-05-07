@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	cmdbRds "github.com/ahwhy/yCmdb/app/rds"
-	"github.com/ahwhy/yCmdb/app/resource"
+	cmdbRds "github.com/ahwhy/yCmdb/apps/rds"
+	"github.com/ahwhy/yCmdb/apps/resource"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/rds"
 	"github.com/infraboard/mcube/logger"

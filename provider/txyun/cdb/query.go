@@ -1,7 +1,7 @@
 package cdb
 
 import (
-	"github.com/ahwhy/yCmdb/app/rds"
+	"github.com/ahwhy/yCmdb/apps/rds"
 
 	cdb "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdb/v20170320"
 )

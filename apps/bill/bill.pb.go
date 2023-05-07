@@ -2,12 +2,12 @@
 // versions:
 // 	protoc-gen-go v1.27.1
 // 	protoc        v3.19.1
-// source: app/bill/pb/bill.proto
+// source: apps/bill/pb/bill.proto
 
 package bill
 
 import (
-	resource "github.com/ahwhy/yCmdb/app/resource"
+	resource "github.com/ahwhy/yCmdb/apps/resource"
 	page "github.com/infraboard/mcube/pb/page"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -114,7 +114,7 @@ type Bill struct {
 func (x *Bill) Reset() {
 	*x = Bill{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_app_bill_pb_bill_proto_msgTypes[0]
+		mi := &file_apps_bill_pb_bill_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -127,7 +127,7 @@ func (x *Bill) String() string {
 func (*Bill) ProtoMessage() {}
 
 func (x *Bill) ProtoReflect() protoreflect.Message {
-	mi := &file_app_bill_pb_bill_proto_msgTypes[0]
+	mi := &file_apps_bill_pb_bill_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -140,7 +140,7 @@ func (x *Bill) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Bill.ProtoReflect.Descriptor instead.
 func (*Bill) Descriptor() ([]byte, []int) {
-	return file_app_bill_pb_bill_proto_rawDescGZIP(), []int{0}
+	return file_apps_bill_pb_bill_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Bill) GetVendor() resource.Vendor {
@@ -341,7 +341,7 @@ type BillSet struct {
 func (x *BillSet) Reset() {
 	*x = BillSet{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_app_bill_pb_bill_proto_msgTypes[1]
+		mi := &file_apps_bill_pb_bill_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -354,7 +354,7 @@ func (x *BillSet) String() string {
 func (*BillSet) ProtoMessage() {}
 
 func (x *BillSet) ProtoReflect() protoreflect.Message {
-	mi := &file_app_bill_pb_bill_proto_msgTypes[1]
+	mi := &file_apps_bill_pb_bill_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -367,7 +367,7 @@ func (x *BillSet) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BillSet.ProtoReflect.Descriptor instead.
 func (*BillSet) Descriptor() ([]byte, []int) {
-	return file_app_bill_pb_bill_proto_rawDescGZIP(), []int{1}
+	return file_apps_bill_pb_bill_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *BillSet) GetTotal() int64 {
@@ -415,7 +415,7 @@ type QueryBillRequest struct {
 func (x *QueryBillRequest) Reset() {
 	*x = QueryBillRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_app_bill_pb_bill_proto_msgTypes[2]
+		mi := &file_apps_bill_pb_bill_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -428,7 +428,7 @@ func (x *QueryBillRequest) String() string {
 func (*QueryBillRequest) ProtoMessage() {}
 
 func (x *QueryBillRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_bill_pb_bill_proto_msgTypes[2]
+	mi := &file_apps_bill_pb_bill_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -441,7 +441,7 @@ func (x *QueryBillRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QueryBillRequest.ProtoReflect.Descriptor instead.
 func (*QueryBillRequest) Descriptor() ([]byte, []int) {
-	return file_app_bill_pb_bill_proto_rawDescGZIP(), []int{2}
+	return file_apps_bill_pb_bill_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *QueryBillRequest) GetPage() *page.PageRequest {
@@ -493,9 +493,9 @@ func (x *QueryBillRequest) GetInstanceId() string {
 	return ""
 }
 
-var File_app_bill_pb_bill_proto protoreflect.FileDescriptor
+var File_apps_bill_pb_bill_proto protoreflect.FileDescriptor
 
-var file_app_bill_pb_bill_proto_rawDesc = []byte{
+var file_apps_bill_pb_bill_proto_rawDesc = []byte{
 	0x0a, 0x16, 0x61, 0x70, 0x70, 0x2f, 0x62, 0x69, 0x6c, 0x6c, 0x2f, 0x70, 0x62, 0x2f, 0x62, 0x69,
 	0x6c, 0x6c, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x10, 0x61, 0x68, 0x77, 0x68, 0x79, 0x2e,
 	0x79, 0x43, 0x6d, 0x64, 0x62, 0x2e, 0x62, 0x69, 0x6c, 0x6c, 0x1a, 0x1e, 0x61, 0x70, 0x70, 0x2f,
@@ -602,19 +602,19 @@ var file_app_bill_pb_bill_proto_rawDesc = []byte{
 }
 
 var (
-	file_app_bill_pb_bill_proto_rawDescOnce sync.Once
-	file_app_bill_pb_bill_proto_rawDescData = file_app_bill_pb_bill_proto_rawDesc
+	file_apps_bill_pb_bill_proto_rawDescOnce sync.Once
+	file_apps_bill_pb_bill_proto_rawDescData = file_apps_bill_pb_bill_proto_rawDesc
 )
 
-func file_app_bill_pb_bill_proto_rawDescGZIP() []byte {
-	file_app_bill_pb_bill_proto_rawDescOnce.Do(func() {
-		file_app_bill_pb_bill_proto_rawDescData = protoimpl.X.CompressGZIP(file_app_bill_pb_bill_proto_rawDescData)
+func file_apps_bill_pb_bill_proto_rawDescGZIP() []byte {
+	file_apps_bill_pb_bill_proto_rawDescOnce.Do(func() {
+		file_apps_bill_pb_bill_proto_rawDescData = protoimpl.X.CompressGZIP(file_apps_bill_pb_bill_proto_rawDescData)
 	})
-	return file_app_bill_pb_bill_proto_rawDescData
+	return file_apps_bill_pb_bill_proto_rawDescData
 }
 
-var file_app_bill_pb_bill_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_app_bill_pb_bill_proto_goTypes = []interface{}{
+var file_apps_bill_pb_bill_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_apps_bill_pb_bill_proto_goTypes = []interface{}{
 	(*Bill)(nil),             // 0: ahwhy.yCmdb.bill.Bill
 	(*BillSet)(nil),          // 1: ahwhy.yCmdb.bill.BillSet
 	(*QueryBillRequest)(nil), // 2: ahwhy.yCmdb.bill.QueryBillRequest
@@ -622,7 +622,7 @@ var file_app_bill_pb_bill_proto_goTypes = []interface{}{
 	(resource.Vendor)(0),     // 4: ahwhy.yCmdb.resource.Vendor
 	(*page.PageRequest)(nil), // 5: infraboard.mcube.page.PageRequest
 }
-var file_app_bill_pb_bill_proto_depIdxs = []int32{
+var file_apps_bill_pb_bill_proto_depIdxs = []int32{
 	4, // 0: ahwhy.yCmdb.bill.Bill.vendor:type_name -> ahwhy.yCmdb.resource.Vendor
 	3, // 1: ahwhy.yCmdb.bill.Bill.extra:type_name -> ahwhy.yCmdb.bill.Bill.ExtraEntry
 	0, // 2: ahwhy.yCmdb.bill.BillSet.items:type_name -> ahwhy.yCmdb.bill.Bill
@@ -639,13 +639,13 @@ var file_app_bill_pb_bill_proto_depIdxs = []int32{
 	0, // [0:5] is the sub-list for field type_name
 }
 
-func init() { file_app_bill_pb_bill_proto_init() }
-func file_app_bill_pb_bill_proto_init() {
-	if File_app_bill_pb_bill_proto != nil {
+func init() { file_apps_bill_pb_bill_proto_init() }
+func file_apps_bill_pb_bill_proto_init() {
+	if File_apps_bill_pb_bill_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_app_bill_pb_bill_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_apps_bill_pb_bill_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Bill); i {
 			case 0:
 				return &v.state
@@ -657,7 +657,7 @@ func file_app_bill_pb_bill_proto_init() {
 				return nil
 			}
 		}
-		file_app_bill_pb_bill_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_apps_bill_pb_bill_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*BillSet); i {
 			case 0:
 				return &v.state
@@ -669,7 +669,7 @@ func file_app_bill_pb_bill_proto_init() {
 				return nil
 			}
 		}
-		file_app_bill_pb_bill_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_apps_bill_pb_bill_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*QueryBillRequest); i {
 			case 0:
 				return &v.state
@@ -686,18 +686,18 @@ func file_app_bill_pb_bill_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_app_bill_pb_bill_proto_rawDesc,
+			RawDescriptor: file_apps_bill_pb_bill_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_app_bill_pb_bill_proto_goTypes,
-		DependencyIndexes: file_app_bill_pb_bill_proto_depIdxs,
-		MessageInfos:      file_app_bill_pb_bill_proto_msgTypes,
+		GoTypes:           file_apps_bill_pb_bill_proto_goTypes,
+		DependencyIndexes: file_apps_bill_pb_bill_proto_depIdxs,
+		MessageInfos:      file_apps_bill_pb_bill_proto_msgTypes,
 	}.Build()
-	File_app_bill_pb_bill_proto = out.File
-	file_app_bill_pb_bill_proto_rawDesc = nil
-	file_app_bill_pb_bill_proto_goTypes = nil
-	file_app_bill_pb_bill_proto_depIdxs = nil
+	File_apps_bill_pb_bill_proto = out.File
+	file_apps_bill_pb_bill_proto_rawDesc = nil
+	file_apps_bill_pb_bill_proto_goTypes = nil
+	file_apps_bill_pb_bill_proto_depIdxs = nil
 }

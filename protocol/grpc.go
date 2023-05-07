@@ -5,7 +5,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/ahwhy/yCmdb/app"
+	"github.com/ahwhy/yCmdb/apps"
 	"github.com/ahwhy/yCmdb/conf"
 	"github.com/ahwhy/yCmdb/version"
 
@@ -56,7 +56,7 @@ type GRPCService struct {
 // Start 启动GRPC服务
 func (s *GRPCService) Start() {
 	// 装载所有GRPC服务
-	app.LoadGrpcApp(s.svr)
+	apps.LoadGrpcApp(s.svr)
 
 	// 启动HTTP服务
 	lis, err := net.Listen("tcp", s.c.App.GRPCAddr())

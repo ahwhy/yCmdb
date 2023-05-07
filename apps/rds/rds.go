@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	resource "github.com/ahwhy/yCmdb/app/resource"
+	resource "github.com/ahwhy/yCmdb/apps/resource"
 )
 
 const (

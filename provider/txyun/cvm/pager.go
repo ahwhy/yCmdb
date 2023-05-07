@@ -1,7 +1,7 @@
 package cvm
 
 import (
-	"github.com/ahwhy/yCmdb/app/host"
+	"github.com/ahwhy/yCmdb/apps/host"
 
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"

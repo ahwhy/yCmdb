@@ -1,10 +1,10 @@
 package client
 
 import (
-	"github.com/ahwhy/yCmdb/app/bill"
-	"github.com/ahwhy/yCmdb/app/host"
-	"github.com/ahwhy/yCmdb/app/resource"
-	"github.com/ahwhy/yCmdb/app/secret"
+	"github.com/ahwhy/yCmdb/apps/bill"
+	"github.com/ahwhy/yCmdb/apps/host"
+	"github.com/ahwhy/yCmdb/apps/resource"
+	"github.com/ahwhy/yCmdb/apps/secret"
 
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"

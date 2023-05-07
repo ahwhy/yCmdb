@@ -3,8 +3,8 @@ package bss
 import (
 	"fmt"
 
-	"github.com/ahwhy/yCmdb/app/bill"
-	"github.com/ahwhy/yCmdb/app/resource"
+	"github.com/ahwhy/yCmdb/apps/bill"
+	"github.com/ahwhy/yCmdb/apps/resource"
 	"github.com/ahwhy/yCmdb/utils"
 
 	"github.com/infraboard/mcube/logger"

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/ahwhy/yCmdb/app/resource"
+	"github.com/ahwhy/yCmdb/apps/resource"
 	"github.com/ahwhy/yCmdb/client"
 	"github.com/stretchr/testify/assert"
 )

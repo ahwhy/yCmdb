@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ahwhy/yCmdb/app/host"
+	"github.com/ahwhy/yCmdb/apps/host"
 	"github.com/ahwhy/yCmdb/provider/vsphere/connectivity"
 	op "github.com/ahwhy/yCmdb/provider/vsphere/vm"
 
