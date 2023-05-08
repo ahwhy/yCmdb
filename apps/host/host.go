@@ -11,7 +11,7 @@ import (
 	"github.com/ahwhy/yCmdb/apps/resource"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/infraboard/mcube/http/request"
+	// "github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 )
 
@@ -132,7 +132,7 @@ func (s *HostSet) ToJsonString() string {
 
 func NewQueryHostRequestFromHTTP(r *http.Request) *QueryHostRequest {
 	qs := r.URL.Query()
-	page := request.NewPageRequestFromHTTP(r)
+	// page := request.NewPageRequestFromHTTP(r)
 
 	ps := qs.Get("page_size")
 	pn := qs.Get("page_number")
@@ -148,7 +148,7 @@ func NewQueryHostRequestFromHTTP(r *http.Request) *QueryHostRequest {
 		pnUint64 = 1
 	}
 	return &QueryHostRequest{
-		Page:     &page.PageRequest,
+		// Page:     &page.PageRequest,
 		Keywords: kw,
 	}
 }
