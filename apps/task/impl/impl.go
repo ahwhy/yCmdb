@@ -3,12 +3,12 @@ package impl
 import (
 	"database/sql"
 
-	"github.com/ahwhy/yCmdb/app"
-	"github.com/ahwhy/yCmdb/app/bill"
-	"github.com/ahwhy/yCmdb/app/host"
-	"github.com/ahwhy/yCmdb/app/rds"
-	"github.com/ahwhy/yCmdb/app/secret"
-	"github.com/ahwhy/yCmdb/app/task"
+	"github.com/ahwhy/yCmdb/apps"
+	"github.com/ahwhy/yCmdb/apps/bill"
+	"github.com/ahwhy/yCmdb/apps/host"
+	"github.com/ahwhy/yCmdb/apps/rds"
+	"github.com/ahwhy/yCmdb/apps/secret"
+	"github.com/ahwhy/yCmdb/apps/task"
 	"github.com/ahwhy/yCmdb/conf"
 
 	"github.com/infraboard/mcube/logger"
@@ -40,10 +40,10 @@ func (s *service) Config() error {
 
 	s.log = zap.L().Named(s.Name())
 	s.db = db
-	s.host = app.GetGrpcApp(host.AppName).(host.ServiceServer)
-	s.rds = app.GetGrpcApp(rds.AppName).(rds.ServiceServer)
-	s.secret = app.GetGrpcApp(secret.AppName).(secret.ServiceServer)
-	s.bill = app.GetGrpcApp(bill.AppName).(bill.ServiceServer)
+	s.host = apps.GetGrpcApp(host.AppName).(host.ServiceServer)
+	s.rds = apps.GetGrpcApp(rds.AppName).(rds.ServiceServer)
+	s.secret = apps.GetGrpcApp(secret.AppName).(secret.ServiceServer)
+	s.bill = apps.GetGrpcApp(bill.AppName).(bill.ServiceServer)
 
 	return nil
 }
@@ -57,5 +57,5 @@ func (s *service) Registry(server *grpc.Server) {
 }
 
 func init() {
-	app.RegistryGrpcApp(svr)
+	apps.RegistryGrpcApp(svr)
 }

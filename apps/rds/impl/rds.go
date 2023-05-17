@@ -3,7 +3,7 @@ package impl
 import (
 	"context"
 
-	"github.com/ahwhy/yCmdb/app/rds"
+	"github.com/ahwhy/yCmdb/apps/rds"
 	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
 )

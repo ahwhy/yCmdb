@@ -1,9 +1,9 @@
 package all
 
 import (
-	_ "github.com/ahwhy/yCmdb/app/bill/http"
-	_ "github.com/ahwhy/yCmdb/app/host/http"
-	_ "github.com/ahwhy/yCmdb/app/resource/http"
-	_ "github.com/ahwhy/yCmdb/app/secret/http"
-	_ "github.com/ahwhy/yCmdb/app/task/http"
+	_ "github.com/ahwhy/yCmdb/apps/bill/http"
+	_ "github.com/ahwhy/yCmdb/apps/host/http"
+	_ "github.com/ahwhy/yCmdb/apps/resource/http"
+	_ "github.com/ahwhy/yCmdb/apps/secret/http"
+	_ "github.com/ahwhy/yCmdb/apps/task/http"
 )

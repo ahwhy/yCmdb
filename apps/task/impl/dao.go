@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ahwhy/yCmdb/app/task"
+	"github.com/ahwhy/yCmdb/apps/task"
 )
 
 func (s *service) insert(ctx context.Context, t *task.Task) error {

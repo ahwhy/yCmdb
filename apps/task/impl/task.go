@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/ahwhy/yCmdb/app/resource"
-	"github.com/ahwhy/yCmdb/app/secret"
-	"github.com/ahwhy/yCmdb/app/task"
+	"github.com/ahwhy/yCmdb/apps/resource"
+	"github.com/ahwhy/yCmdb/apps/secret"
+	"github.com/ahwhy/yCmdb/apps/task"
 	"github.com/ahwhy/yCmdb/conf"
 
 	"github.com/infraboard/mcube/exception"

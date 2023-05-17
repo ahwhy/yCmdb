@@ -3,7 +3,7 @@ package impl
 import (
 	"context"
 
-	"github.com/ahwhy/yCmdb/app/resource"
+	"github.com/ahwhy/yCmdb/apps/resource"
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/sqlbuilder"

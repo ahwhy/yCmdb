@@ -3,7 +3,7 @@ package http
 import (
 	"net/http"
 
-	"github.com/ahwhy/yCmdb/app/secret"
+	"github.com/ahwhy/yCmdb/apps/secret"
 
 	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"

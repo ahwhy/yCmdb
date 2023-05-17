@@ -4,9 +4,9 @@ import (
 	"database/sql"
 
 	"github.com/ahwhy/yCmdb/conf"
-	"github.com/ahwhy/yCmdb/app"
-	"github.com/ahwhy/yCmdb/app/host"
-	"github.com/ahwhy/yCmdb/app/secret"
+	"github.com/ahwhy/yCmdb/apps"
+	"github.com/ahwhy/yCmdb/apps/host"
+	"github.com/ahwhy/yCmdb/apps/secret"
 
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
@@ -33,7 +33,7 @@ func (s *service) Config() error {
 
 	s.log = zap.L().Named(s.Name())
 	s.db = db
-	s.host = app.GetGrpcApp(host.AppName).(host.ServiceServer)
+	s.host = apps.GetGrpcApp(host.AppName).(host.ServiceServer)
 
 	return nil
 }
@@ -47,5 +47,5 @@ func (s *service) Registry(server *grpc.Server) {
 }
 
 func init() {
-	app.RegistryGrpcApp(svr)
+	apps.RegistryGrpcApp(svr)
 }

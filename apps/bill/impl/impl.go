@@ -3,8 +3,8 @@ package impl
 import (
 	"database/sql"
 
-	"github.com/ahwhy/yCmdb/app"
-	"github.com/ahwhy/yCmdb/app/bill"
+	"github.com/ahwhy/yCmdb/apps"
+	"github.com/ahwhy/yCmdb/apps/bill"
 	"github.com/ahwhy/yCmdb/conf"
 
 	"github.com/infraboard/mcube/logger"
@@ -45,5 +45,5 @@ func (s *service) Registry(server *grpc.Server) {
 }
 
 func init() {
-	app.RegistryGrpcApp(svr)
+	apps.RegistryGrpcApp(svr)
 }

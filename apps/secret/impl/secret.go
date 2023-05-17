@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/ahwhy/yCmdb/app/secret"
+	"github.com/ahwhy/yCmdb/apps/secret"
 	"github.com/ahwhy/yCmdb/conf"
 
 	"github.com/infraboard/mcube/exception"

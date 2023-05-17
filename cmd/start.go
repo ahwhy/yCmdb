@@ -8,12 +8,12 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/ahwhy/yCmdb/app"
+	"github.com/ahwhy/yCmdb/apps"
 	"github.com/ahwhy/yCmdb/conf"
 	"github.com/ahwhy/yCmdb/protocol"
 
 	// 注册所有服务
-	_ "github.com/ahwhy/yCmdb/app/all"
+	_ "github.com/ahwhy/yCmdb/apps/all"
 
 	"github.com/infraboard/mcube/cache"
 	"github.com/infraboard/mcube/cache/memory"
@@ -45,7 +45,7 @@ var serviceCmd = &cobra.Command{
 		}
 
 		// 初始化全局app
-		if err := app.InitAllApp(); err != nil {
+		if err := apps.InitAllApp(); err != nil {
 			return err
 		}
 
@@ -180,9 +180,9 @@ type service struct {
 }
 
 func (s *service) start() error {
-	s.log.Infof("loaded grpc app: %s", app.LoadedGrpcApp())
-	s.log.Infof("loaded http app: %s", app.LoadedHttpApp())
-	s.log.Infof("loaded internal app: %s", app.LoadedInternalApp())
+	s.log.Infof("loaded grpc app: %s", apps.LoadedGrpcApp())
+	s.log.Infof("loaded http app: %s", apps.LoadedHttpApp())
+	s.log.Infof("loaded internal app: %s", apps.LoadedInternalApp())
 
 	go s.grpc.Start()
 	return s.http.Start()

@@ -7,7 +7,7 @@
 package eip
 
 import (
-	resource "github.com/ahwhy/yCmdb/app/resource"
+	resource "github.com/ahwhy/yCmdb/apps/resource"
 	page "github.com/infraboard/mcube/pb/page"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"

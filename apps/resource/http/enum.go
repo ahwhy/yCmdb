@@ -3,7 +3,7 @@ package http
 import (
 	"net/http"
 
-	"github.com/ahwhy/yCmdb/app/resource"
+	"github.com/ahwhy/yCmdb/apps/resource"
 	"github.com/ahwhy/yCmdb/utils"
 
 	ali_region "github.com/ahwhy/yCmdb/provider/aliyun/region"

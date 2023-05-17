@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ahwhy/yCmdb/app/secret"
+	"github.com/ahwhy/yCmdb/apps/secret"
 )
 
 func (s *service) createSecret(ctx context.Context, ins *secret.Secret) error {

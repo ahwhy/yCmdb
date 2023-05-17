@@ -1,8 +1,8 @@
 package http
 
 import (
-	"github.com/ahwhy/yCmdb/app"
-	"github.com/ahwhy/yCmdb/app/task"
+	"github.com/ahwhy/yCmdb/apps"
+	"github.com/ahwhy/yCmdb/apps/task"
 
 	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
@@ -21,7 +21,7 @@ type handler struct {
 
 func (h *handler) Config() error {
 	h.log = zap.L().Named("Task")
-	h.task = app.GetGrpcApp(task.AppName).(task.ServiceServer)
+	h.task = apps.GetGrpcApp(task.AppName).(task.ServiceServer)
 
 	return nil
 }
@@ -40,5 +40,5 @@ func (h *handler) Registry(r router.SubRouter) {
 }
 
 func init() {
-	app.RegistryHttpApp(h)
+	apps.RegistryHttpApp(h)
 }

@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/ahwhy/yCmdb/app/host"
-	"github.com/ahwhy/yCmdb/app/resource/impl"
+	"github.com/ahwhy/yCmdb/apps/host"
+	"github.com/ahwhy/yCmdb/apps/resource/impl"
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/sqlbuilder"

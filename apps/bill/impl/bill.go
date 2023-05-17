@@ -3,7 +3,7 @@ package impl
 import (
 	"context"
 
-	"github.com/ahwhy/yCmdb/app/bill"
+	"github.com/ahwhy/yCmdb/apps/bill"
 )
 
 const (

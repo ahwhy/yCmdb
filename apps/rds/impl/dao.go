@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/ahwhy/yCmdb/app/rds"
-	"github.com/ahwhy/yCmdb/app/resource/impl"
+	"github.com/ahwhy/yCmdb/apps/rds"
+	"github.com/ahwhy/yCmdb/apps/resource/impl"
 )
 
 func (s *service) save(ctx context.Context, r *rds.RDS) error {
