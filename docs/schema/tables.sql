@@ -2,6 +2,157 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
+-- Table structure for bill_raw
+-- ----------------------------
+DROP TABLE IF EXISTS `bill_raw`;
+CREATE TABLE `bill_raw` (
+  `vendor` tinyint(1) NOT NULL COMMENT '厂商',
+  `year` int(11) NOT NULL COMMENT '账单年份',
+  `month` int(11) NOT NULL COMMENT '账单月份',
+  `owner_id` varchar(200) NOT NULL COMMENT '账号id',
+  `owner_name` varchar(255) NOT NULL COMMENT '账号名称',
+  `product_type` varchar(255) NOT NULL COMMENT '产品类型',
+  `product_code` varchar(255) NOT NULL COMMENT '产品编码',
+  `product_detail` varchar(255) NOT NULL COMMENT '产品明细',
+  `pay_mode` varchar(255) NOT NULL COMMENT '计费方式',
+  `order_id` varchar(255) NOT NULL COMMENT '订单/账单ID',
+  `resource_id` varchar(255) NOT NULL COMMENT '资源ID',
+  `resource_name` varchar(255) NOT NULL COMMENT '资源名称',
+  `public_ip` varchar(255) NOT NULL COMMENT '公网Ip',
+  `private_ip` varchar(255) NOT NULL COMMENT '内网Ip',
+  `instance_config` text NOT NULL COMMENT '实例配置信息',
+  `region_code` varchar(255) NOT NULL COMMENT '地域Id',
+  `region_name` varchar(255) NOT NULL COMMENT '地域名称',
+  `sale_price` decimal(12,4) NOT NULL COMMENT '官网价',
+  `save_cost` decimal(12,4) NOT NULL COMMENT '优惠金额 ',
+  `real_cost` decimal(12,4) NOT NULL COMMENT '应付金额',
+  `credit_pay` decimal(12,4) NOT NULL COMMENT '信用额度支付金额',
+  `voucher_pay` decimal(12,4) NOT NULL COMMENT '代金券抵扣',
+  `cash_pay` decimal(12,4) NOT NULL COMMENT '现金抵扣',
+  `storedcard_pay` decimal(12,4) NOT NULL COMMENT '储值卡抵扣',
+  `outstanding_amount` decimal(12,4) NOT NULL COMMENT '欠费金额',
+  `is_merged` tinyint(4) NOT NULL COMMENT '是否合并',
+  `task_id` varchar(64) NOT NULL COMMENT '同步的TaskId',
+  KEY `idx_task_id` (`task_id`) USING HASH,
+  KEY `idx_instance_id` (`resource_id`) USING HASH,
+  KEY `idx_year` (`year`) USING BTREE,
+  KEY `idx_month` (`month`) USING BTREE,
+  KEY `idx_vendor` (`vendor`) USING HASH,
+  KEY `idx_owner` (`owner_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='资源月账单';
+
+-- ----------------------------
+-- Table structure for bill_resource
+-- ----------------------------
+DROP TABLE IF EXISTS `bill_resource`;
+CREATE TABLE `bill_resource` (
+  `vendor` tinyint(1) NOT NULL COMMENT '厂商',
+  `year` int(11) NOT NULL COMMENT '账单年份',
+  `month` int(11) NOT NULL COMMENT '账单月份',
+  `owner_id` varchar(200) NOT NULL COMMENT '账号id',
+  `owner_name` varchar(255) NOT NULL COMMENT '账号名称',
+  `product_type` varchar(255) NOT NULL COMMENT '产品类型',
+  `product_code` varchar(255) NOT NULL COMMENT '产品编码',
+  `product_detail` varchar(255) NOT NULL COMMENT '产品明细',
+  `pay_mode` varchar(255) NOT NULL COMMENT '计费方式',
+  `order_id` varchar(255) NOT NULL COMMENT '订单/账单ID',
+  `resource_id` varchar(255) NOT NULL COMMENT '资源ID',
+  `resource_name` varchar(255) NOT NULL COMMENT '资源名称',
+  `public_ip` varchar(255) NOT NULL COMMENT '公网Ip',
+  `private_ip` varchar(255) NOT NULL COMMENT '内网Ip',
+  `instance_config` varchar(255) NOT NULL COMMENT '实例配置信息',
+  `region_code` varchar(255) NOT NULL COMMENT '地域Id',
+  `region_name` varchar(255) NOT NULL COMMENT '地域名称',
+  `real_cost` decimal(12,4) NOT NULL COMMENT '应付金额',
+  `outstanding_amount` decimal(12,4) NOT NULL COMMENT '欠费金额',
+  `task_id` varchar(64) NOT NULL COMMENT '同步的TaskId',
+  `domain` varchar(255) NOT NULL COMMENT '资源所属域',
+  `namespace` varchar(255) NOT NULL COMMENT '资源所属空间',
+  `env` varchar(255) NOT NULL COMMENT '资源所属环境',
+  UNIQUE KEY `idx_id` (`vendor`,`year`,`month`,`resource_id`),
+  KEY `idx_task_id` (`task_id`) USING HASH,
+  KEY `idx_instance_id` (`resource_id`) USING HASH,
+  KEY `idx_year` (`year`) USING BTREE,
+  KEY `idx_month` (`month`) USING BTREE,
+  KEY `idx_vendor` (`vendor`) USING HASH,
+  KEY `idx_owner` (`owner_id`) USING BTREE,
+  KEY `idx_domain` (`domain`),
+  KEY `idx_namespace` (`namespace`),
+  KEY `idx_env` (`env`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='资源月账单';
+
+-- ----------------------------
+-- Table structure for bill_share
+-- ----------------------------
+DROP TABLE IF EXISTS `bill_share`;
+CREATE TABLE `bill_share` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '单元Id',
+  `type` tinyint(4) NOT NULL COMMENT '标签类型',
+  `key` varchar(255) NOT NULL COMMENT '标签健',
+  `value` varchar(255) NOT NULL COMMENT '标签值',
+  `describe` varchar(255) NOT NULL COMMENT '标签描述',
+  `weight` int(11) NOT NULL COMMENT '标签权重',
+  `real_cost` decimal(12,4) NOT NULL COMMENT '分摊金额',
+  `resource_id` varchar(64) NOT NULL COMMENT '资源Id',
+  `year` int(11) NOT NULL COMMENT '账单年份',
+  `month` int(11) NOT NULL COMMENT '账单月份',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_id` (`key`,`value`,`resource_id`,`year`,`month`) COMMENT '实例月账单对于Tag分摊'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='共享资源成本分摊';
+
+-- ----------------------------
+-- Table structure for bill_summary
+-- ----------------------------
+DROP TABLE IF EXISTS `bill_summary`;
+CREATE TABLE `bill_summary` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '成本单元Id',
+  `type` tinyint(4) NOT NULL COMMENT '成本单元类型',
+  `domain` varchar(64) NOT NULL COMMENT '成本单元所属域',
+  `name` varchar(255) NOT NULL COMMENT '成本单元名称',
+  `description` varchar(255) NOT NULL COMMENT '成本单元描述',
+  `year` int(11) NOT NULL COMMENT '账单年份',
+  `month` int(11) NOT NULL COMMENT '账单月份',
+  `real_cost` decimal(12,4) NOT NULL COMMENT '账单金额',
+  `delta_cost` decimal(12,4) NOT NULL COMMENT '同步增长金额',
+  `delta_percent` float(255,0) NOT NULL COMMENT '同步增长比例',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_id` (`type`,`domain`,`name`,`year`,`month`) USING BTREE COMMENT '成本单元月度账单'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='成本单元, 用于月度成本汇总统计';
+
+-- ----------------------------
+-- Table structure for metric_daily
+-- ----------------------------
+DROP TABLE IF EXISTS `metric_daily`;
+CREATE TABLE `metric_daily` (
+  `resource_id` varchar(64) NOT NULL COMMENT '资源Id',
+  `metric_id` int(10) unsigned NOT NULL COMMENT '指标Id',
+  `day` varchar(255) NOT NULL COMMENT '那天的数据, 比如 2022-10-8',
+  `value` decimal(12,4) NOT NULL COMMENT '具体的值',
+  `time` bigint(20) NOT NULL COMMENT '指标入库时间',
+  UNIQUE KEY `idx_id` (`resource_id`,`metric_id`,`day`) USING BTREE,
+  KEY `idx_resource_id` (`resource_id`) USING HASH,
+  KEY `idx_metric` (`metric_id`) USING BTREE,
+  KEY `idx_day` (`day`) USING BTREE,
+  CONSTRAINT `fk_metric_id` FOREIGN KEY (`metric_id`) REFERENCES `resource_metric` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for metric_month
+-- ----------------------------
+DROP TABLE IF EXISTS `metric_month`;
+CREATE TABLE `metric_month` (
+  `resource_id` varchar(64) NOT NULL COMMENT '资源Id',
+  `metric_id` int(10) unsigned NOT NULL COMMENT '指标Id',
+  `month` varchar(255) NOT NULL COMMENT '那月的数据, 比如 2022-10-8',
+  `value` decimal(12,4) NOT NULL COMMENT '具体的值',
+  `time` bigint(20) NOT NULL COMMENT '指标入库时间',
+  UNIQUE KEY `idx_id` (`resource_id`,`metric_id`,`month`) USING BTREE COMMENT '月主键',
+  KEY `idx_resource_id` (`resource_id`) USING BTREE,
+  KEY `idx_metric` (`metric_id`) USING BTREE,
+  KEY `idx_month` (`month`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
 -- Table structure for resource_cost
 -- ----------------------------
 DROP TABLE IF EXISTS `resource_cost`;
