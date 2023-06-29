@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+package ahwhy.yCmdb.resource;
+option go_package="github.com/ahwhy/yCmdb/apps/resource";
+
+import "github.com/infraboard/mcube/pb/page/page.proto";
+import "apps/resource/pb/resource.proto";
+
+service RPC {
+    rpc Search(SearchRequest) returns (ResourceSet);
+}
+
+message DeleteRequest {
+    // 资源Id列表
+    // @gotags: json:"resource_ids"
+    repeated string resource_ids = 1;
+}
+
+message DeleteResponse {
+    // 删除记录
+    // @gotags: json:"delete_records"
+    repeated DeleteRecord delete_records = 1;
+    // 删除失败统计
+    // @gotags: json:"failed_count"
+    int64 failed_count = 2;
+    // 删除成功统计
+    // @gotags: json:"success_count"
+    int64 success_count = 3;
+}
+
+message DeleteRecord {
+    // 资源Id
+    // @gotags: json:"id"
+    string id = 1;
+    // 资源描述
+    // @gotags: json:"describe"
+    string describe = 2;
+    // 资源是否删除成功
+    // @gotags: json:"success"
+    bool success = 3;
+    // 删除失败的原因
+    // @gotags: json:"reason"
+    string reason = 4;
+}
+
+message SearchRequest {
+    // 分页参数
+    // @gotags: json:"page"
+    infraboard.mcube.page.PageRequest page = 1;
+    // 资源所属域
+    // @gotags: json:"domain"
+    string domain = 2;
+    // 资源所属空间
+    // @gotags: json:"namespace"
+    string namespace = 3;
+    // 资源所属环境
+    // @gotags: json:"env"
+    string env = 4;
+    // 使用方式
+    // @gotags: json:"usage_mode"
+    optional USAGE_MODE usage_mode = 5;
+    // 厂商
+    // @gotags: json:"vendor"
+    optional VENDOR vendor = 6;
+    // 资源所属账号
+    // @gotags: json:"owner"
+    string owner = 7;
+    // 资源类型
+    // @gotags: json:"type"
+    optional TYPE type = 8;
+    // 服务商中的状态
+    // @gotags: json:"status"
+    string status = 9;
+    // 资源标签
+    // @gotags: json:"tags"
+    repeated TagSelector tags = 10;
+    // 是否返回资源的标签
+    // @gotags: json:"with_tags"
+    bool with_tags = 11;
+    // 关联资源查询深度, -1表示查询所有, 默认为0,表示不查询关联资源
+    // @gotags: json:"relation_deep"
+    int32 relation_deep = 12; 
+    // 关键字参数
+    // @gotags: json:"keywords"
+    string keywords = 14;
+}
+
+message TagSelector {
+    // 匹配的key, 支持LIKE匹配
+    // @gotags: json:"key" validate:"required"
+    string key = 1;
+    // 匹配符
+    // @gotags: json:"opertor"
+    string opertor = 2;
+    // 匹配的值
+    // @gotags: json:"values"
+    repeated string values = 3;
+}
+

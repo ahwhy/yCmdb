@@ -3,125 +3,100 @@ syntax = "proto3";
 package ahwhy.yCmdb.host;
 option go_package="github.com/ahwhy/yCmdb/app/host";
 
-import "app/resource/pb/resource.proto";
-import "github.com/infraboard/mcube/pb/page/page.proto";
-
-service Service {
-    rpc SaveHost(Host) returns(Host) {}
-    rpc QueryHost(QueryHostRequest) returns(HostSet) {}
-    rpc DescribeHost(DescribeHostRequest) returns(Host) {}
-    rpc UpdateHost(UpdateHostRequest) returns(Host) {}
-    rpc SaveOrUpdateHost(Host) returns(Host) {}
-    rpc DeleteHost(DeleteHostRequest) returns(Host) {}
-}
+import "apps/resource/pb/resource.proto";
 
 message Host {
-    // @gotags: json:"base"
-    ahwhy.yCmdb.resource.Base base = 1;
-    // @gotags: json:"information"
-    ahwhy.yCmdb.resource.Information information = 2;
-    // @gotags: json:"describe"
-    Describe describe = 3;
-}
-
-message Describe {
-    // 核数
-    // @gotags: json:"cpu"
-    int64 cpu = 1;
-    // 内存
-    // @gotags: json:"memory"
-    int64 memory = 2;
-    // GPU数量
-    // @gotags: json:"gpu_amount"
-    int32 gpu_amount = 3;
-    // GPU类型
-    // @gotags: json:"gpu_spec"
-    string gpu_spec = 4;
-    // 操作系统类型，分为Windows和Linux
-    // @gotags: json:"os_type"
-    string os_type = 5;
-    // 操作系统名称
-    // @gotags: json:"os_name"
-    string os_name = 6;
-    // 序列号
-    // @gotags: json:"serial_number"
-    string serial_number = 7;
-    // 镜像ID
-    // @gotags: json:"image_id"
-    string image_id = 8;
-    // 公网出带宽最大值，单位为 Mbps
-    // @gotags: json:"internet_max_bandwidth_out"
-    int64 internet_max_bandwidth_out = 9;
-    // 公网入带宽最大值，单位为 Mbps
-    // @gotags: json:"internet_max_bandwidth_in"
-    int64 internet_max_bandwidth_in = 10;
-    // 秘钥对名称
-    // @gotags: json:"key_pair_name"
-    repeated string key_pair_name = 11;
-    // 安全组  采用逗号分隔
-    // @gotags: json:"security_groups"
-    repeated string security_groups = 12;
-    // 额外的无法通用的一些属性, 比如只有腾讯云独有的一些属性
-    // @gotags: json:"extra"
-    map<string, string> extra = 13;
-}
-
-message HostSet {
-    // 总条数
-    // @gotags: json:"total"
-    int64 total = 1;
-    // 具体条目
-    // @gotags: json:"items"
-    repeated Host items = 2;
-}
-
-message QueryHostRequest {
-    // 分页参数
-    // @gotags: json:"page"
-    infraboard.mcube.page.PageRequest page = 1;
-    // 关键字参数
-    // @gotags: json:"keywords"
-    string keywords = 2;
-}
-
-enum DescribeBy {
-    HOST_ID = 0;
-    INSTANCE_ID = 1;
-}
-
-message DescribeHostRequest {
-    // @gotags: json:"describe_by"
-    DescribeBy describe_by = 1;
-    // @gotags: json:"value" validate:"required"
-    string value = 2;
-}
-
-enum UpdateMode {
-    PUT = 0;
-    PATCH = 1;
-}
-
-message UpdateHostRequest {
-    // @gotags: json:"id" validate:"required"
-    string id = 1;
-    // @gotags: json:"update_mode"
-    UpdateMode update_mode = 2;
-    // @gotags: json:"data" validate:"required"
-    UpdateHostData update_host_data = 3;
-}
-
-message UpdateHostData {
-    // @gotags: json:"information"
-    ahwhy.yCmdb.resource.Information information = 1;
+    // @gotags: json:"resource"
+    resource.Resource resource = 1;
     // @gotags: json:"describe"
     Describe describe = 2;
 }
 
-message DeleteHostRequest {
-    // @gotags: json:"id" validate:"required"
-    string id = 1;
+message Describe {
+    // GPU类型
+    // @gotags: json:"gpu_spec"
+    string gpu_spec = 1;
+    // 操作系统类型，分为Windows和Linux
+    // @gotags: json:"os_type"
+    string os_type = 2;
+    // 操作系统名称
+    // @gotags: json:"os_name"
+    string os_name = 3;
+    // 镜像ID
+    // @gotags: json:"image_id"
+    string image_id = 4;
+    // 公网出带宽最大值，单位为 Mbps
+    // @gotags: json:"internet_max_bandwidth_out"
+    int64 internet_max_bandwidth_out = 5;
+    // 公网入带宽最大值，单位为 Mbps
+    // @gotags: json:"internet_max_bandwidth_in"
+    int64 internet_max_bandwidth_in = 6;
+    // 秘钥对名称
+    // @gotags: json:"key_pair_name"
+    repeated string key_pair_name = 7;
+    // 安全组  采用逗号分隔
+    // @gotags: json:"security_groups"
+    repeated string security_groups = 8;
+    // 额外的无法通用的一些属性, 比如只有腾讯云独有的一些属性
+    // @gotags: json:"extra"
+    map<string, string> extra = 9;
 }
 
-// protoc -I=/usr/local/include/ -I=. --go_out=./app/host --go_opt=module="github.com/ahwhy/yCmdb/app/host" \
-// --go-grpc_out=./app/host --go-grpc_opt=module="github.com/ahwhy/yCmdb/app/host" \
-// app/host/pb/host.proto
+message HostSet {
+    // @gotags: json:"total"
+    int64 total = 1;
+    // @gotags: json:"items"
+    repeated Host items = 2;
+}
+
+message UpdateHostData {
+    // @gotags: json:"sepc"
+    resource.Spec spec = 1;
+    // @gotags: json:"describe"
+    Describe describe = 2;
+}
+
+enum DescribeBy {
+    HOST_ID = 0;
+}
+
+enum STATUS {
+    // 未知状态
+    UNKNOW = 0;
+    // 表示创建中
+    PENDING = 5;
+    // 表示创建失败
+    CREATE_FAILED = 6;
+
+    // 表示开机中
+    STARTING = 10;
+    // 表示运行中
+    RUNNING = 11;
+
+    // 表示关机中
+    STOPPING = 20; 
+    // 表示关机
+    STOPPED = 21;
+
+    // 表示重启中
+    REBOOTING = 30;
+    // 暂停中
+    SUSPENDED = 40;
+
+    // 状态异常
+	ERROR  = 50;
+
+    // 表示实例已经锁定
+    LOCKED = 70;
+
+    // 表示停止待销毁
+    SHUTDOWN = 80;
+    // 表示销毁中
+    DELETING = 81;
+    // 已销毁
+    DESTROYED = 90;
+}
+
+// protoc -I=/usr/local/include/ -I=. --go_out=./apps/host --go_opt=module="github.com/ahwhy/yCmdb/apps/host" \
+// --go-grpc_out=./apps/host --go-grpc_opt=module="github.com/ahwhy/yCmdb/apps/host" \
+// apps/host/pb/host.proto
