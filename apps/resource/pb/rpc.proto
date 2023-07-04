@@ -97,3 +97,5 @@ message TagSelector {
     repeated string values = 3;
 }
 
+// protoc -I=/usr/local/include/ -I=. --go_out=./apps/resource --go_opt=module="github.com/ahwhy/yCmdb/apps/resource" \
+// --go-grpc_out=./apps/resource --go-grpc_opt=module="github.com/ahwhy/yCmdb/apps/resource" apps/resource/pb/rpc.proto
