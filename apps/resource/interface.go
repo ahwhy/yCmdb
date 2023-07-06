@@ -150,5 +150,103 @@ func (ag *AccountGetter) GetAccountId() string {
 	return ag.accountId
 }
 
+type Operator string
+
+const (
+	Operator_EQUAL          = "="
+	Operator_NOT_EQUAL      = "!="
+	Operator_LIKE_EQUAL     = "=~"
+	Operator_NOT_LIKE_EQUAL = "!~"
+)
+
+func ParExpr(str string) (*TagSelector, error) {
+	var (
+		op = ""
+		kv = []string{}
+	)
+
+	if strings.Contains(str, Operator_LIKE_EQUAL) {
+		op = "LIKE"
+		kv = strings.Split(str, Operator_LIKE_EQUAL)
+	} else if strings.Contains(str, Operator_NOT_LIKE_EQUAL) {
+		op = "NOT LIKE"
+		kv = strings.Split(str, Operator_NOT_LIKE_EQUAL)
+	} else if strings.Contains(str, Operator_NOT_EQUAL) {
+		op = "!="
+		kv = strings.Split(str, Operator_NOT_EQUAL)
+	} else if strings.Contains(str, Operator_EQUAL) {
+		op = "="
+		kv = strings.Split(str, Operator_EQUAL)
+	} else {
+		return nil, fmt.Errorf("no support operator [=, =~, !=, !~]")
+	}
+
+	if len(kv) != 2 {
+		return nil, fmt.Errorf("key,value format error, requred key=value")
+	}
+
+	selector := &TagSelector{
+		Key:     kv[0],
+		Opertor: op,
+		Values:  []string{},
+	}
+
+	// 如果Value等于*表示只匹配key
+	if kv[1] != "*" {
+		selector.Values = strings.Split(kv[1], ",")
+	}
+
+	return selector, nil
+}
+
 // key1=v1,v2,v3&key2=~v1,v2,v3
-func NewTagsFromString(tagStr string) (tags []*TagSelector, err error)
+func NewTagsFromString(tagStr string) (tags []*TagSelector, err error) {
+	if tagStr == "" {
+		return
+	}
+
+	items := strings.Split(tagStr, "&")
+	for _, v := range items {
+		t, err := ParExpr(v)
+		if err != nil {
+			return nil, err
+		}
+		tags = append(tags, t)
+	}
+
+	return
+}
+
+func (s *TagSelector) RelationShip() string {
+	switch s.Opertor {
+	case Operator_EQUAL, Operator_LIKE_EQUAL:
+		return " OR "
+	case Operator_NOT_EQUAL, Operator_NOT_LIKE_EQUAL:
+		return " AND "
+	default:
+		return " OR "
+	}
+}
+
+func NewTagSet() *TagSet {
+	return &TagSet{
+		Items: []*Tag{},
+	}
+}
+
+func (r *Resource) Validate() error {
+	return validate.Struct(r)
+}
+
+func (r *DeleteRequest) Validate() error {
+	return nil
+}
+
+// GenResourceHashId 生成资源的短hashId
+func GenResourceHashId(t TYPE, unitkeys ...string) string {
+	hash := fnv.New64a()
+	for _, key := range unitkeys {
+		hash.Write([]byte(key))
+	}
+	return fmt.Sprintf("%s-%x", strings.ToLower(t.String()), hash.Sum64())
+}
