@@ -5,6 +5,7 @@ import (
 	"sort"
 
 	"github.com/ahwhy/yCmdb/utils"
+	"github.com/infraboard/mcube/logger/zap"
 )
 
 func NewResourceSet() *ResourceSet {
@@ -62,4 +63,19 @@ func (r *Resource) GetTagValueOne(key string) string {
 
 func (i *Spec) Hash() string {
 	return utils.Hash(i)
+}
+
+func (s *ResourceSet) PrometheusFormat() (targets []*PrometheusTarget) {
+	for i := range s.Items {
+		item := s.Items[i]
+		if item.GetTagValueOne(PROMETHEUS_SCRAPE) == "true" {
+			t, err := item.PrometheusTarget()
+			if err != nil {
+				zap.L().Errorf("new Prometheus Target errror, %s", err)
+				continue
+			}
+			targets = append(targets, t)
+		}
+	}
+	return
 }
