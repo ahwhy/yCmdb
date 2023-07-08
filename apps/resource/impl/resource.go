@@ -9,74 +9,101 @@ import (
 	"github.com/infraboard/mcube/sqlbuilder"
 )
 
-func (s *service) Search(ctx context.Context, req *resource.SearchRequest) (*resource.ResourceSet, error) {
-	query := sqlbuilder.NewQuery(SQLQueryResource)
-
-	if req.Keywords != "" {
-		query.Where("name LIKE ? OR id = ? OR instance_id = ? OR private_ip LIKE ? OR public_ip LIKE ?",
-			"%"+req.Keywords+"%",
-			req.Keywords,
-			req.Keywords,
-			req.Keywords+"%",
-			req.Keywords+"%",
-		)
+// 更新资源包含创建
+func (s *service) Put(ctx context.Context, res *resource.Resource) (*resource.Resource, error) {
+	// 参数校验
+	if err := res.Validate(); err != nil {
+		return nil, err
 	}
 
-	if req.Vendor != resource.Vendor_NULL {
-		query.Where("vendor = ?", req.Vendor)
-	}
-
-	querySQL, args := query.Order("sync_at").Desc().Limit(req.OffSet(), uint(req.PageSize)).BuildQuery()
-	s.log.Debugf("sql: %s", querySQL)
-
-	queryStmt, err := s.db.Prepare(querySQL)
-	if err != nil {
-		return nil, exception.NewInternalServerError("prepare query host error, %s", err.Error())
-	}
-	defer queryStmt.Close()
-
-	rows, err := queryStmt.Query(args...)
-	if err != nil {
-		return nil, exception.NewInternalServerError(err.Error())
-	}
-	defer rows.Close()
-
-	var (
-		publicIPList, privateIPList string
-	)
-	set := resource.NewResourceSet()
-	for rows.Next() {
-		ins := resource.NewDefaultResource()
-		base := ins.Base
-		info := ins.Information
-		err := rows.Scan(
-			&base.Id, &base.Vendor, &base.Region, &base.Zone, &base.CreateAt, &info.ExpireAt,
-			&info.Category, &info.Type, &base.InstanceId, &info.Name, &info.Description,
-			&info.Status, &info.UpdateAt, &base.SyncAt, &info.SyncAccount,
-			&publicIPList, &privateIPList, &info.PayType, &base.DescribeHash, &base.ResourceHash,
-		)
-		if err != nil {
-			return nil, exception.NewInternalServerError("query host error, %s", err.Error())
+	// 开启事务
+	var err error
+	tx := s.db.WithContext(ctx).Begin()
+	defer func() {
+		if err == nil {
+			tx.Commit()
+		} else {
+			tx.Rollback()
 		}
-		info.LoadPrivateIPString(privateIPList)
-		info.LoadPublicIPString(publicIPList)
-		set.Add(ins)
+	}()
+
+	temp := NewResource(res)
+
+	// 保存meta
+	if err := tx.Save(temp.ResourceMeta).Error; err != nil {
+		return nil, err
 	}
 
-	// 获取total SELECT COUNT(*) FROMT t Where ....
-	countSQL, args := query.BuildCount()
-	countStmt, err := s.db.Prepare(countSQL)
+	// 保存spec
+	if err := tx.Save(temp.ResourceSpec).Error; err != nil {
+		return nil, err
+	}
+
+	// 资源价格
+	if res.Cost != nil {
+		if err := tx.Save(temp.ResourceCost).Error; err != nil {
+			return nil, err
+		}
+	}
+
+	// 保存状态
+	if err := tx.Save(temp.ResourceStatus).Error; err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+// 删除资源
+func (s *service) Delete(ctx context.Context, req *resource.DeleteRequest) (*resource.DeleteResponse, error) {
+	// 参数校验
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+
+	// 开启事务
+	var err error
+	tx := s.db.WithContext(ctx).Begin()
+	defer func() {
+		if err == nil {
+			tx.Commit()
+		} else {
+			tx.Rollback()
+		}
+	}()
+
+	// 删除meta
+	err = tx.Where("id IN (?)", req.ResourceIds).Delete(ResourceMeta{}).Error
 	if err != nil {
-		return nil, exception.NewInternalServerError(err.Error())
+		return nil, err
 	}
-	defer countStmt.Close()
 
-	err = countStmt.QueryRow(args...).Scan(&set.Total)
+	return nil, nil
+}
+
+func (s *service) Search(ctx context.Context, req *resource.SearchRequest) (*resource.ResourceSet, error) {
+	query, err := s.BuildQuery(ctx, req)
 	if err != nil {
-		return nil, exception.NewInternalServerError(err.Error())
+		return nil, err
 	}
 
-	return set, nil
+	temp := NewResourceSet()
+	err = query.
+		Order("m.create_at DESC").
+		Offset(int(req.Page.ComputeOffset())).
+		Limit(int(req.Page.PageSize)).
+		Scan(&temp.Items).
+		Error
+	if err != nil {
+		return nil, err
+	}
+
+	err = query.Count(&temp.Total).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return temp.ResourceSet(), nil
 }
 
 // func (s *service) Search(ctx context.Context, req *resource.SearchRequest) (
