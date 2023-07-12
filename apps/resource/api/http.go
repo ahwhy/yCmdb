@@ -47,6 +47,16 @@ func (h *handler) Registry(ws *restful.WebService) {
 		Reads(resource.SearchRequest{}).
 		Writes(resource.ResourceSet{}).
 		Returns(200, "OK", resource.ResourceSet{}))
+
+	// 资源发现
+	ws.Route(ws.GET("/discovery/prometheus").To(h.DiscoveryPrometheus).
+		Doc("监控发现(Prometheus)").
+		Metadata(restfulspec.KeyOpenAPITags, tags).
+		Metadata(label.Resource, "prometheus_resource").
+		Metadata(label.Action, label.List.Value()).
+		Reads(resource.SearchRequest{}).
+		Writes(resource.ResourceSet{}).
+		Returns(200, "OK", resource.ResourceSet{}))
 }
 
 func init() {
