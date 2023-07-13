@@ -18,8 +18,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ServiceClient interface {
-	SaveBill(ctx context.Context, in *Bill, opts ...grpc.CallOption) (*Bill, error)
+	SyncBill(ctx context.Context, in *Bill, opts ...grpc.CallOption) (*Bill, error)
 	QueryBill(ctx context.Context, in *QueryBillRequest, opts ...grpc.CallOption) (*BillSet, error)
+	ConfirmBill(ctx context.Context, in *ConfirmBillRequest, opts ...grpc.CallOption) (*BillSet, error)
+	DeleteBill(ctx context.Context, in *DeleteBillRequest, opts ...grpc.CallOption) (*BillSet, error)
 }
 
 type serviceClient struct {
@@ -30,9 +32,9 @@ func NewServiceClient(cc grpc.ClientConnInterface) ServiceClient {
 	return &serviceClient{cc}
 }
 
-func (c *serviceClient) SaveBill(ctx context.Context, in *Bill, opts ...grpc.CallOption) (*Bill, error) {
+func (c *serviceClient) SyncBill(ctx context.Context, in *Bill, opts ...grpc.CallOption) (*Bill, error) {
 	out := new(Bill)
-	err := c.cc.Invoke(ctx, "/ahwhy.yCmdb.bill.Service/SaveBill", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ahwhy.yCmdb.bill.Service/SyncBill", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -48,12 +50,32 @@ func (c *serviceClient) QueryBill(ctx context.Context, in *QueryBillRequest, opt
 	return out, nil
 }
 
+func (c *serviceClient) ConfirmBill(ctx context.Context, in *ConfirmBillRequest, opts ...grpc.CallOption) (*BillSet, error) {
+	out := new(BillSet)
+	err := c.cc.Invoke(ctx, "/ahwhy.yCmdb.bill.Service/ConfirmBill", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *serviceClient) DeleteBill(ctx context.Context, in *DeleteBillRequest, opts ...grpc.CallOption) (*BillSet, error) {
+	out := new(BillSet)
+	err := c.cc.Invoke(ctx, "/ahwhy.yCmdb.bill.Service/DeleteBill", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ServiceServer is the server API for Service service.
 // All implementations must embed UnimplementedServiceServer
 // for forward compatibility
 type ServiceServer interface {
-	SaveBill(context.Context, *Bill) (*Bill, error)
+	SyncBill(context.Context, *Bill) (*Bill, error)
 	QueryBill(context.Context, *QueryBillRequest) (*BillSet, error)
+	ConfirmBill(context.Context, *ConfirmBillRequest) (*BillSet, error)
+	DeleteBill(context.Context, *DeleteBillRequest) (*BillSet, error)
 	mustEmbedUnimplementedServiceServer()
 }
 
@@ -61,11 +83,17 @@ type ServiceServer interface {
 type UnimplementedServiceServer struct {
 }
 
-func (UnimplementedServiceServer) SaveBill(context.Context, *Bill) (*Bill, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SaveBill not implemented")
+func (UnimplementedServiceServer) SyncBill(context.Context, *Bill) (*Bill, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyncBill not implemented")
 }
 func (UnimplementedServiceServer) QueryBill(context.Context, *QueryBillRequest) (*BillSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryBill not implemented")
+}
+func (UnimplementedServiceServer) ConfirmBill(context.Context, *ConfirmBillRequest) (*BillSet, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConfirmBill not implemented")
+}
+func (UnimplementedServiceServer) DeleteBill(context.Context, *DeleteBillRequest) (*BillSet, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBill not implemented")
 }
 func (UnimplementedServiceServer) mustEmbedUnimplementedServiceServer() {}
 
@@ -80,20 +108,20 @@ func RegisterServiceServer(s grpc.ServiceRegistrar, srv ServiceServer) {
 	s.RegisterService(&Service_ServiceDesc, srv)
 }
 
-func _Service_SaveBill_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_SyncBill_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Bill)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ServiceServer).SaveBill(ctx, in)
+		return srv.(ServiceServer).SyncBill(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ahwhy.yCmdb.bill.Service/SaveBill",
+		FullMethod: "/ahwhy.yCmdb.bill.Service/SyncBill",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServiceServer).SaveBill(ctx, req.(*Bill))
+		return srv.(ServiceServer).SyncBill(ctx, req.(*Bill))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -116,6 +144,42 @@ func _Service_QueryBill_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Service_ConfirmBill_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfirmBillRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServiceServer).ConfirmBill(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ahwhy.yCmdb.bill.Service/ConfirmBill",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServiceServer).ConfirmBill(ctx, req.(*ConfirmBillRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Service_DeleteBill_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteBillRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServiceServer).DeleteBill(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ahwhy.yCmdb.bill.Service/DeleteBill",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServiceServer).DeleteBill(ctx, req.(*DeleteBillRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Service_ServiceDesc is the grpc.ServiceDesc for Service service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -124,14 +188,22 @@ var Service_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SaveBill",
-			Handler:    _Service_SaveBill_Handler,
+			MethodName: "SyncBill",
+			Handler:    _Service_SyncBill_Handler,
 		},
 		{
 			MethodName: "QueryBill",
 			Handler:    _Service_QueryBill_Handler,
 		},
+		{
+			MethodName: "ConfirmBill",
+			Handler:    _Service_ConfirmBill_Handler,
+		},
+		{
+			MethodName: "DeleteBill",
+			Handler:    _Service_DeleteBill_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "app/bill/pb/bill.proto",
+	Metadata: "apps/bill/pb/rpc.proto",
 }

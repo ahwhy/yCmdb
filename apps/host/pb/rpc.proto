@@ -51,3 +51,6 @@ message ReleaseHostRequest {
     // @gotags: json:"id" validate:"required"
     string id = 1;
 }
+
+// protoc -I=/usr/local/include/ -I=. --go_out=./apps/hosts --go_opt=module="github.com/ahwhy/yCmdb/apps/hosts" \
+// --go-grpc_out=./apps/hosts --go-grpc_opt=module="github.com/ahwhy/yCmdb/apps/hosts" apps/hosts/pb/rpc.proto
