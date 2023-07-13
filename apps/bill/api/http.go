@@ -1,4 +1,4 @@
-package http
+package api
 
 import (
 	"github.com/ahwhy/yCmdb/apps"
@@ -32,8 +32,6 @@ func (h *handler) Name() string {
 func (h *handler) Registry(r router.SubRouter) {
 	hr := r.ResourceRouter("bill")
 	hr.Permission(true)
-	hr.Handle("POST", "/bills", h.SaveBill)
-	hr.Handle("GET", "/bills", h.QueryBill)
 }
 
 func init() {

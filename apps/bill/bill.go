@@ -4,14 +4,23 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/alibabacloud-go/tea/tea"
+	"github.com/go-playground/validator/v10"
 )
 
 const (
 	AppName = "bill"
 )
 
+var (
+	validate = validator.New()
+)
+
 func NewDefaultBill() *Bill {
-	return &Bill{}
+	return &Bill{
+		Cost: &Cost{},
+	}
 }
 
 func (b *Bill) YearMonth() (int, int) {
@@ -20,7 +29,7 @@ func (b *Bill) YearMonth() (int, int) {
 	}
 
 	ym := strings.Split(b.Month, "-")
-	if len(ym) == 2 {
+	if len(ym) > 1 {
 		y, _ := strconv.Atoi(ym[0])
 		m, _ := strconv.Atoi(ym[1])
 		return y, m
@@ -33,29 +42,47 @@ func (b *Bill) ShortDesc() string {
 	return fmt.Sprintf("%s %s", b.InstanceId, b.InstanceName)
 }
 
+func (b *Bill) ToJsonString() string {
+	return tea.Prettify(b)
+}
+
 func NewBillSet() *BillSet {
 	return &BillSet{
+		Sum:   &Cost{},
 		Items: []*Bill{},
 	}
 }
 
-func (s *BillSet) Add(item *Bill) {
-	s.Items = append(s.Items, item)
+func (s *BillSet) ToAny() (items []any) {
+	for i := range s.Items {
+		items = append(items, s.Items[i])
+	}
+
+	return
 }
 
-// 分页迭代器
-type Pager interface {
-	Next() *PagerResult
-}
-
-func NewPagerResult() *PagerResult {
-	return &PagerResult{
-		Data: NewBillSet(),
+func (s *BillSet) Add(items ...any) {
+	for i := range items {
+		s.Items = append(s.Items, items[i].(*Bill))
 	}
 }
 
-type PagerResult struct {
-	Data    *BillSet
-	Err     error
-	HasNext bool
+func (s *BillSet) Length() int64 {
+	return int64(len(s.Items))
+}
+
+func NewDeleteBillRequest(taskId string) *DeleteBillRequest {
+	return &DeleteBillRequest{
+		TaskId: taskId,
+	}
+}
+
+func (req *DeleteBillRequest) Validate() error {
+	return validate.Struct(req)
+}
+
+func NewConfirmBillRequest(taskId string) *ConfirmBillRequest {
+	return &ConfirmBillRequest{
+		TaskId: taskId,
+	}
 }

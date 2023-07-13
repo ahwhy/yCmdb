@@ -6,19 +6,8 @@ import (
 	"github.com/ahwhy/yCmdb/apps/bill"
 )
 
-const (
-	insertBillSQL = `INSERT INTO bill (
-		vendor,year,month,owner_id,owner_name,product_type,product_code,product_detail,
-		pay_mode,order_id,instance_id,instance_name,public_ip,private_ip,instance_config,
-		region_code,region_name,sale_price,save_cost,real_cost,credit_pay,voucher_pay,
-		cash_pay,storedcard_pay,outstanding_amount
-	) VALUES (?,?,?,?,?,?,?,?,?,?,?, ?,?,?,?,?,?,?,?,?,?,?, ?,?,?,?,?);`
-
-	queryBillSQL = `SELECT * FROM bill`
-)
-
-func (s *service) SaveBill(ctx context.Context, req *bill.Bill) (*bill.Bill, error) {
-	stmt, err := s.db.Prepare(insertBillSQL)
+func (s *service) SyncBill(ctx context.Context, req *bill.Bill) (*bill.Bill, error) {
+	stmt, err := s.db.PrepareContext(ctx, insertBillSQL)
 	if err != nil {
 		return nil, err
 	}
@@ -26,11 +15,11 @@ func (s *service) SaveBill(ctx context.Context, req *bill.Bill) (*bill.Bill, err
 
 	y, m := req.YearMonth()
 
-	_, err = stmt.Exec(
+	_, err = stmt.ExecContext(ctx,
 		req.Vendor, y, m, req.OwnerId, req.OwnerName, req.ProductType, req.ProductCode, req.ProductDetail,
-		req.PayMode, req.OrderId, req.InstanceId, req.InstanceName, req.PublicIp, req.PrivateIp, req.InstanceConfig,
-		req.RegionCode, req.RegionName, req.SalePrice, req.SaveCost, req.RealCost, req.CreditPay, req.VoucherPay,
-		req.CashPay, req.StoredcardPay, req.OutstandingAmount,
+		req.PayMode, req.OrderId, req.InstanceId, req.InstanceName, req.Year, req.Day, req.InstanceConfig,
+		req.RegionCode, req.RegionName, req.Cost.SalePrice, req.Cost.SaveCost, req.Cost.RealCost, req.Cost.CreditPay,
+		req.Cost.VoucherPay, req.Cost.CashPay, req.Cost.StoredcardPay, req.Cost.OutstandingAmount, req.TaskId,
 	)
 	if err != nil {
 		return nil, err
@@ -41,4 +30,37 @@ func (s *service) SaveBill(ctx context.Context, req *bill.Bill) (*bill.Bill, err
 
 func (s *service) QueryBill(ctx context.Context, req *bill.QueryBillRequest) (*bill.BillSet, error) {
 	return nil, nil
+}
+
+// 确认账单, 确认当前月的账单以TaskId同步的准, 之前其他Task同步的账单作废需要删除
+func (s *service) ConfirmBill(ctx context.Context, req *bill.ConfirmBillRequest) (*bill.BillSet, error) {
+	b := sqlbuilder.NewQuery(deleteBillSQL)
+	b.Where("year = ?")
+
+	// 清理该月之前同步的账单数据
+
+	// 生产实例按照月的聚合的数据
+
+	return nil, nil
+}
+
+func (s *service) DeleteBill(ctx context.Context, req *bill.DeleteBillRequest) (*bill.BillSet, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest("validate delete bill error, %s", err)
+	}
+
+	set := bill.NewBillSet()
+	stmt, err := s.db.PrepareContext(ctx, deleteBillSQL)
+	if err != nil {
+		return set, err
+	}
+	defer stmt.Close()
+
+	ret, err := stmt.ExecContext(ctx, req.TaskId)
+	if err != nil {
+		return set, err
+	}
+	set.Total, _ = ret.RowsAffected()
+
+	return set, nil
 }
